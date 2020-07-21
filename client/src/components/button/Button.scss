@@ -1,0 +1,16 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: .375rem .75rem;
+  color: #fff;
+  font-size: 1rem;
+  word-wrap: normal;
+  background-color: #4e6471;
+  border: none;
+  outline: none;
+  border-radius: .25rem;
+
+  &:focus, &:hover {
+    background-color: rgba(78, 100, 113, 0.9);
+  }
+}

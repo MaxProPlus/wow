@@ -1,0 +1,11 @@
+.avatar_img {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #22293c;
+  border-radius: 50%;
+  overflow: hidden;
+
+  > img {
+    height: 100%;
+  }
+}

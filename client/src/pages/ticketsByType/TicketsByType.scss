@@ -1,0 +1,24 @@
+.page-ticket-list {
+  .not-found {
+    margin-top: .6rem;
+  }
+  h2 {
+    font-weight: bold;
+  }
+  ul {
+    li {
+      margin-top: .6rem;
+      .title {
+        font-weight: bold;
+        font-size: .9rem;
+
+      }
+
+      .description {
+        font-size: .8rem;
+        color: #808080;
+      }
+    }
+  }
+
+}

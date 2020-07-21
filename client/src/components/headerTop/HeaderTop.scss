@@ -1,0 +1,53 @@
+.header-top {
+  background-color: #fff;
+  color: #333;
+  padding: .25rem 0;
+
+  > .header-inner {
+    width: 95%;
+    justify-content: flex-end;
+    >.menu {
+      display: none;
+    }
+
+
+    .profile {
+      display: flex;
+      align-items: center;
+      position: relative;
+      >.nickname {
+        order: 1;
+        margin-right: .5rem;
+      }
+      >.avatar_img {
+        order: 2;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 66.5rem) {
+  .header-top {
+    > .header-inner {
+      width: 98%;
+      justify-content: space-between;
+      align-items: center;
+      >.menu {
+        display: flex;
+        justify-content: center;
+        > img {
+          height: 1.5rem;
+        }
+      }
+
+      .profile {
+        margin-right: .2rem;
+        > .nickname {
+          //display: none;
+        }
+      }
+    }
+  }
+}
+

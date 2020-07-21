@@ -1,0 +1,139 @@
+import {Comment, Ticket, TicketStatus, TicketType, Account} from '../../common/entity/types'
+import logger from '../../services/logger'
+
+class Mapper {
+    private pool: any
+
+    constructor(pool: any) {
+        this.pool = pool
+    }
+
+    // Создать тикет
+    insert = (ticket: Ticket) => {
+        const sql = `INSERT INTO ticket (title, text, id_ticket_type, id_account)
+                     VALUES (?, ?, ?, ?)`
+        return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idAccount]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Создать комментарий на тикет
+    insertComment = (comment: Comment) => {
+        const sql = `INSERT INTO comment (text, id_account, id_ticket)
+                     VALUES (?, ?, ?)`
+        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idTicket]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить тикет по id
+    selectById = (id: number) => {
+        const sql = `select t.id,
+               t.title,
+               t.id_ticket_type   as idTicketType,
+               t.text,
+               t.status,
+               t.date_init        as dateInit,
+               t.id_account       as idAccount,
+               t.id_account_moder as idAccountModer,
+               aUser.nickname     as userNickname,
+               aModer.nickname    as moderNickname
+        from ticket t
+                 join account aUser on t.id_account = aUser.id
+                 left join account aModer on t.id_account_moder = aModer.id
+        where t.id = ?`
+        return this.pool.query(sql, [id]).then(([r]: [Account[]]) => {
+            if (!r.length) {
+                return Promise.reject('Не найден тикет')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить тикет по id
+    selectCommentsByIdTicket = (id: number) => {
+        const sql = `select c.id,
+               c.text,
+               c.id_account as idAccount,
+               c.id_ticket  as idTicket,
+               a.nickname   as authorNickname,
+               a.url_avatar as authorUrlAvatar
+        from comment c
+                 join account a on c.id_account = a.id
+        where c.id_ticket = ?`
+        return this.pool.query(sql, [id]).then(([r]: [Comment[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить тип тикета
+    selectTicketTypeById = (idType: number) => {
+        const sql = `select t.id, t.title, t.description, t.url_icon as urlIcon
+            from ticket_type t
+            where t.id = ?`
+        return this.pool.query(sql, [idType]).then(([r]: [TicketType[]]) => {
+            if (!r.length) {
+                return Promise.reject('Не найдена категория заявок')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить все типы тикетов
+    selectTicketTypes = () => {
+        const sql = `select t.id, t.title, t.description, t.url_icon as urlIcon
+            from ticket_type t`
+        return this.pool.query(sql).then(([r]: [TicketType[]]) => {
+            if (!r.length) {
+                return Promise.reject('Не найдены категории заявок')
+            }
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить все тикеты по id типу
+    selectTicketsByType = (id: number) => {
+        const sql = `select t.id, t.title, t.id_ticket_type as idTicketType, t.text, t.status, t.date_init as dateInit, t.id_account as idAccount, t.id_account_moder as idAccountModer 
+            from ticket t 
+            where t.id_ticket_type = ?`
+        return this.pool.query(sql, [id]).then(([r]: [Ticket[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    updateStatus = (idTicket: number, status: TicketStatus) => {
+        const sql = `UPDATE ticket SET status=? where id = ?`
+        return this.pool.query(sql, [status, idTicket]).then((r:any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Не найден тикет')
+            }
+            return Promise.resolve(idTicket)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+}
+
+export default Mapper

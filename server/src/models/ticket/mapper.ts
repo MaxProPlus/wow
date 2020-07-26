@@ -32,6 +32,24 @@ class Mapper {
         })
     }
 
+
+    // Получить количество тикетов
+    selectCountTicketByType = (id: number): Promise<number> => {
+        const sql = `select count(id) as count
+        from ticket
+        where id_ticket_type = ?`
+        return this.pool.query(sql, [id]).then(([r]: any) => {
+            console.log(r[0].count)
+            if (!r.length) {
+                return Promise.reject('Не найден тикет')
+            }
+            return Promise.resolve(r[0].count)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить тикет по id
     selectById = (id: number) => {
         const sql = `select t.id,
@@ -79,7 +97,7 @@ class Mapper {
     }
 
     // Получить тип тикета
-    selectTicketTypeById = (idType: number) => {
+    selectTypeOfTicketById = (idType: number) => {
         const sql = `select t.id, t.title, t.description, t.url_icon as urlIcon
             from ticket_type t
             where t.id = ?`
@@ -95,7 +113,7 @@ class Mapper {
     }
 
     // Получить все типы тикетов
-    selectTicketTypes = () => {
+    selectTypesOfTicket = () => {
         const sql = `select t.id, t.title, t.description, t.url_icon as urlIcon
             from ticket_type t`
         return this.pool.query(sql).then(([r]: [TicketType[]]) => {
@@ -110,11 +128,11 @@ class Mapper {
     }
 
     // Получить все тикеты по id типу
-    selectTicketsByType = (id: number) => {
+    selectTicketsByType = (id: number, limit: number, page: number) => {
         const sql = `select t.id, t.title, t.id_ticket_type as idTicketType, t.text, t.status, t.date_init as dateInit, t.id_account as idAccount, t.id_account_moder as idAccountModer 
             from ticket t 
-            where t.id_ticket_type = ?`
-        return this.pool.query(sql, [id]).then(([r]: [Ticket[]]) => {
+            where t.id_ticket_type = ? limit ? offset ?`
+        return this.pool.query(sql, [id, limit, limit*(page-1)]).then(([r]: [Ticket[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

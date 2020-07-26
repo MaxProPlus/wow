@@ -144,6 +144,14 @@ class TicketController {
                 errorMessage: 'Нет прав для редактирование статуса',
             })
         }
+        // todo
+        if (req.body.status !== 0 && req.body.status !== 1 && req.body.status !== 9) {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: 'Ошибка валидации',
+            })
+
+        }
         return this.ticketModel.changeStatus(idTicket, req.body.status).then((r:any) => {
             return res.json({
                 status: 'OK',
@@ -180,8 +188,8 @@ class TicketController {
     }
 
     // Получить все типы тикетов
-    getTicketTypes = async (req: Request, res: Response) => {
-        return this.ticketModel.getTicketTypes().then((r: TicketType[]) => {
+    getTypesOfTicket = async (req: Request, res: Response) => {
+        return this.ticketModel.getTypesOfTicket().then((r: TicketType[]) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -197,13 +205,15 @@ class TicketController {
     // Получить все тикеты по id типу
     getTicketsByType = async (req: Request, res: Response) => {
         const idTicketType = parseInt(req.params.id)
+        const limit = parseInt(req.query.limit as string) || 10
+        const page = parseInt(req.query.page as string) || 1
         if (isNaN(idTicketType)) {
             return res.json({
                 status: 'INVALID_PARSE',
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        return this.ticketModel.getTicketsByType(idTicketType).then((r: any[]) => {
+        return this.ticketModel.getTicketsByType(idTicketType, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

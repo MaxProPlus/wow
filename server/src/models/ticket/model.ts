@@ -39,16 +39,22 @@ class TicketModel {
     }
 
     // Получить все типы тикетов
-    getTicketTypes = async () => {
-        return this.mapper.selectTicketTypes()
+    getTypesOfTicket = async () => {
+        return this.mapper.selectTypesOfTicket()
     }
 
     // Получить все тикеты по id типу
-    getTicketsByType = async (idType: number) => {
+    getTicketsByType = async (idType: number, limit: number, page: number) => {
         const p = []
-        p.push(this.mapper.selectTicketTypeById(idType))
-        p.push(this.mapper.selectTicketsByType(idType))
-        return Promise.all(p)
+        p.push(this.mapper.selectTypeOfTicketById(idType))
+        p.push(this.mapper.selectTicketsByType(idType, limit, page))
+        p.push(this.mapper.selectCountTicketByType(idType))
+        const r = await Promise.all(p)
+        return {
+            type: r[0],
+            data: r[1],
+            count: r[2],
+        }
     }
 
     changeStatus = (idTicket: number, status: TicketStatus) => {

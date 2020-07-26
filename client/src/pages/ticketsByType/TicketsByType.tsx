@@ -5,25 +5,30 @@ import history from "../../utils/history";
 import TicketApi from "../../api/ticketApi";
 import {Ticket, ticketStatusToString, TicketType} from "../../../../server/src/common/entity/types";
 import './TicketsByType.scss'
+import Button from "../../components/button/Button";
 
 type IState = {
     isLoaded: boolean
     id: string
-    ticketType: TicketType
-    list: Ticket[]
+    type: TicketType,
+    count: number,
+    data: Ticket[],
 }
 
 class TicketsByType extends React.Component<{}, IState> {
 
     private ticketApi = new TicketApi()
+    private page = 1
+    private limit = 10
 
     constructor(props: any) {
         super(props)
         this.state = {
             isLoaded: false,
             id: props.match.params.id,
-            ticketType: new TicketType(),
-            list: [],
+            type: new TicketType(),
+            data: [],
+            count: 0,
         }
     }
 
@@ -54,14 +59,17 @@ class TicketsByType extends React.Component<{}, IState> {
     }
 
     updateData = () => {
-        this.ticketApi.getTicketsByType(this.state.id).then(r => {
+        this.ticketApi.getTicketsByType(this.state.id, this.limit, this.page).then(r => {
             if (r.status !== 'OK') {
                 console.error(r.errorMessage)
                 return
             }
-            this.setState({
-                ticketType: r.results[0],
-                list: r.results[1],
+            this.setState((prevState: IState) => {
+                return {
+                    type: r.results.type,
+                    data: prevState.data.concat(r.results.data),
+                    count: r.results.count,
+                }
             })
         }).finally(() => {
             this.setState({
@@ -71,19 +79,31 @@ class TicketsByType extends React.Component<{}, IState> {
 
     }
 
+    handlePageClick = () => {
+        this.setState({
+            isLoaded: false,
+        })
+        this.page += 1
+        this.updateData()
+    }
+
     render() {
+        const more = this.limit * this.page < this.state.count ?
+            <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
+        const notFound = this.state.data.length > 0 ? '' : <h3 className="not-found">Нет заявок</h3>
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="page-ticket-list">
                     <ul>
-                        <h2>{this.state.ticketType.title}</h2>
-                        {this.state.list.length > 0 ? this.state.list.map((t) =>
+                        <h2>{this.state.type.title}</h2>
+                        {this.state.data.map((t) =>
                             <li key={t.id}><Link to={"/ticket/" + t.id}>
                                 <div className="title">{t.title}</div>
                                 <div className="description">Статус: {ticketStatusToString(t.status)}</div>
-                            </Link></li>
-                        ): <h3 className="not-found">Нет заявок</h3>}
+                            </Link></li>)}
+                        {more}
+                        {notFound}
                     </ul>
                 </div>
             </div>

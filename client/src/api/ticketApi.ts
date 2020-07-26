@@ -108,8 +108,8 @@ class TicketApi {
     }
 
     // получить тикеты по категории
-    getTicketsByType(idType: string) {
-        let url = '/api/tickets/types/' + idType
+    getTicketsByType(idType: string, limit: number, page: number) {
+        const url = `/api/tickets/types/${idType}?limit=${limit}&page=${page}`
         return fetch(url, {
             method: 'GET'
         }).then(r => {

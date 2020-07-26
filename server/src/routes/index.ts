@@ -20,7 +20,7 @@ router.get('/users/:id', accountController.getUser)
 
 router.post('/tickets', ticketController.create)
 router.post('/tickets/comments', ticketController.createComment)
-router.get('/ticket_types', ticketController.getTicketTypes)
+router.get('/ticket_types', ticketController.getTypesOfTicket)
 router.get('/tickets/types/:id', ticketController.getTicketsByType)
 router.get('/tickets/:id', ticketController.getById)
 router.post('/tickets/:id', ticketController.changeStatus)

@@ -4,14 +4,14 @@ import Button from "../../components/button/Button";
 import {Link} from "react-router-dom";
 import TicketApi from "../../api/ticketApi";
 import {TicketType} from "../../../../server/src/common/entity/types";
-import './TicketTypeList.scss'
+import './TypesOfTicket.scss'
 
 type IState = {
     isLoaded: boolean
     list: TicketType[]
 }
 
-class TicketTypeList extends React.Component<{}, IState> {
+class TypesOfTicket extends React.Component<{}, IState> {
 
     private ticketApi = new TicketApi()
 
@@ -36,7 +36,6 @@ class TicketTypeList extends React.Component<{}, IState> {
             this.setState({
                 list: r.results
             })
-            console.log(r.results)
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -66,4 +65,4 @@ class TicketTypeList extends React.Component<{}, IState> {
     }
 }
 
-export default TicketTypeList
+export default TypesOfTicket

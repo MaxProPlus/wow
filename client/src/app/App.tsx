@@ -11,8 +11,7 @@ import SignUp from "pages/singUp/SignUp"
 import UserApi from "api/userApi"
 import UserContext from "utils/userContext"
 import {Account} from "../../../server/src/common/entity/types"
-import Footer from "../components/footer/Footer"
-import TicketTypeList from "../pages/ticketTypeList/TicketTypeList";
+import TypesOfTicket from "../pages/typesOfTicket/TypesOfTicket";
 import TicketsByType from "../pages/ticketsByType/TicketsByType";
 import TicketCreate from "../pages/ticketCreate/TicketCreate";
 import TicketPage from "../pages/ticket/TicketPage";
@@ -83,8 +82,8 @@ class App extends React.Component<{}, IState> {
         }
     };
 
-    handleToggleMenu = (e:any) => {
-        this.setState((prevState: Readonly<IState>, props: Readonly<{}>)=>{
+    handleToggleMenu = () => {
+        this.setState((prevState: Readonly<IState>) => {
             return {
                 showMenu: !prevState.showMenu,
             }
@@ -115,7 +114,8 @@ class App extends React.Component<{}, IState> {
                                         <Route path="/signup" component={SignUp}/>
                                         <Route path="/profile/:id" component={Profile}/>
                                         <Route path="/setting" component={Setting}/>
-                                        <Route path="/ticket/type/list" component={TicketTypeList}/>{/*категории тикетов*/}
+                                        <Route path="/ticket/type/list"
+                                               component={TypesOfTicket}/>{/*категории тикетов*/}
                                         <Route path="/ticket/type/:id"
                                                component={TicketsByType}/> {/*тикеты конкретной категории*/}
                                         <Route path="/ticket/create" component={TicketCreate}/>{/*создание тикета*/}

@@ -6,11 +6,11 @@ import history from "../../utils/history";
 import './TicketPage.scss'
 import CommentForm from "./commentFrom/CommentForm";
 import CommentC from "./comment/Comment";
-import Button from "../../components/button/Button";
 import AlertDanger from "../../components/alert-danger/AlertDanger";
 import UserContext from "../../utils/userContext";
 
 type IState = {
+    status: number,
     isLoaded: boolean
     errorMessage: string
     id: string
@@ -26,6 +26,7 @@ class TicketPage extends React.Component<{}, IState> {
     constructor(props: any) {
         super(props)
         this.state = {
+            status: 0,
             isLoaded: false,
             errorMessage: '',
             id: props.match.params.id,
@@ -62,18 +63,17 @@ class TicketPage extends React.Component<{}, IState> {
             isLoaded: false,
         })
         this.ticketApi.getTicket(this.state.id).then(r => {
-            console.log(r)
             if (r.status !== 'OK') {
                 console.error(r.errorMessage)
                 this.setState({
                     errorMessage: r.errorMessage,
                 })
-                // history.push('/')
                 return
             }
             this.setState({
                 ticket: r.results[0],
                 comments: r.results[1],
+                status: r.results[0].status
             })
 
         }).finally(() => {
@@ -105,9 +105,11 @@ class TicketPage extends React.Component<{}, IState> {
 
     }
 
-    changeStatus = (status: TicketStatus) => {
+    handleStatus = (e: any) => {
+        const status = parseInt(e.target.value)
         this.setState({
             isLoaded: false,
+            status: status
         })
         this.ticketApi.changeStatus(this.state.id, status).then(r => {
             if (r.status !== 'OK') {
@@ -120,7 +122,6 @@ class TicketPage extends React.Component<{}, IState> {
 
 
     render() {
-        console.log(this.context)
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
@@ -133,13 +134,12 @@ class TicketPage extends React.Component<{}, IState> {
                             className="author_title">{this.state.ticket.userNickname}</span> Статус
                             заявки: {ticketStatusToString(this.state.ticket.status)}</div>
                         {this.context.user.rights.includes('TICKET_UPDATE_STATUS') &&
-                        <div className="change-status"><Button onClick={() => {
-                            this.changeStatus(TicketStatus.START)
-                        }}>Открыть</Button> <Button onClick={() => {
-                            this.changeStatus(TicketStatus.PROGRESS)
-                        }}>Взять в работу</Button> <Button onClick={() => {
-                            this.changeStatus(TicketStatus.CLOSE)
-                        }}>Закрыть</Button></div>
+                        <div className="change-status">
+                            <select value={this.state.status} onChange={this.handleStatus}>
+                                <option value="0">Открыто</option>
+                                <option value="1">Взято в работу</option>
+                                <option value="9">Закрыто</option>
+                            </select></div>
                         }
 
                     </div>

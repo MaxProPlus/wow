@@ -98,7 +98,6 @@ class TicketCreate extends React.Component<{}, IState> {
                 isLoaded: true
             })
         })
-        console.log(this.state)
     }
 
     render() {
@@ -113,7 +112,7 @@ class TicketCreate extends React.Component<{}, IState> {
                                     id="title" onChange={this.handleChange}/>
                         <div className="form-group">
                             <label htmlFor="type">Тип</label>
-                            <select id="idTicketType" onChange={this.handleChangeSelect} value={this.state.idTicketType}>
+                            <select value={this.state.idTicketType} onChange={this.handleChangeSelect}>
                                 {this.state.listType.map(tt=>
                                     <option key={tt.id} value={tt.id}>{tt.title}</option>
                                 )}

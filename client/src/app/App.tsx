@@ -16,6 +16,8 @@ import TicketsByType from "../pages/ticketsByType/TicketsByType";
 import TicketCreate from "../pages/ticketCreate/TicketCreate";
 import TicketPage from "../pages/ticket/TicketPage";
 import HeaderTop from "../components/headerTop/HeaderTop";
+import AdminDashboard from "../pages/admin/dashboard/AdminDashboard";
+import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins";
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -27,8 +29,8 @@ let getCookie = (name: string) => {
 
 interface IState {
     isLoaded: boolean
-    user: Account
     showMenu: boolean
+    user: Account
 }
 
 class App extends React.Component<{}, IState> {
@@ -39,8 +41,8 @@ class App extends React.Component<{}, IState> {
         super(props)
         this.state = {
             isLoaded: false,
-            user: new Account(),
             showMenu: false,
+            user: new Account(),
         }
     }
 
@@ -65,10 +67,9 @@ class App extends React.Component<{}, IState> {
                 }
             })
         })
-    };
+    }
 
     componentDidMount() {
-        document.addEventListener('mousedown', this.handleClickOutside)
         this.updateLogin()
     }
 
@@ -79,24 +80,22 @@ class App extends React.Component<{}, IState> {
     handleClickOutside = (e: any) => {
         if (this.wrapperRef && !this.wrapperRef.contains(e.target)) {
             this.hideMenu()
+            document.removeEventListener('mousedown', this.handleClickOutside)
         }
-    };
+    }
 
-    handleToggleMenu = () => {
-        this.setState((prevState: Readonly<IState>) => {
-            return {
-                showMenu: !prevState.showMenu,
-            }
-        })
+    handleToggleMenu = (e: any) => {
+        this.setState({showMenu: true})
+        document.addEventListener('mousedown', this.handleClickOutside)
     }
 
     hideMenu = () => {
         this.setState({showMenu: false})
-    };
+    }
 
     setWrapperRef = (node: HTMLElement) => {
         this.wrapperRef = node
-    };
+    }
 
     render() {
         return (
@@ -120,6 +119,9 @@ class App extends React.Component<{}, IState> {
                                                component={TicketsByType}/> {/*тикеты конкретной категории*/}
                                         <Route path="/ticket/create" component={TicketCreate}/>{/*создание тикета*/}
                                         <Route path="/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
+
+                                        <Route exact path="/admin" component={AdminDashboard}/>
+                                        <Route path="/admin/list" component={ListOfAdmins}/>
                                         <Route path="/*">Страница не найдена или еще не создана ¯\_(ツ)_/¯</Route>
                                     </Switch>
                                 </div>

@@ -51,14 +51,12 @@ class CommentForm extends Component<propsTypes, stateTypes> {
             isLoaded: false,
             errorMessage: '',
         })
-        this.ticketApi.addComment(comment).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorMessage: r.errorMessage
-                })
-                return
-            }
+        this.ticketApi.addComment(comment).then(() => {
             this.props.onCommentUpdate()
+        }, err => {
+            this.setState({
+                errorMessage: err
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,

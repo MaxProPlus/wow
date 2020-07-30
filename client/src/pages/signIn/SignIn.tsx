@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from "react-router-dom"
 import UserApi from "../../api/userApi"
-import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
@@ -15,7 +14,7 @@ type stateTypes = {
     errorMessage: string,
 }
 
-class SignIn extends Component<{}, stateTypes> {
+class SignIn extends Component<any, stateTypes> {
     static contextType = UserContext;
     userApi = new UserApi();
 
@@ -39,21 +38,21 @@ class SignIn extends Component<{}, stateTypes> {
         let user = new Account()
         user.username = this.state.username
         user.password = this.state.password
-        this.userApi.signIn(user).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorMessage: r.errorMessage
-                })
-                return
-            }
-            this.context.updateLogin()
-            history.push('/')
+        this.userApi.signIn(user).then(() => {
+            this.context.updateLogin().then(() => {
+                let {from} = this.props.location.state || {from: {pathname: '/'}}
+                this.props.history.replace(from)
+            })
+        }, err => {
+            this.setState({
+                errorMessage: err
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
             })
         })
-    };
+    }
     handleChange = (e: any) => {
         this.setState({
             errorMessage: '',

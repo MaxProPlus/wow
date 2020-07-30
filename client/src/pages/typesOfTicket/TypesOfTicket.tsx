@@ -1,21 +1,23 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import TicketApi from "../../api/ticketApi";
 import {TicketType} from "../../../../server/src/common/entity/types";
 import './TypesOfTicket.scss'
+import UserContext from "../../utils/userContext";
 
 type IState = {
     isLoaded: boolean
     list: TicketType[]
 }
 
-class TypesOfTicket extends React.Component<{}, IState> {
+class TypesOfTicket extends React.Component<any, IState> {
+    static contextType = UserContext
 
     private ticketApi = new TicketApi()
 
-    constructor(props: {}) {
+    constructor(props: any) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -29,13 +31,11 @@ class TypesOfTicket extends React.Component<{}, IState> {
 
     updateData = () => {
         this.ticketApi.getTicketsTypeList().then(r => {
-            if (r.status !== 'OK') {
-                console.error(r)
-                return
-            }
             this.setState({
-                list: r.results
+                list: r
             })
+        }, err => {
+            console.error(err)
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -48,7 +48,8 @@ class TypesOfTicket extends React.Component<{}, IState> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-
+                {this.context.user.id === -1 &&
+                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket-type-list">
                     <Button><Link to="/ticket/create">Создать новый запрос</Link></Button><br/>
                     <ul>

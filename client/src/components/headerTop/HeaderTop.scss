@@ -6,7 +6,8 @@
   > .header-inner {
     width: 95%;
     justify-content: flex-end;
-    >.menu {
+
+    > .menu {
       display: none;
     }
 
@@ -15,11 +16,13 @@
       display: flex;
       align-items: center;
       position: relative;
-      >.nickname {
+
+      > .nickname {
         order: 1;
         margin-right: .5rem;
       }
-      >.avatar_img {
+
+      > .avatar_img {
         order: 2;
         margin-right: 0;
       }
@@ -33,9 +36,11 @@
       width: 98%;
       justify-content: space-between;
       align-items: center;
-      >.menu {
+
+      > .menu {
         display: flex;
         justify-content: center;
+
         > img {
           height: 1.5rem;
         }
@@ -43,6 +48,7 @@
 
       .profile {
         margin-right: .2rem;
+
         > .nickname {
           //display: none;
         }

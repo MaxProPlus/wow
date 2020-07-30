@@ -6,14 +6,14 @@ import './HeaderTop.scss'
 import menuImg from './menu-black-18dp.svg'
 
 type IProps = {
-    onClickMenu: (e:any)=>void
+    onClickMenu: (e: any) => void
 }
 
 class HeaderTop extends Component<IProps, {}> {
     static contextType = UserContext;
 
     render() {
-        const $profile = (this.context.user.id === 0) ? (
+        const $profile = (this.context.user.id <= 0) ? (
             <div className="profile"><Link to="/login">Вход</Link></div>) : (<Dropdown/>)
         return (
             <header className="fc header-top">

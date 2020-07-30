@@ -8,6 +8,7 @@ import CommentForm from "./commentFrom/CommentForm";
 import CommentC from "./comment/Comment";
 import AlertDanger from "../../components/alert-danger/AlertDanger";
 import UserContext from "../../utils/userContext";
+import {Redirect} from "react-router-dom";
 
 type IState = {
     status: number,
@@ -18,10 +19,10 @@ type IState = {
     comments: Comment[]
 }
 
-class TicketPage extends React.Component<{}, IState> {
+class TicketPage extends React.Component<any, IState> {
 
-    private ticketApi = new TicketApi()
     static contextType = UserContext;
+    private ticketApi = new TicketApi()
 
     constructor(props: any) {
         super(props)
@@ -63,19 +64,16 @@ class TicketPage extends React.Component<{}, IState> {
             isLoaded: false,
         })
         this.ticketApi.getTicket(this.state.id).then(r => {
-            if (r.status !== 'OK') {
-                console.error(r.errorMessage)
-                this.setState({
-                    errorMessage: r.errorMessage,
-                })
-                return
-            }
             this.setState({
-                ticket: r.results[0],
-                comments: r.results[1],
-                status: r.results[0].status
+                ticket: r[0],
+                comments: r[1],
+                status: r[0].status
             })
 
+        }, err => {
+            this.setState({
+                errorMessage: err,
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -88,14 +86,12 @@ class TicketPage extends React.Component<{}, IState> {
             isLoaded: false,
         })
         this.ticketApi.getComments(this.state.id).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorMessage: r.errorMessage,
-                })
-                return
-            }
             this.setState({
-                comments: r.results,
+                comments: r,
+            })
+        }, err => {
+            this.setState({
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -111,12 +107,10 @@ class TicketPage extends React.Component<{}, IState> {
             isLoaded: false,
             status: status
         })
-        this.ticketApi.changeStatus(this.state.id, status).then(r => {
-            if (r.status !== 'OK') {
-                console.error(r.errorMessage)
-                return
-            }
+        this.ticketApi.changeStatus(this.state.id, status).then(() => {
             this.updateData()
+        }, err => {
+            console.error(err)
         })
     }
 
@@ -125,6 +119,8 @@ class TicketPage extends React.Component<{}, IState> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
+                {this.context.user.id === -1 &&
+                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket">
                     {this.state.errorMessage && <AlertDanger>{this.state.errorMessage}</AlertDanger>}
                     <div className="ticket">
@@ -136,12 +132,12 @@ class TicketPage extends React.Component<{}, IState> {
                         {this.context.user.rights.includes('TICKET_UPDATE_STATUS') &&
                         <div className="change-status">
                             <select value={this.state.status} onChange={this.handleStatus}>
-                                <option value="0">Открыто</option>
-                                <option value="1">Взято в работу</option>
-                                <option value="9">Закрыто</option>
-                            </select></div>
+                                <option value="0">{ticketStatusToString(0)}</option>
+                                <option value="1">{ticketStatusToString(1)}</option>
+                                <option value="9">{ticketStatusToString(9)}</option>
+                            </select>
+                        </div>
                         }
-
                     </div>
                     <div className="comments">
                         {this.state.comments.map((c: any) => <CommentC key={c.id}

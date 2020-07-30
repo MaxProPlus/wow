@@ -7,6 +7,7 @@ import Validator from "../../../../server/src/common/validator"
 import {Account, UserPassword} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/input-field/InputField";
 import AlertDanger from "../../components/alert-danger/AlertDanger";
+import {Redirect} from "react-router-dom";
 
 type IState = {
     email: string,
@@ -24,12 +25,12 @@ type IState = {
     isLoaded: boolean,
 }
 
-class Setting extends React.Component<{}, IState> {
+class Setting extends React.Component<any, IState> {
     static contextType = userContext;
     userApi = new UserApi();
     validator = new Validator();
 
-    constructor(props: {}) {
+    constructor(props: any) {
         super(props)
         this.state = {
             email: '',
@@ -50,11 +51,9 @@ class Setting extends React.Component<{}, IState> {
 
     componentDidMount() {
         this.userApi.getGeneral().then(r => {
-            if (r.status !== 'OK') {
-                history.push('/signIn')
-                return
-            }
-            this.setState(r.results[0])
+            this.setState(r)
+        }, () => {
+            history.push('/login')
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -96,17 +95,15 @@ class Setting extends React.Component<{}, IState> {
         e.preventDefault()
         let formData = new FormData()
         formData.append('avatar', this.state.avatar)
-        this.userApi.updateAvatar(formData).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorAvatar: r.errorMessage,
-                })
-                return
-            }
+        this.userApi.updateAvatar(formData).then(() => {
             this.setState({
                 errorAvatar: '',
             })
             this.context.updateLogin()
+        }, (err) => {
+            this.setState({
+                errorAvatar: err,
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -160,13 +157,10 @@ class Setting extends React.Component<{}, IState> {
             isLoaded: false,
             errorSecure: '',
         })
-        this.userApi.updateSecure(user).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorSecure: r.errorMessage,
-                })
-                return
-            }
+        this.userApi.updateSecure(user).catch(err => {
+            this.setState({
+                errorSecure: err,
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -191,26 +185,24 @@ class Setting extends React.Component<{}, IState> {
             errorPassword: err,
             isLoaded: false,
         })
-        this.userApi.updatePassword(user).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorPassword: r.errorMessage,
-                })
-                return
-            }
+        this.userApi.updatePassword(user).catch(err => {
+            this.setState({
+                errorPassword: err,
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
             })
         })
-    };
+    }
 
     render() {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-
                 <div className="page-setting">
+                    {this.context.user.id === -1 &&
+                    <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                     <form className="form-sign" onSubmit={this.handleSubmitProfileAvatar}>
                         <div className="title">Загрузка аватара</div>
                         {this.state.errorAvatar && <AlertDanger>{this.state.errorAvatar}</AlertDanger>}

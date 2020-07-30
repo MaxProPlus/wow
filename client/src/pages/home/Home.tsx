@@ -27,7 +27,7 @@ class Home extends React.Component<any, stateTypes> {
         return (
             <div className="home-page">
                 {!this.state.isLoaded && <Spinner/>}
-                <div>Заглавная страница</div>
+                <div>Добро пожаловать на Equilibrium - русскоязычной ролевой проект World of Warcraft</div>
             </div>
         )
     }

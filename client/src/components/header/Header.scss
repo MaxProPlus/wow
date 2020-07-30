@@ -9,18 +9,21 @@
     align-items: stretch;
     flex-direction: column;
 
-    >.header-item{
+    > .header-item {
       display: block;
       position: relative;
       text-align: center;
       padding: .375rem .75rem;
       text-transform: uppercase;
+
       &:hover, &:focus {
         background-color: #4e6471;
+
         &::before {
           background-color: #ebf1ff;
         }
       }
+
       &::before {
         display: block;
         position: absolute;
@@ -35,7 +38,8 @@
     > .logo {
       font-size: 2rem;
       padding: 1.5rem 1rem;
-      img{
+
+      img {
         height: 2.5rem;
       }
     }
@@ -52,6 +56,7 @@
 @media screen and (max-width: 66.5rem) {
   .header {
     display: none;
+
     > .header-inner {
       width: 98%;
     }
@@ -60,7 +65,7 @@
   .show {
     display: flex !important;
     position: absolute;
-    top:0;
+    top: 0;
     bottom: 0;
 
   }

@@ -1,24 +1,28 @@
 .page-ticket {
-  >.ticket {
-    >.title {
+  > .ticket {
+    > .title {
       font-size: 1.2rem;
       font-weight: bold;
       margin-bottom: .5rem;
     }
-    >.description {
+
+    > .description {
 
       margin-bottom: .5rem;
     }
+
     .status {
       font-size: .8rem;
       margin-bottom: .5rem;
     }
+
     .author_title {
       font-weight: bold;
     }
 
 
   }
+
   .comments {
     margin-bottom: .8rem;
   }

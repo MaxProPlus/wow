@@ -12,7 +12,8 @@ type IProps = {
 class Header extends Component<IProps, {}> {
     render() {
         return (
-            <header onClick={this.props.hideMenu} ref={this.props.innerRef} className={this.props.showMenu?"fc header show":"fc header"}>
+            <header onClick={this.props.hideMenu} ref={this.props.innerRef}
+                    className={this.props.showMenu ? "fc header show" : "fc header"}>
                 <div className={"header-inner"}>
                     <Link className="fc logo" to="/"><img src={logo} alt="Equilibrium"/></Link>
                     <Link className="header-item" to="/start">Начать игру</Link>
@@ -25,4 +26,4 @@ class Header extends Component<IProps, {}> {
     }
 }
 
-export default forwardRef((props:any, ref:any) => <Header innerRef={ref} {...props}/>)
+export default forwardRef((props: any, ref: any) => <Header innerRef={ref} {...props}/>)

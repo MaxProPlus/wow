@@ -50,20 +50,27 @@ class App extends React.Component<{}, IState> {
         let token = getCookie('token')
         if (!token) {
             this.setState({
-                user: new Account()
+                user: {
+                    ...new Account(),
+                    id: -1,
+                }
             })
             return
         }
-        this.userApi.getContext().then(r => {
-            if (r.status !== 'OK') {
-                return
-            }
+        return this.userApi.getContext().then(user => {
             this.setState((state) => {
                 return {
                     user: {
                         ...state.user,
-                        ...r.results[0],
+                        ...user,
                     }
+                }
+            })
+        }, () => {
+            this.setState({
+                user: {
+                    ...new Account(),
+                    id: -1,
                 }
             })
         })
@@ -84,7 +91,7 @@ class App extends React.Component<{}, IState> {
         }
     }
 
-    handleToggleMenu = (e: any) => {
+    handleToggleMenu = () => {
         this.setState({showMenu: true})
         document.addEventListener('mousedown', this.handleClickOutside)
     }
@@ -113,11 +120,12 @@ class App extends React.Component<{}, IState> {
                                         <Route path="/signup" component={SignUp}/>
                                         <Route path="/profile/:id" component={Profile}/>
                                         <Route path="/setting" component={Setting}/>
-                                        <Route path="/ticket/type/list"
+                                        <Route exact path="/ticket/type/list"
                                                component={TypesOfTicket}/>{/*категории тикетов*/}
                                         <Route path="/ticket/type/:id"
                                                component={TicketsByType}/> {/*тикеты конкретной категории*/}
-                                        <Route path="/ticket/create" component={TicketCreate}/>{/*создание тикета*/}
+                                        <Route exact path="/ticket/create"
+                                               component={TicketCreate}/>{/*создание тикета*/}
                                         <Route path="/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
                                         <Route exact path="/admin" component={AdminDashboard}/>

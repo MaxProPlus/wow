@@ -47,15 +47,13 @@ class SignUp extends Component<{}, stateTypes> {
             return
         }
 
-        this.userApi.signup(user).then(r => {
-            if (r.status !== 'OK') {
-                this.setState({
-                    errorMessage: r.errorMessage,
-                })
-                return
-            }
+        this.userApi.signup(user).then(() => {
             this.context.updateLogin()
             history.push('/setting')
+        }, err => {
+            this.setState({
+                errorMessage: err,
+            })
         })
     };
     handleChange = (e: any) => {

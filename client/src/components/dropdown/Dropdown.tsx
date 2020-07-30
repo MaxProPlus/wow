@@ -51,7 +51,7 @@ class Dropdown extends Component<{}, stateTypes> {
     };
 
     logout = () => {
-        this.userApi.logout().then(r => {
+        this.userApi.logout().then(() => {
             this.context.updateLogin()
             history.push('/')
         })

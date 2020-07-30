@@ -1,15 +1,11 @@
 import React, {Component} from "react";
 
-type IState = {
-
-}
+type IState = {}
 
 class ListOfAdmins extends Component<{}, IState> {
-    constructor(props:{}) {
+    constructor(props: {}) {
         super(props)
-        this.state = {
-
-        }
+        this.state = {}
     }
 
     render() {

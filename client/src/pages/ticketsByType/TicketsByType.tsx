@@ -1,11 +1,12 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import history from "../../utils/history";
 import TicketApi from "../../api/ticketApi";
 import {Ticket, ticketStatusToString, TicketType} from "../../../../server/src/common/entity/types";
 import './TicketsByType.scss'
 import Button from "../../components/button/Button";
+import UserContext from "../../utils/userContext";
 
 type IState = {
     isLoaded: boolean
@@ -15,8 +16,8 @@ type IState = {
     data: Ticket[],
 }
 
-class TicketsByType extends React.Component<{}, IState> {
-
+class TicketsByType extends React.Component<any, IState> {
+    static contextType = UserContext
     private ticketApi = new TicketApi()
     private page = 1
     private limit = 10
@@ -60,17 +61,15 @@ class TicketsByType extends React.Component<{}, IState> {
 
     updateData = () => {
         this.ticketApi.getTicketsByType(this.state.id, this.limit, this.page).then(r => {
-            if (r.status !== 'OK') {
-                console.error(r.errorMessage)
-                return
-            }
             this.setState((prevState: IState) => {
                 return {
-                    type: r.results.type,
-                    data: prevState.data.concat(r.results.data),
-                    count: r.results.count,
+                    type: r.type,
+                    data: prevState.data.concat(r.data),
+                    count: r.count,
                 }
             })
+        }, err => {
+            console.error(err)
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -94,6 +93,8 @@ class TicketsByType extends React.Component<{}, IState> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
+                {this.context.user.id === -1 &&
+                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket-list">
                     <ul>
                         <h2>{this.state.type.title}</h2>

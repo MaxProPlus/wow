@@ -46,13 +46,11 @@ class ProfilePage extends React.Component<any, stateTypes> {
     updateData = () => {
         let id = Number(this.props.match.params.id)
         this.userApi.getUser(id).then(r => {
-            if (r.status !== 'OK') {
-                history.push('/')
-                return
-            }
             this.setState({
-                user: r.results[0],
+                user: r,
             })
+        }, () => {
+            history.push('/')
         }).finally(() => {
             this.setState({
                 isLoaded: true,

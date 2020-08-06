@@ -1,13 +1,12 @@
 import React from "react"
+import Form from "../Form";
 
 const Select = ({label, value, id, onChange, children}: any) => {
     return (
-        <div className="form-group">
-            <label htmlFor={id}>{label}</label>
-            <select id={id} name={id} value={value} onChange={onChange}>
-                {children}
-            </select>
-        </div>
+        <Form.Group>
+            <Form.Label htmlFor={id}>{label}</Form.Label>
+            <Form.Select id={id} name={id} value={value} onChange={onChange}>{children}</Form.Select>
+        </Form.Group>
     )
 }
 

@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 
 class Material extends Component<any, any> {
 
-
     render() {
         return (
             <div className="page-material">

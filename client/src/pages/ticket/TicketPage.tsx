@@ -1,14 +1,15 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import TicketApi from "../../api/ticketApi";
-import {Comment, Ticket, TicketStatus, ticketStatusToString} from "../../../../server/src/common/entity/types";
-import history from "../../utils/history";
+import {Comment, Ticket, TicketStatus, ticketStatusToString} from "../../../../server/src/common/entity/types"
+import history from "../../utils/history"
 import './TicketPage.scss'
-import CommentForm from "./commentFrom/CommentForm";
-import CommentC from "./comment/Comment";
-import AlertDanger from "../../components/alert-danger/AlertDanger";
-import UserContext from "../../utils/userContext";
-import {Redirect} from "react-router-dom";
+import CommentForm from "./commentFrom/CommentForm"
+import CommentC from "./comment/Comment"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
+import UserContext from "../../utils/userContext"
+import {Redirect} from "react-router-dom"
+import Select from "../../components/form/select/Select"
 
 type IState = {
     status: number,
@@ -114,7 +115,6 @@ class TicketPage extends React.Component<any, IState> {
         })
     }
 
-
     render() {
         return (
             <div>
@@ -130,13 +130,11 @@ class TicketPage extends React.Component<any, IState> {
                             className="author_title">{this.state.ticket.userNickname}</span> Статус
                             заявки: {ticketStatusToString(this.state.ticket.status)}</div>
                         {this.context.user.rights.includes('TICKET_UPDATE_STATUS') &&
-                        <div className="change-status">
-                            <select value={this.state.status} onChange={this.handleStatus}>
-                                <option value="0">{ticketStatusToString(0)}</option>
-                                <option value="1">{ticketStatusToString(1)}</option>
-                                <option value="9">{ticketStatusToString(9)}</option>
-                            </select>
-                        </div>
+                        <Select label="Статус заявки:" value={this.state.status} onChange={this.handleStatus}>
+                            {[0, 1, 9].map(v =>
+                                (<option key={v} value={v}>{ticketStatusToString(v)}</option>)
+                            )}
+                        </Select>
                         }
                     </div>
                     <div className="comments">

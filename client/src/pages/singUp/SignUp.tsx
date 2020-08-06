@@ -6,7 +6,10 @@ import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Validator from "../../../../server/src/common/validator"
 import {Account} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/inputField/InputField";
+import InputField from "../../components/form/inputField/InputField"
+import Form from "../../components/form/Form"
+import Button from "../../components/button/Button"
+import './SignUp.scss'
 
 type stateTypes = {
     login: string
@@ -66,24 +69,27 @@ class SignUp extends Component<{}, stateTypes> {
 
     render() {
         return (
-            <form className="form-sign" onSubmit={this.handleSubmit}>
-                <div className="title">Регистрация</div>
-                <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                <InputField label="E-mail" type="text" value={this.state.email}
-                            id="email" onChange={this.handleChange}/>
-                <InputField label="Имя пользователя" type="text" value={this.state.login}
-                            id="login" onChange={this.handleChange}/>
-                <InputField label="Пароль" type="password" value={this.state.password}
-                            id="password" onChange={this.handleChange}/>
-                <InputField label="Повторите пароль" type="password" value={this.state.passwordRepeat}
-                            id="passwordRepeat" onChange={this.handleChange}/>
-                <div className="form-group">
-                    <button>Регистрация</button>
-                </div>
-                <div className="suggest">
-                    Уже зарегистрированы? <Link to="/login">Войдите</Link>
-                </div>
-            </form>
+            <div className="page-signup">
+                <Form onSubmit={this.handleSubmit}>
+                    <div className="title">Регистрация</div>
+                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                    <InputField label="E-mail" type="text" value={this.state.email}
+                                id="email" onChange={this.handleChange}/>
+                    <InputField label="Имя пользователя" type="text" value={this.state.login}
+                                id="login" onChange={this.handleChange}/>
+                    <InputField label="Пароль" type="password" value={this.state.password}
+                                id="password" onChange={this.handleChange}/>
+                    <InputField label="Повторите пароль" type="password" value={this.state.passwordRepeat}
+                                id="passwordRepeat" onChange={this.handleChange}/>
+                    <div className="form-group">
+                        <Button className="btn-block">Регистрация</Button>
+                    </div>
+                    <div className="suggest">
+                        Уже зарегистрированы? <Link to="/login">Войдите</Link>
+                    </div>
+
+                </Form>
+            </div>
         )
     }
 }

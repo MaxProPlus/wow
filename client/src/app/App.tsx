@@ -146,7 +146,8 @@ class App extends React.Component<{}, IState> {
                                         <Route exact path="/material" component={Material}/>
                                         <Route exact path="/character" component={CharacterList}/>
                                         <Route exact path="/character/create"
-                                               render={(props) => (<CharacterCreate {...props} scrollTop={this.scrollTop}/>)}/>
+                                               render={(props) => (
+                                                   <CharacterCreate {...props} scrollTop={this.scrollTop}/>)}/>
                                         <Route path="/character/:id" component={CharacterPage}/>
 
                                         <Route exact path="/admin" component={AdminDashboard}/>

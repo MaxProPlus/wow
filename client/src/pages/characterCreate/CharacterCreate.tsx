@@ -17,6 +17,7 @@ import CharacterApi from "../../api/CharacterApi";
 import Textarea from "../../components/form/textarea/Textarea";
 import Select from "../../components/form/select/Select";
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox";
+import Form from "../../components/form/Form";
 
 type IState = {
     isLoaded: boolean
@@ -177,20 +178,15 @@ class CharacterCreate extends React.Component<any, IState> {
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-character-create">
-                    <form className="form-sign" onSubmit={this.handleSubmit}>
-                        <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                    <Form onSubmit={this.handleSubmit}>
                         <div className="title">Создание персонажа</div>
+                        <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <InputField label="Аватарка персонажа" type="file"
                                     id="avatar" onChange={this.handleImageChange}/>
                         <InputField label="Полное имя персонажа" type="text" value={this.state.title}
                                     id="title" onChange={this.handleChange}/>
                         <InputField label="Игровое имя" type="text" value={this.state.nickname}
                                     id="nickname" onChange={this.handleChange}/>
-                        {/*<div className="form-group">*/}
-                        {/*    <label htmlFor="shortDescription">Девиз персонажа</label>*/}
-                        {/*    <textarea id="shortDescription" value={this.state.shortDescription}*/}
-                        {/*              onChange={this.handleChange}/>*/}
-                        {/*</div>*/}
                         <Textarea label="Девиз персонажа" id="shortDescription" value={this.state.shortDescription}
                                   onChange={this.handleChange}/>
                         <InputField label="Раса" type="text" value={this.state.race}
@@ -246,7 +242,8 @@ class CharacterCreate extends React.Component<any, IState> {
                         <div className="from-group">
                             <Button>Создать</Button>
                         </div>
-                    </form>
+
+                    </Form>
                 </div>
             </div>
         )

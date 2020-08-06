@@ -5,7 +5,10 @@ import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {Account} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/inputField/InputField";
+import InputField from "../../components/form/inputField/InputField"
+import Form from "../../components/form/Form"
+import './SignIn.scss'
+import Button from "../../components/button/Button";
 
 type stateTypes = {
     username: string,
@@ -62,21 +65,23 @@ class SignIn extends Component<any, stateTypes> {
 
     render() {
         return (
-            <form className="form-sign" onSubmit={this.handleSubmit}>
-                {!this.state.isLoaded && <Spinner/>}
-                <div className="title">Вход</div>
-                <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                <InputField label="Имя пользователя" type="text" value={this.state.username}
-                            id="username" onChange={this.handleChange}/>
-                <InputField label="Пароль" type="password" value={this.state.password}
-                            id="password" onChange={this.handleChange}/>
-                <div className="form-group">
-                    <button>Вход</button>
-                </div>
-                <div className="suggest">
-                    Ещё нет аккаунта? <Link to="/signup">Зарегистрируйтесь</Link>
-                </div>
-            </form>
+            <div className="page-signin">
+                <Form onSubmit={this.handleSubmit}>
+                    {!this.state.isLoaded && <Spinner/>}
+                    <div className="title">Вход</div>
+                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                    <InputField label="Имя пользователя" type="text" value={this.state.username}
+                                id="username" onChange={this.handleChange}/>
+                    <InputField label="Пароль" type="password" value={this.state.password}
+                                id="password" onChange={this.handleChange}/>
+                    <div className="form-group">
+                        <Button className="btn-block">Вход</Button>
+                    </div>
+                    <div className="suggest">
+                        Ещё нет аккаунта? <Link to="/signup">Зарегистрируйтесь</Link>
+                    </div>
+                </Form>
+            </div>
         )
     }
 }

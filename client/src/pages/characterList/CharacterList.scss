@@ -1,5 +1,5 @@
 .page-character-list {
-  >.row {
+  > .row {
     margin-bottom: 15px;
   }
 
@@ -9,6 +9,7 @@
     a {
       display: inline-block;
     }
+
     img {
       min-width: auto;
       max-width: 100%;

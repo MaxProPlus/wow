@@ -1,43 +1,51 @@
 .page-character {
-  > .title, >.nickname {
+  > .title, > .nickname {
     text-align: center;
     font-size: 2rem;
   }
-  >.nickname {
+
+  > .nickname {
     font-size: 1rem;
   }
-  >.info {
+
+  > .info {
     display: flex;
     justify-content: stretch;
 
-    >.info-left {
+    > .info-left {
       flex-basis: 40%;
       padding-right: .8rem;
 
-      img{
+      img {
         height: 400px;
         min-width: auto;
         max-width: 300px;
       }
     }
-    >.info-right {
+
+    > .info-right {
       flex-basis: 60%;
-      >.info-right-block {
+
+      > .info-right-block {
         display: flex;
         justify-content: space-between;
-        >.info-desc {
+
+        > .info-desc {
           flex-basis: 30%;
         }
-        >.info-value {
+
+        > .info-value {
           flex-basis: 60%;
         }
-        >.info-desc::after{
+
+        > .info-desc::after {
           content: ':';
         }
       }
     }
   }
-  >.description {
+
+  > .description {
     white-space: pre-line;
   }
 }

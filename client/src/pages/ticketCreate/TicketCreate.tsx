@@ -1,14 +1,17 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import Button from "../../components/button/Button";
-import InputField from "../../components/form/inputField/InputField";
-import AlertDanger from "../../components/alert-danger/AlertDanger";
-import TicketApi from "../../api/ticketApi";
-import {Ticket, TicketType} from "../../../../server/src/common/entity/types";
-import Validator from "../../../../server/src/common/validator";
-import history from "../../utils/history";
-import UserContext from "../../utils/userContext";
-import {Redirect} from "react-router-dom";
+import Button from "../../components/button/Button"
+import InputField from "../../components/form/inputField/InputField"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
+import TicketApi from "../../api/ticketApi"
+import {Ticket, TicketType} from "../../../../server/src/common/entity/types"
+import Validator from "../../../../server/src/common/validator"
+import history from "../../utils/history"
+import UserContext from "../../utils/userContext"
+import {Redirect} from "react-router-dom"
+import Form from "../../components/form/Form"
+import Select from "../../components/form/select/Select"
+import Textarea from "../../components/form/textarea/Textarea"
 
 type IState = {
     isLoaded: boolean
@@ -106,27 +109,24 @@ class TicketCreate extends React.Component<any, IState> {
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket-create">
-                    <form className="form-sign" onSubmit={this.handleSubmit}>
+                    <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.error}</AlertDanger>
                         <div className="title">Создание заявки</div>
                         <InputField label="Название" type="text" value={this.state.title}
                                     id="title" onChange={this.handleChange}/>
-                        <div className="form-group">
-                            <label htmlFor="type">Тип</label>
-                            <select value={this.state.idTicketType} onChange={this.handleChangeSelect}>
-                                {this.state.listType.map(tt =>
-                                    <option key={tt.id} value={tt.id}>{tt.title}</option>
-                                )}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="text">Текст заявки</label>
-                            <textarea id="text" onChange={this.handleChange} value={this.state.text}/>
-                        </div>
+                        <Select label="Тип" id="type" value={this.state.idTicketType}
+                                onChange={this.handleChangeSelect}>
+                            {this.state.listType.map(tt =>
+                                <option key={tt.id} value={tt.id}>{tt.title}</option>
+                            )}
+                        </Select>
+                        <Textarea label="Текст заявки" id="text" value={this.state.text}
+                                  onChange={this.handleChange}
+                                  rows={10}/>
                         <div className="from-group">
                             <Button>Создать</Button>
                         </div>
-                    </form>
+                    </Form>
                 </div>
             </div>
         )

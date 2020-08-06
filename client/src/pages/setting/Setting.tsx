@@ -5,9 +5,12 @@ import Spinner from "../../components/spinner/Spinner"
 import history from "../../utils/history"
 import Validator from "../../../../server/src/common/validator"
 import {Account, UserPassword} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/inputField/InputField";
-import AlertDanger from "../../components/alert-danger/AlertDanger";
-import {Redirect} from "react-router-dom";
+import InputField from "../../components/form/inputField/InputField"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
+import {Redirect} from "react-router-dom"
+import Form from "../../components/form/Form"
+import Button from "../../components/button/Button"
+import './Setting.scss'
 
 type IState = {
     email: string,
@@ -71,7 +74,6 @@ class Setting extends React.Component<any, IState> {
     }
 
     handleImageChange = (e: any) => {
-        console.log('handleImageChange')
         const err = this.validator.validateImg(e.target.files[0])
         if (!!err) {
             this.setState({
@@ -203,26 +205,25 @@ class Setting extends React.Component<any, IState> {
                 <div className="page-setting">
                     {this.context.user.id === -1 &&
                     <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                    <form className="form-sign" onSubmit={this.handleSubmitProfileAvatar}>
+                    <Form onSubmit={this.handleSubmitProfileAvatar}>
                         <div className="title">Загрузка аватара</div>
                         <AlertDanger>{this.state.errorAvatar}</AlertDanger>
-                        <div className="form-group">
-                            <input className="fileInput" type="file" onChange={this.handleImageChange}/>
-                        </div>
-                        <div className="form-group">
-                            <button>Загрузить</button>
-                        </div>
-                    </form>
-                    <form className="form-sign" onSubmit={this.handleSubmitProfile}>
+                        <InputField label="Аватарка" type="file"
+                                    id="avatar" onChange={this.handleImageChange}/>
+                        <Form.Group>
+                            <Button>Загрузить</Button>
+                        </Form.Group>
+                    </Form>
+                    <Form onSubmit={this.handleSubmitProfile}>
                         <div className="title">Общие настройки</div>
-                        <AlertDanger>{this.state.errorGeneral}</AlertDanger>
                         <InputField label="Никнейм" type="text" value={this.state.nickname}
                                     id="nickname" onChange={this.handleChange}/>
-                        <div className="form-group">
-                            <button>Сохранить</button>
-                        </div>
-                    </form>
-                    <form className="form-sign" onSubmit={this.handleSubmitSecure}>
+                        <Form.Group>
+                            <Button>Сохранить</Button>
+                        </Form.Group>
+
+                    </Form>
+                    <Form onSubmit={this.handleSubmitSecure}>
                         <div className="title">Настройки безопасности</div>
                         <AlertDanger>{this.state.errorSecure}</AlertDanger>
                         <InputField label="E-mail" type="email" value={this.state.email}
@@ -231,11 +232,11 @@ class Setting extends React.Component<any, IState> {
                                     id="username" onChange={this.handleChange}/>
                         <InputField label="Подтверждение пароля" type="password" value={this.state.passwordAccept}
                                     id="passwordAccept" onChange={this.handleChange}/>
-                        <div className="form-group">
-                            <button>Сохранить</button>
-                        </div>
-                    </form>
-                    <form className="form-sign" onSubmit={this.handleSubmitUserPassword}>
+                        <Form.Group>
+                            <Button>Сохранить</Button>
+                        </Form.Group>
+                    </Form>
+                    <Form onSubmit={this.handleSubmitUserPassword}>
                         <div className="title">Изменение пароля</div>
                         <AlertDanger>{this.state.errorPassword}</AlertDanger>
                         <InputField label="Старый пароль" type="password" value={this.state.passwordOld}
@@ -244,10 +245,11 @@ class Setting extends React.Component<any, IState> {
                                     id="password" onChange={this.handleChange}/>
                         <InputField label="Повторите пароль" type="password" value={this.state.passwordRepeat}
                                     id="passwordRepeat" onChange={this.handleChange}/>
-                        <div className="form-group">
-                            <button>Сохранить</button>
-                        </div>
-                    </form>
+                        <Form.Group>
+                            <Button>Сохранить</Button>
+                        </Form.Group>
+
+                    </Form>
                 </div>
             </div>
         )

@@ -37,15 +37,15 @@ class CharacterPage extends React.Component<any, IState> {
     }
 
     updateData = () => {
-        this.characterApi.getById(this.state.id).then(r=>{
+        this.characterApi.getById(this.state.id).then(r => {
             this.setState({
                 character: r[0]
             })
-        }, err=>{
+        }, err => {
             this.setState({
                 errorMessage: err
             })
-        }).finally(()=>{
+        }).finally(() => {
             this.setState({
                 isLoaded: true,
             })

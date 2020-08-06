@@ -17,5 +17,7 @@
 /server/logs
 /server/upload/avatar/*
 !/server/upload/avatar/standart.png
+/server/upload/characterAvatar/*
+!/server/upload/characterAvatar/.gitkeep
 
 

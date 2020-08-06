@@ -1,8 +1,10 @@
 import React from "react"
 import './AlertDanger.scss'
 
-export default (props: any) => {
+const AlertDanger =  (props: any) => {
     return (
-        <div className="alert-danger">{props.children}</div>
+        <>{props.children && <div className="alert-danger">{props.children}</div>}</>
     )
 }
+
+export default AlertDanger

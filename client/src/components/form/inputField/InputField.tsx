@@ -1,6 +1,6 @@
 import React from "react"
 
-export default ({label, type, value, id, onChange}: any) => {
+const InputField = ({label, type, value, id, onChange}: any) => {
     return (
         <div className="form-group">
             <label htmlFor={id}>{label}</label>
@@ -9,4 +9,6 @@ export default ({label, type, value, id, onChange}: any) => {
                    onChange={onChange}/>
         </div>
     )
-} 
+}
+
+export default InputField

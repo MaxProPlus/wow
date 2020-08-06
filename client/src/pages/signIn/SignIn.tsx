@@ -5,7 +5,7 @@ import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {Account} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/input-field/InputField";
+import InputField from "../../components/form/inputField/InputField";
 
 type stateTypes = {
     username: string,
@@ -65,7 +65,7 @@ class SignIn extends Component<any, stateTypes> {
             <form className="form-sign" onSubmit={this.handleSubmit}>
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="title">Вход</div>
-                {this.state.errorMessage && <AlertDanger>{this.state.errorMessage}</AlertDanger>}
+                <AlertDanger>{this.state.errorMessage}</AlertDanger>
                 <InputField label="Имя пользователя" type="text" value={this.state.username}
                             id="username" onChange={this.handleChange}/>
                 <InputField label="Пароль" type="password" value={this.state.password}

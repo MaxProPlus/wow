@@ -6,7 +6,7 @@ import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Validator from "../../../../server/src/common/validator"
 import {Account} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/input-field/InputField";
+import InputField from "../../components/form/inputField/InputField";
 
 type stateTypes = {
     login: string
@@ -68,7 +68,7 @@ class SignUp extends Component<{}, stateTypes> {
         return (
             <form className="form-sign" onSubmit={this.handleSubmit}>
                 <div className="title">Регистрация</div>
-                {this.state.errorMessage && <AlertDanger>{this.state.errorMessage}</AlertDanger>}
+                <AlertDanger>{this.state.errorMessage}</AlertDanger>
                 <InputField label="E-mail" type="text" value={this.state.email}
                             id="email" onChange={this.handleChange}/>
                 <InputField label="Имя пользователя" type="text" value={this.state.login}

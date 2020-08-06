@@ -75,7 +75,7 @@ class CommentForm extends Component<propsTypes, stateTypes> {
     render() {
         return (
             <>
-                {this.state.errorMessage && <AlertDanger>{this.state.errorMessage}</AlertDanger>}
+                <AlertDanger>{this.state.errorMessage}</AlertDanger>
                 <form className="comment-form" onSubmit={this.handleSubmit}>
                     {!this.state.isLoaded && <Spinner/>}
                     <AvatarImg url={this.context.user.urlAvatar}/>

@@ -1,0 +1,43 @@
+.page-character {
+  > .title, >.nickname {
+    text-align: center;
+    font-size: 2rem;
+  }
+  >.nickname {
+    font-size: 1rem;
+  }
+  >.info {
+    display: flex;
+    justify-content: stretch;
+
+    >.info-left {
+      flex-basis: 40%;
+      padding-right: .8rem;
+
+      img{
+        height: 400px;
+        min-width: auto;
+        max-width: 300px;
+      }
+    }
+    >.info-right {
+      flex-basis: 60%;
+      >.info-right-block {
+        display: flex;
+        justify-content: space-between;
+        >.info-desc {
+          flex-basis: 30%;
+        }
+        >.info-value {
+          flex-basis: 60%;
+        }
+        >.info-desc::after{
+          content: ':';
+        }
+      }
+    }
+  }
+  >.description {
+    white-space: pre-line;
+  }
+}

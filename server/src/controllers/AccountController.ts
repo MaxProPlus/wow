@@ -233,8 +233,8 @@ class AccountController {
                 errorMessage: 'Не прикреплен файл',
             })
         }
-        const {ok, err} = this.validator.validateImg(req.files.avatar as UploadedFile)
-        if (!ok) {
+        const err = this.validator.validateImg(req.files.avatar as UploadedFile)
+        if (!!err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,

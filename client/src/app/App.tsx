@@ -18,6 +18,10 @@ import TicketPage from "../pages/ticket/TicketPage";
 import HeaderTop from "../components/headerTop/HeaderTop";
 import AdminDashboard from "../pages/admin/dashboard/AdminDashboard";
 import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins";
+import CharacterCreate from "../pages/characterCreate/CharacterCreate";
+import CharacterPage from "../pages/character/Character";
+import Material from "../pages/material/Material";
+import CharacterList from "../pages/characterList/CharacterList";
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -34,8 +38,9 @@ interface IState {
 }
 
 class App extends React.Component<{}, IState> {
-    private userApi = new UserApi();
+    private userApi = new UserApi()
     private wrapperRef?: HTMLElement
+    private containerRef?: HTMLElement
 
     constructor(props: {}) {
         super(props)
@@ -100,8 +105,18 @@ class App extends React.Component<{}, IState> {
         this.setState({showMenu: false})
     }
 
+    scrollTop = () => {
+        if (!!this.containerRef) {
+            this.containerRef.scrollTo(0, 0)
+        }
+    }
+
     setWrapperRef = (node: HTMLElement) => {
         this.wrapperRef = node
+    }
+
+    setContainerRef = (node: HTMLDivElement) => {
+        this.containerRef = node
     }
 
     render() {
@@ -110,7 +125,7 @@ class App extends React.Component<{}, IState> {
                 <UserContext.Provider value={{user: this.state.user, updateLogin: this.updateLogin}}>
                     <div className="app">
                         <Header ref={this.setWrapperRef} showMenu={this.state.showMenu} hideMenu={this.hideMenu}/>
-                        <div className="container">
+                        <div ref={this.setContainerRef} className="my-container">
                             <div className="container-inner">
                                 <HeaderTop onClickMenu={this.handleToggleMenu}/>
                                 <div className="page">
@@ -127,6 +142,12 @@ class App extends React.Component<{}, IState> {
                                         <Route exact path="/ticket/create"
                                                component={TicketCreate}/>{/*создание тикета*/}
                                         <Route path="/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
+
+                                        <Route exact path="/material" component={Material}/>
+                                        <Route exact path="/character" component={CharacterList}/>
+                                        <Route exact path="/character/create"
+                                               render={(props) => (<CharacterCreate {...props} scrollTop={this.scrollTop}/>)}/>
+                                        <Route path="/character/:id" component={CharacterPage}/>
 
                                         <Route exact path="/admin" component={AdminDashboard}/>
                                         <Route path="/admin/list" component={ListOfAdmins}/>

@@ -122,7 +122,7 @@ class TicketPage extends React.Component<any, IState> {
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket">
-                    {this.state.errorMessage && <AlertDanger>{this.state.errorMessage}</AlertDanger>}
+                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <div className="ticket">
                         <div className="title">{this.state.ticket.title}</div>
                         <div className="description">{this.state.ticket.text}</div>

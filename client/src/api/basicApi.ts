@@ -19,6 +19,22 @@ class Api {
         })
     }
 
+    // post
+    postForm(url: string, body: FormData) {
+        return fetch(url, {
+            method: 'POST',
+            body: body,
+        }).then(r => {
+            if (!r.ok) {
+                return {
+                    status: "ERROR_SERVER",
+                    errorMessage: `${r.status} ${r.statusText}`
+                }
+            }
+            return r.json()
+        })
+    }
+
     // get
     get(url: string) {
         return fetch(url, {

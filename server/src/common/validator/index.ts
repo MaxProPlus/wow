@@ -1,4 +1,4 @@
-import {Comment, Ticket, Account, UserPassword} from '../entity/types'
+import {Account, Character, Comment, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -76,7 +76,6 @@ class Validator {
 
     // Валидация изображений
     validateImg(file: UploadedFile | File): any {
-        let ok = true
         let err = ''
         const type = 'mimetype' in file ? file.mimetype : file.type
         switch (type) {
@@ -85,10 +84,9 @@ class Validator {
             case 'image/webp':
                 break
             default:
-                ok = false
                 err += 'Не поддерживаемый тип изображения. Поддерживаемые форматы: jpeg, png, webp.\n'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация комментария
@@ -105,6 +103,68 @@ class Validator {
             err += 'Длина текста заявки должна быть от 3 до 150 символов.\n'
         }
         return {ok, err}
+    }
+
+    // Валидация персонажа
+    validateCharacter = (character: Character) => {
+        let err = '';
+        (['title', 'nickname', 'race', 'nation', 'territory', 'className', 'occupation', 'religion', 'languages'] as string[]).forEach(((el: string) => {
+            // @ts-ignore
+            character[el] = this.trim(character[el])
+        }))
+        if (character.title.length < 3 || character.title.length > 35) {
+            err += 'Длина полного имя персонажа должна быть от 3 до 35 символов.\n'
+        }
+        if (character.nickname.length < 3 || character.nickname.length > 35) {
+            err += 'Длина игрового имени должна быть от 3 до 35 символов.\n'
+        }
+        if (character.race.length < 3 || character.race.length > 35) {
+            err += 'Длина названия расы должна быть от 3 до 35 символов.\n'
+        }
+        if (character.nation.length > 35) {
+            err += 'Длина названия народности не должна первышать 35 символов.\n'
+        }
+        if (character.territory.length > 50) {
+            err += 'Длина названия мест пребывания не должна первышать 50 символов.\n'
+        }
+        if (character.className.length > 35) {
+            err += 'Длина названия класса персонажа не должна первышать 35 символов.\n'
+        }
+        if (character.occupation.length > 35) {
+            err += 'Длина названия рода занятий не должна первышать 35 символов.\n'
+        }
+        if (character.religion.length > 35) {
+            err += 'Длина названия верования не должна первышать 35 символов.\n'
+        }
+        if (character.languages.length > 35) {
+            err += 'Длина названия знание языков не должна первышать 35 символов.\n'
+        }
+        if (character.shortDescription.length > 100) {
+            err += 'Длина девиза не должна первышать 100 символов.\n'
+        }
+        if (character.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
+        }
+        if (character.sex < 0 || character.sex > 2) {
+            err += ''
+        }
+        if (character.status < 0 || character.status > 3) {
+            err += 'Ошибка со статусом'
+        }
+        if (character.active < 0 || character.active > 3) {
+            err += 'Ошибка с активностью'
+        }
+        if (character.closed < 0 || character.closed > 1) {
+            err += 'Ошибка closed'
+        }
+        if (character.hidden < 0 || character.hidden > 1) {
+            err += 'Ошибка hidden'
+        }
+        if (character.comment < 0 || character.comment > 1) {
+            err += 'Ошибка comment'
+        }
+
+        return err
     }
 }
 

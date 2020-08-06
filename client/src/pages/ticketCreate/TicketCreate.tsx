@@ -1,7 +1,7 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button";
-import InputField from "../../components/form/input-field/InputField";
+import InputField from "../../components/form/inputField/InputField";
 import AlertDanger from "../../components/alert-danger/AlertDanger";
 import TicketApi from "../../api/ticketApi";
 import {Ticket, TicketType} from "../../../../server/src/common/entity/types";
@@ -107,7 +107,7 @@ class TicketCreate extends React.Component<any, IState> {
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket-create">
                     <form className="form-sign" onSubmit={this.handleSubmit}>
-                        {this.state.error && <AlertDanger>{this.state.error}</AlertDanger>}
+                        <AlertDanger>{this.state.error}</AlertDanger>
                         <div className="title">Создание заявки</div>
                         <InputField label="Название" type="text" value={this.state.title}
                                     id="title" onChange={this.handleChange}/>

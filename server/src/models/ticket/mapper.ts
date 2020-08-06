@@ -39,7 +39,6 @@ class Mapper {
         from ticket
         where id_ticket_type = ?`
         return this.pool.query(sql, [id]).then(([r]: any) => {
-            console.log(r[0].count)
             if (!r.length) {
                 return Promise.reject('Не найден тикет')
             }

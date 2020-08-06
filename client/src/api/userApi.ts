@@ -13,18 +13,7 @@ class UserApi extends Api {
 
     updateAvatar(avatar: FormData) {
         const url = '/api/users/avatar'
-        return fetch(url, {
-            method: 'POST',
-            body: avatar
-        }).then(r => {
-            if (!r.ok) {
-                return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
-                }
-            }
-            return r.json()
-        }).then(r => {
+        return this.postForm(url, avatar).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
             return Promise.resolve()

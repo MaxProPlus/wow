@@ -5,7 +5,7 @@ import Spinner from "../../components/spinner/Spinner"
 import history from "../../utils/history"
 import Validator from "../../../../server/src/common/validator"
 import {Account, UserPassword} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/input-field/InputField";
+import InputField from "../../components/form/inputField/InputField";
 import AlertDanger from "../../components/alert-danger/AlertDanger";
 import {Redirect} from "react-router-dom";
 
@@ -68,12 +68,12 @@ class Setting extends React.Component<any, IState> {
             errorPassword: '',
             [e.target.name]: e.target.value,
         } as { [K in keyof IState]: IState[K] })
-    };
+    }
 
     handleImageChange = (e: any) => {
         console.log('handleImageChange')
-        const {ok, err} = this.validator.validateImg(e.target.files[0])
-        if (!ok) {
+        const err = this.validator.validateImg(e.target.files[0])
+        if (!!err) {
             this.setState({
                 errorAvatar: err,
                 avatar: ''
@@ -85,7 +85,7 @@ class Setting extends React.Component<any, IState> {
             errorAvatar: '',
             avatar: e.target.files[0]
         })
-    };
+    }
 
     handleSubmitProfileAvatar = (e: any) => {
         this.setState({
@@ -109,7 +109,7 @@ class Setting extends React.Component<any, IState> {
                 isLoaded: true,
             })
         })
-    };
+    }
 
     handleSubmitProfile = (e: any) => {
         e.preventDefault()
@@ -138,7 +138,7 @@ class Setting extends React.Component<any, IState> {
                 isLoaded: true,
             })
         })
-    };
+    }
 
     handleSubmitSecure = (e: any) => {
         e.preventDefault()
@@ -166,7 +166,7 @@ class Setting extends React.Component<any, IState> {
                 isLoaded: true,
             })
         })
-    };
+    }
 
     handleSubmitUserPassword = (e: any) => {
         e.preventDefault()
@@ -205,7 +205,7 @@ class Setting extends React.Component<any, IState> {
                     <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                     <form className="form-sign" onSubmit={this.handleSubmitProfileAvatar}>
                         <div className="title">Загрузка аватара</div>
-                        {this.state.errorAvatar && <AlertDanger>{this.state.errorAvatar}</AlertDanger>}
+                        <AlertDanger>{this.state.errorAvatar}</AlertDanger>
                         <div className="form-group">
                             <input className="fileInput" type="file" onChange={this.handleImageChange}/>
                         </div>
@@ -215,7 +215,7 @@ class Setting extends React.Component<any, IState> {
                     </form>
                     <form className="form-sign" onSubmit={this.handleSubmitProfile}>
                         <div className="title">Общие настройки</div>
-                        {this.state.errorGeneral && <AlertDanger>{this.state.errorGeneral}</AlertDanger>}
+                        <AlertDanger>{this.state.errorGeneral}</AlertDanger>
                         <InputField label="Никнейм" type="text" value={this.state.nickname}
                                     id="nickname" onChange={this.handleChange}/>
                         <div className="form-group">
@@ -224,7 +224,7 @@ class Setting extends React.Component<any, IState> {
                     </form>
                     <form className="form-sign" onSubmit={this.handleSubmitSecure}>
                         <div className="title">Настройки безопасности</div>
-                        {this.state.errorSecure && <AlertDanger>{this.state.errorSecure}</AlertDanger>}
+                        <AlertDanger>{this.state.errorSecure}</AlertDanger>
                         <InputField label="E-mail" type="email" value={this.state.email}
                                     id="email" onChange={this.handleChange}/>
                         <InputField label="Username" type="text" value={this.state.username}
@@ -237,7 +237,7 @@ class Setting extends React.Component<any, IState> {
                     </form>
                     <form className="form-sign" onSubmit={this.handleSubmitUserPassword}>
                         <div className="title">Изменение пароля</div>
-                        {this.state.errorPassword && <AlertDanger>{this.state.errorPassword}</AlertDanger>}
+                        <AlertDanger>{this.state.errorPassword}</AlertDanger>
                         <InputField label="Старый пароль" type="password" value={this.state.passwordOld}
                                     id="passwordOld" onChange={this.handleChange}/>
                         <InputField label="Новый пароль" type="password" value={this.state.password}

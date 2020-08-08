@@ -227,14 +227,14 @@ class CharacterCreate extends React.Component<any, IState> {
                             )}
                         </Select>
                         <InputCheckBox label="Закрыть(материал
-                                будет доступен только автору)" id="closed" value={this.state.closed}
+                                будет доступен только автору)" id="closed" checked={this.state.closed}
                                        onChange={this.handleChangeChecked}/>
                         <InputCheckBox label="Скрыть
                                 из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим
-                                материалам)" id="hidden" value={this.state.hidden}
+                                материалам)" id="hidden" checked={this.state.hidden}
                                        onChange={this.handleChangeChecked}/>
                         <InputCheckBox label="Запретить
-                                комментарии" id="comment" value={this.state.comment}
+                                комментарии" id="comment" checked={this.state.comment}
                                        onChange={this.handleChangeChecked}/>
                         <Textarea label="CSS-стили(в разработке)" id="style" value={this.state.style}
                                   onChange={this.handleChange}

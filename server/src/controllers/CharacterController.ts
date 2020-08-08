@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {Comment, Ticket, TicketType, Character} from '../common/entity/types'
+import {CommentTicket, Ticket, TicketType, Character, CommentCharacter} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
@@ -106,17 +106,39 @@ class CharacterController {
 
     // Редактировать персонажа
     update = async (req: Request, res: Response) => {
-        const idTicket = parseInt(req.params.idTicket)
-        if (isNaN(idTicket)) {
+        const id = parseInt(req.params.id)
+        if (isNaN(id)) {
             return res.json({
                 status: 'INVALID_PARSE',
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        return this.characterModel.getComments(idTicket).then((r) => {
+        const c: CharacterUpload = req.body
+        c.id = id
+        let err = this.validator.validateCharacter(c)
+
+        if (!(!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar)) {
+            c.fileAvatar = req.files.fileAvatar as UploadedFile
+            err += this.validator.validateImg(c.fileAvatar)
+        }
+        if (!!err) {
+            return res.json({
+                status: 'INVALID_DATA',
+                errorMessage: err,
+            })
+        }
+        try {
+            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+        } catch (err) {
+            return res.json({
+                status: 'INVALID_AUTH',
+                errorMessage: 'Ошибка авторизации',
+            })
+        }
+        return this.characterModel.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
-                results: r,
+                results: [r],
             })
         }, (err:any) => {
             return res.json({
@@ -150,7 +172,7 @@ class CharacterController {
 
     // Создать комментарий к персонажу
     createComment = async (req: Request, res: Response) => {
-        const c: Comment = req.body
+        const c: CommentCharacter = req.body
         try {
             c.idAccount = await this.auth.checkAuth(req.cookies.token)
             const {ok, err} = this.validator.validateComment(c)

@@ -5,11 +5,14 @@ import {
     Character,
     characterStatusToString,
     sexToString
-} from "../../../../server/src/common/entity/types";
-import UserContext from "../../utils/userContext";
-import CharacterApi from "../../api/CharacterApi";
-import AlertDanger from "../../components/alert-danger/AlertDanger";
+} from "../../../../server/src/common/entity/types"
+import UserContext from "../../utils/userContext"
+import CharacterApi from "../../api/CharacterApi"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
 import './Character.scss'
+import Button from "../../components/button/Button"
+import {Link} from "react-router-dom"
+import CommentForm from "../../components/commentFrom/CommentForm";
 
 type IState = {
     isLoaded: boolean
@@ -39,7 +42,7 @@ class CharacterPage extends React.Component<any, IState> {
     updateData = () => {
         this.characterApi.getById(this.state.id).then(r => {
             this.setState({
-                character: r[0]
+                character: r
             })
         }, err => {
             this.setState({
@@ -58,6 +61,8 @@ class CharacterPage extends React.Component<any, IState> {
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="page-character">
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                    {this.context.user.id === this.state.character.idAccount &&
+                    <Link to={`/material/character/edit/${this.state.id}`}><Button>Редактировать персонажа</Button></Link>}
                     <div className="title">{this.state.character.title}</div>
                     <div className="nickname">{this.state.character.nickname}</div>
                     <div className="info">
@@ -116,6 +121,8 @@ class CharacterPage extends React.Component<any, IState> {
                     <div className="description">
                         {this.state.character.description}
                     </div>
+
+                    {/*<CommentForm></CommentForm>*/}
 
                 </div>
             </div>

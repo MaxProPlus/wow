@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {Comment, Ticket, TicketType} from '../common/entity/types'
+import {CommentTicket, Ticket, TicketType} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import TicketModel from '../models/ticket/model'
@@ -51,7 +51,7 @@ class TicketController {
 
     // Создать комментарий на тикет
     createComment = async (req: Request, res: Response) => {
-        const c: Comment = req.body
+        const c: CommentTicket = req.body
         try {
             c.idAccount = await this.auth.checkAuth(req.cookies.token)
             const {ok, err} = this.validator.validateComment(c)

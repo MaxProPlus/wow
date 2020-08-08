@@ -1,5 +1,5 @@
 import React from "react"
-import Form from "../Form";
+import Form from "../Form"
 
 const InputField = ({label, type, value, id, onChange, placeholder}: any) => {
     return (

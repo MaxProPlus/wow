@@ -8,7 +8,7 @@ import {Account} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/inputField/InputField"
 import Form from "../../components/form/Form"
 import './SignIn.scss'
-import Button from "../../components/button/Button";
+import Button from "../../components/button/Button"
 
 type stateTypes = {
     username: string,

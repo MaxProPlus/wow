@@ -1,8 +1,8 @@
 import React from "react"
 import './AdminDashboard.scss'
-import Spinner from "../../../components/spinner/Spinner";
-import UserContext from "../../../utils/userContext";
-import {Link} from "react-router-dom";
+import Spinner from "../../../components/spinner/Spinner"
+import UserContext from "../../../utils/userContext"
+import {Link} from "react-router-dom"
 
 type IState = {
     isLoaded: true

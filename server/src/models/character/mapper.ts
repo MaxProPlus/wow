@@ -1,4 +1,4 @@
-import {Character, Comment} from '../../common/entity/types'
+import {Character, CommentCharacter, CommentTicket} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -27,7 +27,7 @@ class Mapper {
     }
 
     // Получить персонажа по id
-    selectById = (id: number) => {
+    selectById = (id: number): Promise<Character> => {
         const sql = `select id,
                             id_account        as idAccount,
                             url_avatar        as urlAvatar,
@@ -141,9 +141,9 @@ class Mapper {
                          comment           = ?,
                          style             = ?
                      where id = ?`
-        return this.pool.query(sql, [character.id, character.idAccount, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
+        return this.pool.query(sql, [character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.sex,
-            character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then((r: any) => {
+            character.status, character.active, character.closed, character.hidden, character.comment, character.style, character.id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Не найден персонаж')
             }
@@ -160,10 +160,10 @@ class Mapper {
     }
 
     // Создать комментарий к персонажу
-    insertComment = (comment: Comment) => {
-        const sql = `INSERT INTO comment (text, id_account, id_ticket)
+    insertComment = (comment: CommentCharacter) => {
+        const sql = `INSERT INTO character_comment (text, id_account, id_character)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idTicket]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idCharacter]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -176,13 +176,13 @@ class Mapper {
         const sql = `select c.id,
                             c.text,
                             c.id_account as idAccount,
-                            c.id_ticket  as idTicket,
+                            c.id_character  as idCharacter,
                             a.nickname   as authorNickname,
                             a.url_avatar as authorUrlAvatar
-                     from comment c
+                     from character_comment c
                               join account a on c.id_account = a.id
-                     where c.id_ticket = ?`
-        return this.pool.query(sql, [id]).then(([r]: [Comment[]]) => {
+                     where c.id_character = ?`
+        return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

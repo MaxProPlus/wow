@@ -22,10 +22,17 @@ export class UserPassword {
 export class Comment {
     id = 0
     text = ''
-    idTicket = 0
     idAccount = 0
     authorNickname = ''
     authorUrlAvatar = ''
+}
+
+export class CommentTicket extends Comment{
+    idTicket = 0
+}
+
+export class CommentCharacter extends Comment{
+    idCharacter = 0
 }
 
 export class Ticket {

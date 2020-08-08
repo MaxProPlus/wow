@@ -1,5 +1,5 @@
-import {Comment, Ticket, TicketStatus} from "../../../server/src/common/entity/types"
-import Api from "./basicApi";
+import {CommentTicket, Ticket, TicketStatus} from "../../../server/src/common/entity/types"
+import Api from "./basicApi"
 
 class TicketApi extends Api {
     // Создать тикет
@@ -13,7 +13,7 @@ class TicketApi extends Api {
     }
 
     // Дополнить комментарием
-    addComment(comment: Comment) {
+    addComment(comment: CommentTicket) {
         const url = '/api/tickets/comments'
         return this.post(url, comment).then(r => {
             if (r.status !== 'OK')

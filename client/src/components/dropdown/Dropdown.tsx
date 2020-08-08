@@ -4,7 +4,7 @@ import UserApi from "../../api/userApi"
 import history from "../../utils/history"
 import './Dropdown.scss'
 import Profile from "../profile/Profile"
-import {Link} from "react-router-dom";
+import {Link} from "react-router-dom"
 
 type stateTypes = {
     visible: boolean

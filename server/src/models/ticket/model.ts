@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Comment, Ticket, TicketStatus} from '../../common/entity/types'
+import {CommentTicket, Ticket, TicketStatus} from '../../common/entity/types'
 import {defaultAvatar} from '../../entity/types'
 
 class TicketModel {
@@ -15,11 +15,11 @@ class TicketModel {
     }
 
     // Получить тикет по id
-    getById = (idTicket: number): Promise<[Ticket, Comment[]]> => {
+    getById = (idTicket: number): Promise<[Ticket, CommentTicket[]]> => {
         const p = []
         p.push(this.mapper.selectById(idTicket))
         p.push(this.getComments(idTicket))
-        return Promise.all(p) as Promise<[Ticket, Comment[]]>
+        return Promise.all(p) as Promise<[Ticket, CommentTicket[]]>
     }
 
     // Получить все типы тикетов
@@ -46,14 +46,14 @@ class TicketModel {
     }
 
     // Создать комментарий на тикет
-    createComment = async (comment: Comment) => {
+    createComment = async (comment: CommentTicket) => {
         return this.mapper.insertComment(comment)
     }
 
     // Получить комментарии к тикету
     getComments = async (idTicket: number) => {
         const comments = await this.mapper.selectCommentsByIdTicket(idTicket)
-        comments.forEach((c: Comment) => {
+        comments.forEach((c: CommentTicket) => {
             if (!c.authorUrlAvatar) {
                 c.authorUrlAvatar = defaultAvatar
             }

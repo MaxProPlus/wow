@@ -1,14 +1,14 @@
 import React, {Component} from 'react'
 import './CommentForm.scss'
-import userContext from "../../../utils/userContext"
-import AvatarImg from "../../../components/avatar-img/AvatarImg"
-import Button from "../../../components/button/Button"
-import Input from "../../../components/input/Input"
-import Spinner from "../../../components/spinner/Spinner"
-import TicketApi from "../../../api/ticketApi";
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import Validator from "../../../../../server/src/common/validator"
-import {Comment} from "../../../../../server/src/common/entity/types"
+import userContext from "../../utils/userContext"
+import AvatarImg from "../../components/avatar-img/AvatarImg"
+import Button from "../../components/button/Button"
+import Input from "../../components/input/Input"
+import Spinner from "../../components/spinner/Spinner"
+import TicketApi from "../../api/ticketApi"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
+import Validator from "../../../../server/src/common/validator"
+import {CommentTicket} from "../../../../server/src/common/entity/types"
 
 type propsTypes = {
     idTicket: number
@@ -37,7 +37,7 @@ class CommentForm extends Component<propsTypes, stateTypes> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        let comment = new Comment()
+        let comment = new CommentTicket()
         comment.text = this.state.comment
         comment.idTicket = this.props.idTicket
         const {ok, err} = this.validator.validateComment(comment)

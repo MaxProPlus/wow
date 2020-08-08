@@ -1,12 +1,12 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {Link, Redirect} from "react-router-dom";
-import history from "../../utils/history";
-import TicketApi from "../../api/ticketApi";
-import {Ticket, ticketStatusToString, TicketType} from "../../../../server/src/common/entity/types";
+import {Link, Redirect} from "react-router-dom"
+import history from "../../utils/history"
+import TicketApi from "../../api/ticketApi"
+import {Ticket, ticketStatusToString, TicketType} from "../../../../server/src/common/entity/types"
 import './TicketsByType.scss'
-import Button from "../../components/button/Button";
-import UserContext from "../../utils/userContext";
+import Button from "../../components/button/Button"
+import UserContext from "../../utils/userContext"
 
 type IState = {
     isLoaded: boolean

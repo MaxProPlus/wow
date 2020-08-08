@@ -1,6 +1,11 @@
 .header {
   background-color: #22293c;
   color: #fff;
+  z-index: 10;
+  .header-sub {
+    display: flex;
+    flex-direction: column;
+  }
 
   > .header-inner {
     //width: 90%;
@@ -8,31 +13,46 @@
     justify-content: flex-start;
     align-items: stretch;
     flex-direction: column;
+    overflow-y: auto;
 
-    > .header-item {
+    .item-active {
+      color: #626fa3;
+    }
+
+    >.accordion {
+      flex-shrink: 0;
+      .sub-item {
+        font-size: .8rem;
+        text-transform: none;
+      }
+    }
+
+     .header-item {
       display: block;
       position: relative;
+      cursor: pointer;
       text-align: center;
       padding: .375rem .75rem;
       text-transform: uppercase;
 
-      &:hover, &:focus {
-        background-color: #4e6471;
+      &:hover{
+        //background-color: #4e6471;
 
-        &::before {
-          background-color: #ebf1ff;
-        }
+        color: #626fa3;
+        //&::before {
+        //  background-color: #ebf1ff;
+        //}
       }
 
-      &::before {
-        display: block;
-        position: absolute;
-        content: '';
-        left: 0;
-        top: 0;
-        width: 3px;
-        height: 100%;
-      }
+      //&::before {
+      //  display: block;
+      //  position: absolute;
+      //  content: '';
+      //  left: 0;
+      //  top: 0;
+      //  width: 3px;
+      //  height: 100%;
+      //}
     }
 
     > .logo {

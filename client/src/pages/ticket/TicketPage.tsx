@@ -1,11 +1,11 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import TicketApi from "../../api/ticketApi";
-import {Comment, Ticket, TicketStatus, ticketStatusToString} from "../../../../server/src/common/entity/types"
+import TicketApi from "../../api/ticketApi"
+import {CommentTicket, Ticket, TicketStatus, ticketStatusToString} from "../../../../server/src/common/entity/types"
 import history from "../../utils/history"
 import './TicketPage.scss'
-import CommentForm from "./commentFrom/CommentForm"
-import CommentC from "./comment/Comment"
+import CommentForm from "../../components/commentFrom/CommentForm"
+import CommentC from "../../components/comment/Comment"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import UserContext from "../../utils/userContext"
 import {Redirect} from "react-router-dom"
@@ -17,7 +17,7 @@ type IState = {
     errorMessage: string
     id: string
     ticket: Ticket,
-    comments: Comment[]
+    comments: CommentTicket[]
 }
 
 class TicketPage extends React.Component<any, IState> {

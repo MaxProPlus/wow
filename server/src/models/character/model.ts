@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Character, Comment, Ticket, TicketStatus} from '../../common/entity/types'
+import {Character, CommentCharacter, CommentTicket, Ticket, TicketStatus} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -42,7 +42,19 @@ class CharacterModel {
     }
 
     // Редактировать персонажа
-    update = (c: Character) => {
+    update =async (c: CharacterUpload) => {
+        const oldCharacter = await this.mapper.selectById(c.id)
+        if (oldCharacter.idAccount !== c.idAccount) {
+            return Promise.reject('Нет прав')
+        }
+        c.urlAvatar = oldCharacter.urlAvatar
+        let infoAvatar
+        if (!!c.fileAvatar) {
+            this.uploader.remove(oldCharacter.urlAvatar)
+            infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
+            c.urlAvatar = infoAvatar.url
+            c.fileAvatar.mv(infoAvatar.path)
+        }
         return this.mapper.update(c)
     }
 
@@ -52,14 +64,14 @@ class CharacterModel {
     }
 
     // Создать комментарий к персонажу
-    createComment = async (comment: Comment) => {
+    createComment = async (comment: CommentCharacter) => {
         return this.mapper.insertComment(comment)
     }
 
     // Получить комментарии к персонажу
     getComments = async (id: number) => {
         const comments = await this.mapper.selectCommentsByIdCharacter(id)
-        comments.forEach((c: Comment) => {
+        comments.forEach((c: CommentTicket) => {
             if (!c.authorUrlAvatar) {
                 c.authorUrlAvatar = defaultAvatar
             }

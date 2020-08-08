@@ -20,6 +20,7 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
 
 type IState = {
+    id: string
     isLoaded: boolean
     errorMessage: string
     avatar: any
@@ -46,9 +47,10 @@ type IState = {
     comment: number // Запретить комментарии
     style: string // CSS-стили
     coauthors: [] // Список соавторов
+    idAccount: number
 }
 
-class CharacterCreate extends React.Component<any, IState> {
+class CharacterEdit extends React.Component<any, IState> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
@@ -56,7 +58,8 @@ class CharacterCreate extends React.Component<any, IState> {
     constructor(props: any) {
         super(props)
         this.state = {
-            isLoaded: true,
+            id: props.match.params.id,
+            isLoaded: false,
             errorMessage: '',
             avatar: '',
             title: '',
@@ -79,9 +82,38 @@ class CharacterCreate extends React.Component<any, IState> {
             hidden: 0,
             comment: 0,
             style: '',
-            coauthors: []
+            coauthors: [],
+            idAccount: 0,
         }
     }
+
+    componentDidMount() {
+        this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<IState>, snapshot?: any) {
+        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+            this.setState({
+                errorMessage: 'Нет прав'
+            })
+        }
+    }
+
+    updateData = () => {
+        this.characterApi.getById(this.state.id).then(r => {
+            delete r.id
+            this.setState(r)
+        }, err => {
+            this.setState({
+                errorMessage: err
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true
+            })
+        })
+    }
+
 
     handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({
@@ -158,7 +190,7 @@ class CharacterCreate extends React.Component<any, IState> {
         formData.append('comment', String(character.comment))
         formData.append('fileAvatar', this.state.avatar)
         formData.append('style', character.style)
-        this.characterApi.create(formData).then(r => {
+        this.characterApi.update(this.state.id, formData).then(r => {
             history.push('/material/character/' + r)
         }, err => {
             this.setState({
@@ -179,7 +211,7 @@ class CharacterCreate extends React.Component<any, IState> {
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-character-create">
                     <Form onSubmit={this.handleSubmit}>
-                        <div className="title">Создание персонажа</div>
+                        <div className="title">Редактирование персонажа</div>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <InputField label="Аватарка персонажа" type="file"
                                     id="avatar" onChange={this.handleImageChange}/>
@@ -250,4 +282,4 @@ class CharacterCreate extends React.Component<any, IState> {
     }
 }
 
-export default CharacterCreate
+export default CharacterEdit

@@ -11,6 +11,10 @@ class Validator {
     validateComment(comment: Comment) {
         let ok = true
         let err = ''
+        if (comment.text.length < 3) {
+            ok = false
+            err += 'Длина комментария не должна быть меньше 3 символов'
+        }
         return {ok, err}
     }
 

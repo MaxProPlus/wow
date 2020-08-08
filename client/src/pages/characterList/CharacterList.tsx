@@ -3,8 +3,8 @@ import CharacterApi from "../../api/CharacterApi"
 import {Character} from "../../../../server/src/common/entity/types"
 import {Link} from "react-router-dom"
 import './CharacterList.scss'
-import {Col, Row} from "react-bootstrap";
-import Button from "../../components/button/Button";
+import {Col, Row} from "react-bootstrap"
+import Button from "../../components/button/Button"
 
 type IState = {
     isLoaded: boolean,
@@ -64,11 +64,11 @@ class CharacterList extends Component<any, IState> {
         return (
             <div className="page-character-list">
                 <Row>
-                    <Col><Link to="/character/create"><Button>Создать персонажа</Button></Link></Col>
+                    <Col><Link to="/material/character/create"><Button>Создать персонажа</Button></Link></Col>
                 </Row>
                 <Row>
                     {this.state.list.map(el =>
-                        (<CharacterBlock {...el}/>)
+                        (<CharacterBlock key={el.id} {...el}/>)
                     )}
                 </Row>
                 {more}
@@ -81,7 +81,7 @@ const CharacterBlock = (props: Character) => {
     return (
         <Col lg={4}>
             <div className="character">
-                <Link to={"/character/" + props.id}>
+                <Link to={"/material/character/" + props.id}>
                     <img src={props.urlAvatar} alt=""/>
                     <div className="title">{props.title}</div>
                     <div className="nickname">{props.nickname}</div>

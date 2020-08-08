@@ -1,4 +1,4 @@
-import {Comment, Ticket, TicketStatus, TicketType, Account} from '../../common/entity/types'
+import {CommentTicket, Ticket, TicketStatus, TicketType, Account} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -21,7 +21,7 @@ class Mapper {
     }
 
     // Создать комментарий на тикет
-    insertComment = (comment: Comment) => {
+    insertComment = (comment: CommentTicket) => {
         const sql = `INSERT INTO comment (text, id_account, id_ticket)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idAccount, comment.idTicket]).then(([r]: any) => {
@@ -87,7 +87,7 @@ class Mapper {
         from comment c
                  join account a on c.id_account = a.id
         where c.id_ticket = ?`
-        return this.pool.query(sql, [id]).then(([r]: [Comment[]]) => {
+        return this.pool.query(sql, [id]).then(([r]: [CommentTicket[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

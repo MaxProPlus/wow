@@ -1,5 +1,5 @@
-import {Comment} from "../../../server/src/common/entity/types"
-import Api from "./basicApi";
+import {CommentTicket} from "../../../server/src/common/entity/types"
+import Api from "./basicApi"
 
 class CharacterApi extends Api {
 
@@ -19,7 +19,7 @@ class CharacterApi extends Api {
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
-            return r.results
+            return r.results[0]
         })
     }
 
@@ -33,8 +33,18 @@ class CharacterApi extends Api {
         })
     }
 
+    // Редактирование персонажа
+    update(id: string, c: FormData) {
+        const url = `/api/characters/${id}`
+        return this.putForm(url, c).then(r => {
+            if (r.status !== 'OK')
+                return Promise.reject(r.errorMessage)
+            return r.results[0]
+        })
+    }
+
     // Создать комментарий к персонажу
-    addComment(comment: Comment) {
+    addComment(comment: CommentTicket) {
         const url = '/api/tickets/comments'
         return this.post(url, comment).then(r => {
             if (r.status !== 'OK')

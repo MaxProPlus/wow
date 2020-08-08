@@ -11,17 +11,17 @@ import SignUp from "pages/singUp/SignUp"
 import UserApi from "api/userApi"
 import UserContext from "utils/userContext"
 import {Account} from "../../../server/src/common/entity/types"
-import TypesOfTicket from "../pages/typesOfTicket/TypesOfTicket";
-import TicketsByType from "../pages/ticketsByType/TicketsByType";
-import TicketCreate from "../pages/ticketCreate/TicketCreate";
-import TicketPage from "../pages/ticket/TicketPage";
-import HeaderTop from "../components/headerTop/HeaderTop";
-import AdminDashboard from "../pages/admin/dashboard/AdminDashboard";
-import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins";
-import CharacterCreate from "../pages/characterCreate/CharacterCreate";
-import CharacterPage from "../pages/character/Character";
-import Material from "../pages/material/Material";
-import CharacterList from "../pages/characterList/CharacterList";
+import TypesOfTicket from "../pages/typesOfTicket/TypesOfTicket"
+import TicketsByType from "../pages/ticketsByType/TicketsByType"
+import TicketCreate from "../pages/ticketCreate/TicketCreate"
+import TicketPage from "../pages/ticket/TicketPage"
+import HeaderTop from "../components/headerTop/HeaderTop"
+import AdminDashboard from "../pages/admin/dashboard/AdminDashboard"
+import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins"
+import CharacterCreate from "../pages/characterCreate/CharacterCreate"
+import CharacterPage from "../pages/character/Character"
+import CharacterList from "../pages/characterList/CharacterList"
+import CharacterEdit from "../pages/characterEdit/CharacterEdit"
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -143,12 +143,14 @@ class App extends React.Component<{}, IState> {
                                                component={TicketCreate}/>{/*создание тикета*/}
                                         <Route path="/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
-                                        <Route exact path="/material" component={Material}/>
-                                        <Route exact path="/character" component={CharacterList}/>
-                                        <Route exact path="/character/create"
+                                        <Route exact path="/material/character" component={CharacterList}/>
+                                        <Route exact path="/material/character/create"
                                                render={(props) => (
                                                    <CharacterCreate {...props} scrollTop={this.scrollTop}/>)}/>
-                                        <Route path="/character/:id" component={CharacterPage}/>
+                                        <Route path="/material/character/edit/:id"
+                                               render={(props) => (
+                                                   <CharacterEdit {...props} scrollTop={this.scrollTop}/>)}/>
+                                        <Route path="/material/character/:id" component={CharacterPage}/>
 
                                         <Route exact path="/admin" component={AdminDashboard}/>
                                         <Route path="/admin/list" component={ListOfAdmins}/>

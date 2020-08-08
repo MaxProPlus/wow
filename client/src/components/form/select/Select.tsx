@@ -1,5 +1,5 @@
 import React from "react"
-import Form from "../Form";
+import Form from "../Form"
 
 const Select = ({label, value, id, onChange, children}: any) => {
     return (

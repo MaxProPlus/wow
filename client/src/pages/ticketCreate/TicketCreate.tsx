@@ -90,7 +90,7 @@ class TicketCreate extends React.Component<any, IState> {
             return
         }
         this.ticketApi.create(ticket).then(r => {
-            history.push('/ticket/' + r)
+            history.push('/help/ticket/' + r)
         }, err => {
             this.setState({
                 error: err

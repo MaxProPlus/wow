@@ -51,10 +51,10 @@ class TypesOfTicket extends React.Component<any, IState> {
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
                 <div className="page-ticket-type-list">
-                    <Button><Link to="/ticket/create">Создать новый запрос</Link></Button><br/>
+                    <Button><Link to="/help/ticket/create">Создать новый запрос</Link></Button><br/>
                     <ul>
                         {this.state.list.map((tt) =>
-                            (<li key={tt.id}><Link to={"/ticket/type/" + tt.id}>
+                            (<li key={tt.id}><Link to={"/help/ticket/type/" + tt.id}>
                                 <div className="title">{tt.title}</div>
                                 <div className="description">{tt.description}</div>
                             </Link></li>)

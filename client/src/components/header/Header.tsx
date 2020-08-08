@@ -3,7 +3,7 @@ import {Link} from "react-router-dom"
 import './Header.scss'
 import logo from './logo.png'
 import Accordion from "../accordion/Accordion"
-import history from "../../utils/history";
+import history from "../../utils/history"
 
 type IProps = {
     showMenu: boolean
@@ -15,17 +15,34 @@ type S = {
     showStart: boolean
     showMaterial: boolean
     showHelp: boolean
+    path: string
 }
 
 class Header extends Component<IProps, S> {
+    private removeListen: any
+
     constructor(props: any) {
         super(props)
         this.state = {
             showStart: false,
             showMaterial: false,
             showHelp: false,
+            path: history.location.pathname,
         }
     }
+
+    componentDidMount() {
+        this.removeListen = history.listen(location => {
+            this.setState({
+                path: location.pathname
+            })
+        })
+    }
+
+    componentWillUnmount() {
+        this.removeListen()
+    }
+
 
     toggleStart = () => {
         this.setState((state: S) => {
@@ -54,69 +71,72 @@ class Header extends Component<IProps, S> {
 
     }
 
-    handleClick = () => {
-
-    }
-
     render() {
-        console.log(history.location.pathname)
         return (
             <header ref={this.props.innerRef}
                     className={this.props.showMenu ? "fc header show" : "fc header"}>
                 <div className="header-inner">
                     <Link onClick={this.props.hideMenu} className="fc logo" to="/"><img src={logo}
                                                                                         alt="Equilibrium"/></Link>
-                    <div className={`header-item${history.location.pathname.includes('/start') ? ' item-active' : ''}`}
+                    <div className={`header-item${this.state.path.includes('/start') ? ' item-active' : ''}`}
                          onClick={this.toggleStart}>
                         Начать игру
                     </div>
                     <Accordion isActive={this.state.showStart}>
                         <div onClick={this.props.hideMenu} className="header-sub">
-                            <Link className={`header-item sub-item${history.location.pathname.includes('/reg') ? ' item-active' : ''}`} to="/reg">Регистрация</Link>
-                            <Link className={`header-item sub-item${history.location.pathname.includes('/rule') ? ' item-active' : ''}`} to="/rule">Правила</Link>
-                            <Link className={`header-item sub-item${history.location.pathname.includes('/how') ? ' item-active' : ''}`} to="/how">Как играть?</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/reg') ? ' item-active' : ''}`}
+                                to="/reg">Регистрация</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/rule') ? ' item-active' : ''}`}
+                                to="/rule">Правила</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/how') ? ' item-active' : ''}`}
+                                to="/how">Как играть?</Link>
                         </div>
                     </Accordion>
 
                     <Link onClick={this.props.hideMenu}
-                          className={`header-item${history.location.pathname.includes('/news') ? ' item-active' : ''}`}
+                          className={`header-item${this.state.path.includes('/news') ? ' item-active' : ''}`}
                           to="/news">Новости</Link>
 
                     <div
-                        className={`header-item${history.location.pathname.includes('/material') ? ' item-active' : ''}`}
+                        className={`header-item${this.state.path.includes('/material') ? ' item-active' : ''}`}
                         onClick={this.toggleMaterial}>
                         Материалы
                     </div>
                     <Accordion isActive={this.state.showMaterial}>
                         <div onClick={this.props.hideMenu} className="header-sub">
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/character') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/character') ? ' item-active' : ''}`}
                                 to="/material/character">Персонажи</Link>
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/guild') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/guild') ? ' item-active' : ''}`}
                                 to="/material/guild">Гильдии</Link>
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/story') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/story') ? ' item-active' : ''}`}
                                 to="/material/story">Сюжет</Link>
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/report') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/report') ? ' item-active' : ''}`}
                                 to="/material/report">Отчеты</Link>
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/guid') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/guid') ? ' item-active' : ''}`}
                                 to="/material/guid">Гайды</Link>
                             <Link
-                                className={`header-item sub-item${history.location.pathname.includes('/forum') ? ' item-active' : ''}`}
+                                className={`header-item sub-item${this.state.path.includes('/forum') ? ' item-active' : ''}`}
                                 to="/material/forum">Форум</Link>
                         </div>
                     </Accordion>
 
-                    <div className={`header-item${history.location.pathname.includes('/help') ? ' item-active' : ''}`}
+                    <div className={`header-item${this.state.path.includes('/help') ? ' item-active' : ''}`}
                          onClick={this.toggleHelp}>
                         Помощь
                     </div>
                     <Accordion isActive={this.state.showHelp}>
                         <div onClick={this.props.hideMenu} className="header-sub">
-                            <Link className="header-item sub-item" to="/ticket/type/list">Обратная связь</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/ticket') ? ' item-active' : ''}`}
+                                to="/help/ticket/type">Обратная связь</Link>
                         </div>
                     </Accordion>
 

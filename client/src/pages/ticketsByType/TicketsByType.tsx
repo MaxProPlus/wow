@@ -99,7 +99,7 @@ class TicketsByType extends React.Component<any, IState> {
                     <ul>
                         <h2>{this.state.type.title}</h2>
                         {this.state.data.map((t) =>
-                            <li key={t.id}><Link to={"/ticket/" + t.id}>
+                            <li key={t.id}><Link to={"/help/ticket/" + t.id}>
                                 <div className="title">{t.title}</div>
                                 <div className="description">Статус: {ticketStatusToString(t.status)}</div>
                             </Link></li>)}

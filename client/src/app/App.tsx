@@ -135,13 +135,13 @@ class App extends React.Component<{}, IState> {
                                         <Route path="/signup" component={SignUp}/>
                                         <Route path="/profile/:id" component={Profile}/>
                                         <Route path="/setting" component={Setting}/>
-                                        <Route exact path="/ticket/type/list"
+                                        <Route exact path="/help/ticket/type"
                                                component={TypesOfTicket}/>{/*категории тикетов*/}
-                                        <Route path="/ticket/type/:id"
+                                        <Route path="/help/ticket/type/:id"
                                                component={TicketsByType}/> {/*тикеты конкретной категории*/}
-                                        <Route exact path="/ticket/create"
+                                        <Route exact path="/help/ticket/create"
                                                component={TicketCreate}/>{/*создание тикета*/}
-                                        <Route path="/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
+                                        <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
                                         <Route exact path="/material/character" component={CharacterList}/>
                                         <Route exact path="/material/character/create"

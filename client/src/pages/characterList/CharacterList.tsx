@@ -66,11 +66,14 @@ class CharacterList extends Component<any, IState> {
                 <Row>
                     <Col><Link to="/material/character/create"><Button>Создать персонажа</Button></Link></Col>
                 </Row>
-                <Row>
-                    {this.state.list.map(el =>
-                        (<CharacterBlock key={el.id} {...el}/>)
-                    )}
-                </Row>
+                {this.state.list.length > 0 ?
+                    <Row>
+                        {this.state.list.map(el =>
+                            (<CharacterBlock key={el.id} {...el}/>)
+                        )}
+                    </Row>
+                :
+                'Нет перонажей'}
                 {more}
             </div>
         )

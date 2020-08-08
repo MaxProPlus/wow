@@ -1,4 +1,4 @@
-import {CommentTicket} from "../../../server/src/common/entity/types"
+import {CommentCharacter} from "../../../server/src/common/entity/types"
 import Api from "./basicApi"
 
 class CharacterApi extends Api {
@@ -19,7 +19,7 @@ class CharacterApi extends Api {
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
-            return r.results[0]
+            return r.results
         })
     }
 
@@ -44,8 +44,8 @@ class CharacterApi extends Api {
     }
 
     // Создать комментарий к персонажу
-    addComment(comment: CommentTicket) {
-        const url = '/api/tickets/comments'
+    addComment(comment: CommentCharacter) {
+        const url = '/api/characters/comments'
         return this.post(url, comment).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -54,8 +54,8 @@ class CharacterApi extends Api {
     }
 
     // Получить комментарии к персонажу
-    getComments(idTicket: string) {
-        const url = '/api/tickets/' + idTicket + '/comments'
+    getComments(idCharacter: string) {
+        const url = '/api/characters/' + idCharacter + '/comments'
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)

@@ -160,7 +160,7 @@ class Mapper {
     }
 
     // Создать комментарий к персонажу
-    insertComment = (comment: CommentCharacter) => {
+    insertComment = (comment: CommentCharacter): Promise<number> => {
         const sql = `INSERT INTO character_comment (text, id_account, id_character)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idAccount, comment.idCharacter]).then(([r]: any) => {

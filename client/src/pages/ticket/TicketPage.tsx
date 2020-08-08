@@ -102,6 +102,11 @@ class TicketPage extends React.Component<any, IState> {
 
     }
 
+    handleSendComment = (comment: CommentTicket) => {
+        comment.idTicket = this.state.ticket.id
+        return this.ticketApi.addComment(comment)
+    }
+
     handleStatus = (e: any) => {
         const status = parseInt(e.target.value)
         this.setState({
@@ -142,8 +147,7 @@ class TicketPage extends React.Component<any, IState> {
                                                                        {...c}/>)}
                     </div>
                     {(this.state.ticket.status !== TicketStatus.CLOSE && !this.state.errorMessage) &&
-                    <CommentForm onCommentUpdate={this.updateComment}
-                                 idTicket={this.state.ticket.id}/>}
+                    <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
                 </div>
             </div>
         )

@@ -68,8 +68,13 @@ class CharacterController {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        return this.characterModel.getById(id).then(([c]) => {
-            if (false) {
+        let idAccount = 0
+        try {
+            idAccount = await this.auth.checkAuth(req.cookies.token)
+        } catch (err) {
+        }
+        return this.characterModel.getById(id).then(([character, comments]) => {
+            if (!!character.closed && idAccount !== character.idAccount) {
                 return res.json({
                     status: 'ERROR_RIGHT',
                     errorMessage: 'Нет прав для просмотра',
@@ -77,7 +82,7 @@ class CharacterController {
             }
             return res.json({
                 status: 'OK',
-                results: [c],
+                results: [character, comments],
             })
         }, (err:string) => {
             return res.json({
@@ -150,24 +155,6 @@ class CharacterController {
 
     // Удалить персонажа
     remove = async (req: Request, res: Response) => {
-        const idTicket = parseInt(req.params.idTicket)
-        if (isNaN(idTicket)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
-        }
-        return this.characterModel.getComments(idTicket).then((r) => {
-            return res.json({
-                status: 'OK',
-                results: r,
-            })
-        }, (err:any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
     }
 
     // Создать комментарий к персонажу
@@ -188,7 +175,7 @@ class CharacterController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.characterModel.createComment(c).then((r: any) => {
+        return this.characterModel.createComment(c).then((r: number) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -203,14 +190,14 @@ class CharacterController {
 
     // Получить комментарии к персонажу
     getComments = async (req: Request, res: Response) => {
-        const idTicket = parseInt(req.params.idTicket)
-        if (isNaN(idTicket)) {
+        const idCharacter = parseInt(req.params.idCharacter)
+        if (isNaN(idCharacter)) {
             return res.json({
                 status: 'INVALID_PARSE',
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        return this.characterModel.getComments(idTicket).then((r) => {
+        return this.characterModel.getComments(idCharacter).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -225,24 +212,6 @@ class CharacterController {
 
     // Удалить комментарий
     removeComment = async (req: Request, res: Response) => {
-        const idTicket = parseInt(req.params.idTicket)
-        if (isNaN(idTicket)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
-        }
-        return this.characterModel.getComments(idTicket).then((r) => {
-            return res.json({
-                status: 'OK',
-                results: r,
-            })
-        }, (err:any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
     }
 }
 

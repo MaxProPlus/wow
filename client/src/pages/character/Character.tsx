@@ -4,6 +4,7 @@ import {
     activeToString,
     Character,
     characterStatusToString,
+    CommentCharacter,
     sexToString
 } from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
@@ -12,13 +13,15 @@ import AlertDanger from "../../components/alert-danger/AlertDanger"
 import './Character.scss'
 import Button from "../../components/button/Button"
 import {Link} from "react-router-dom"
-import CommentForm from "../../components/commentFrom/CommentForm";
+import CommentForm from "../../components/commentFrom/CommentForm"
+import Comment from "../../components/comment/Comment"
 
 type IState = {
     isLoaded: boolean
     errorMessage: string
     id: string
     character: Character
+    comments: CommentCharacter[]
 }
 
 class CharacterPage extends React.Component<any, IState> {
@@ -32,6 +35,7 @@ class CharacterPage extends React.Component<any, IState> {
             errorMessage: '',
             id: props.match.params.id,
             character: new Character(),
+            comments: [],
         }
     }
 
@@ -42,7 +46,8 @@ class CharacterPage extends React.Component<any, IState> {
     updateData = () => {
         this.characterApi.getById(this.state.id).then(r => {
             this.setState({
-                character: r
+                character: r[0],
+                comments: r[1],
             })
         }, err => {
             this.setState({
@@ -55,6 +60,31 @@ class CharacterPage extends React.Component<any, IState> {
         })
     }
 
+    updateComment = () => {
+        this.setState({
+            isLoaded: false,
+        })
+        this.characterApi.getComments(this.state.id).then(r => {
+            this.setState({
+                comments: r,
+            })
+        }, err => {
+            this.setState({
+                errorMessage: err,
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true,
+            })
+        })
+
+    }
+
+    handleSendComment = (comment: CommentCharacter) => {
+        comment.idCharacter = this.state.character.id
+        return this.characterApi.addComment(comment)
+    }
+
     render() {
         return (
             <div>
@@ -62,7 +92,8 @@ class CharacterPage extends React.Component<any, IState> {
                 <div className="page-character">
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     {this.context.user.id === this.state.character.idAccount &&
-                    <Link to={`/material/character/edit/${this.state.id}`}><Button>Редактировать персонажа</Button></Link>}
+                    <Link to={`/material/character/edit/${this.state.id}`}><Button>Редактировать
+                        персонажа</Button></Link>}
                     <div className="title">{this.state.character.title}</div>
                     <div className="nickname">{this.state.character.nickname}</div>
                     <div className="info">
@@ -122,7 +153,13 @@ class CharacterPage extends React.Component<any, IState> {
                         {this.state.character.description}
                     </div>
 
-                    {/*<CommentForm></CommentForm>*/}
+                    <div className="comments">
+                        {this.state.comments.map((c) =>
+                            <Comment key={c.id} {...c}/>
+                        )}
+                    </div>
+                    {(!this.state.character.comment && !this.state.errorMessage) &&
+                    <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
 
                 </div>
             </div>

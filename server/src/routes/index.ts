@@ -33,8 +33,8 @@ router.get('/characters', characterController.getAll)
 router.get('/characters/:id', characterController.getById)
 router.put('/characters/:id', characterController.update)
 // router.delete('/characters', characterController.remove)
-// router.post('/characters/comments', characterController.createComment)
-// router.get('/characters/:id/comments', characterController.getComments)
+router.post('/characters/comments', characterController.createComment)
+router.get('/characters/:idCharacter/comments', characterController.getComments)
 // router.delete('/characters/:idCharacter/comments/:idComment', characterController.removeComment)
 
 export default router

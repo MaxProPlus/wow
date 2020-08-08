@@ -1,11 +1,11 @@
 import React from "react"
 import './Comment.scss'
 import {Link} from "react-router-dom"
-import {CommentTicket as CommentType} from "../../../../server/src/common/entity/types"
+import {Comment as CommentType} from "../../../../server/src/common/entity/types"
 import AvatarImg from "../avatar-img/AvatarImg"
 
 type propsTypes = CommentType & {
-    onClickRemove: any
+    onClickRemove?: any
 }
 
 export default function Comment(props: propsTypes) {

@@ -102,7 +102,7 @@ class CharacterEdit extends React.Component<any, IState> {
     updateData = () => {
         this.characterApi.getById(this.state.id).then(r => {
             delete r.id
-            this.setState(r)
+            this.setState(r[0])
         }, err => {
             this.setState({
                 errorMessage: err

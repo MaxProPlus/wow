@@ -22,11 +22,11 @@ class CharacterModel {
     }
 
     // Получить персонажа по id
-    getById = (id: number): Promise<[Character]> => {
+    getById = (id: number): Promise<[Character, CommentCharacter]> => {
         const p = []
         p.push(this.mapper.selectById(id))
-        // p.push(this.getComments(id))
-        return Promise.all(p) as Promise<[Character]>
+        p.push(this.getComments(id))
+        return Promise.all(p) as Promise<[Character, CommentCharacter]>
     }
 
     // Получить всех персонажей
@@ -65,13 +65,17 @@ class CharacterModel {
 
     // Создать комментарий к персонажу
     createComment = async (comment: CommentCharacter) => {
+        const c = await this.mapper.selectById(comment.idCharacter)
+        if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
+            return Promise.reject('Комментирование запрещено')
+        }
         return this.mapper.insertComment(comment)
     }
 
     // Получить комментарии к персонажу
     getComments = async (id: number) => {
         const comments = await this.mapper.selectCommentsByIdCharacter(id)
-        comments.forEach((c: CommentTicket) => {
+        comments.forEach((c: CommentCharacter) => {
             if (!c.authorUrlAvatar) {
                 c.authorUrlAvatar = defaultAvatar
             }

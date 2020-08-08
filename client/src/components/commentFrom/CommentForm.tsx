@@ -5,28 +5,26 @@ import AvatarImg from "../../components/avatar-img/AvatarImg"
 import Button from "../../components/button/Button"
 import Input from "../../components/input/Input"
 import Spinner from "../../components/spinner/Spinner"
-import TicketApi from "../../api/ticketApi"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Validator from "../../../../server/src/common/validator"
-import {CommentTicket} from "../../../../server/src/common/entity/types"
+import {Comment} from "../../../../server/src/common/entity/types"
 
-type propsTypes = {
-    idTicket: number
+type P = {
     onCommentUpdate: any
+    onSendComment: any
 }
 
-type stateTypes = {
+type S = {
     isLoaded: boolean
     comment: string
     errorMessage: string,
 }
 
-class CommentForm extends Component<propsTypes, stateTypes> {
+class CommentForm extends Component<P, S> {
     static contextType = userContext;
-    private ticketApi = new TicketApi();
     private validator = new Validator();
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: true,
@@ -37,9 +35,8 @@ class CommentForm extends Component<propsTypes, stateTypes> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        let comment = new CommentTicket()
+        let comment = new Comment()
         comment.text = this.state.comment
-        comment.idTicket = this.props.idTicket
         const {ok, err} = this.validator.validateComment(comment)
         if (!ok) {
             this.setState({
@@ -51,9 +48,9 @@ class CommentForm extends Component<propsTypes, stateTypes> {
             isLoaded: false,
             errorMessage: '',
         })
-        this.ticketApi.addComment(comment).then(() => {
+        this.props.onSendComment(comment).then(() => {
             this.props.onCommentUpdate()
-        }, err => {
+        }, (err: string) => {
             this.setState({
                 errorMessage: err
             })
@@ -63,14 +60,14 @@ class CommentForm extends Component<propsTypes, stateTypes> {
                 comment: '',
             })
         })
-    };
+    }
 
     handleChange = (e: any) => {
         this.setState({
             errorMessage: '',
             comment: e.target.value,
         })
-    };
+    }
 
     render() {
         return (

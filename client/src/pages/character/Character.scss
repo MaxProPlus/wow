@@ -1,4 +1,8 @@
 .page-character {
+
+  .character-avatar {
+    width: 100%;
+  }
   > .title, > .nickname {
     text-align: center;
     font-size: 2rem;
@@ -15,12 +19,6 @@
     > .info-left {
       flex-basis: 40%;
       padding-right: .8rem;
-
-      img {
-        height: 400px;
-        min-width: auto;
-        max-width: 300px;
-      }
     }
 
     > .info-right {

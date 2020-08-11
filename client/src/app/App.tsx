@@ -2,6 +2,7 @@ import React from 'react'
 import {Route, Router, Switch} from "react-router-dom"
 import history from "utils/history"
 import './App.scss'
+import './common.scss'
 import Header from "components/header/Header"
 import Profile from "pages/profile/Profile"
 import Home from "pages/home/Home"
@@ -18,10 +19,12 @@ import TicketPage from "../pages/ticket/TicketPage"
 import HeaderTop from "../components/headerTop/HeaderTop"
 import AdminDashboard from "../pages/admin/dashboard/AdminDashboard"
 import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins"
-import CharacterCreate from "../pages/characterCreate/CharacterCreate"
+import CharacterCreate from "../pages/character/CharacterCreate"
 import CharacterPage from "../pages/character/Character"
-import CharacterList from "../pages/characterList/CharacterList"
-import CharacterEdit from "../pages/characterEdit/CharacterEdit"
+import CharacterList from "../pages/character/CharacterList"
+import CharacterEdit from "../pages/character/CharacterEdit"
+import GuildCreate from "../pages/guild/Create"
+import GuildList from "../pages/guild/List"
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -151,6 +154,15 @@ class App extends React.Component<{}, IState> {
                                                render={(props) => (
                                                    <CharacterEdit {...props} scrollTop={this.scrollTop}/>)}/>
                                         <Route path="/material/character/:id" component={CharacterPage}/>
+
+                                        <Route exact path="/material/guild" component={GuildList}/>
+                                        <Route exact path="/material/guild/create"
+                                               render={(props) => (
+                                                   <GuildCreate {...props} scrollTop={this.scrollTop}/>)}/>
+                                        {/*<Route path="/material/guild/edit/:id"*/}
+                                        {/*       render={(props) => (*/}
+                                        {/*           <GuildEdit {...props} scrollTop={this.scrollTop}/>)}/>*/}
+                                        {/*<Route path="/material/guild/:id" component={GuildShow}/>*/}
 
                                         <Route exact path="/admin" component={AdminDashboard}/>
                                         <Route path="/admin/list" component={ListOfAdmins}/>

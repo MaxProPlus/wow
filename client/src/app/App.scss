@@ -67,7 +67,7 @@ img {
   .container-inner {
     background-color: rgba(255, 255, 255, 0.85);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-    padding: .375rem .75rem;
+    padding: .375rem 15px;
     min-height: 100%;
 
     > .page {
@@ -75,64 +75,6 @@ img {
     }
   }
 }
-
-
-.fc {
-  display: flex;
-  justify-content: center;
-}
-
-.fsb {
-  display: flex;
-  justify-content: space-between;
-}
-
-//.form-sign {
-//  margin: 4rem auto 0;
-//  max-width: 430px;
-//  width: 100%;
-//
-//  > .title {
-//    margin-bottom: 2rem;
-//    font-size: 1.5rem;
-//    font-weight: 700;
-//  }
-//
-//  > .form-group {
-//    margin-bottom: .8rem;
-//
-//    > label {
-//      display: inline-block;
-//      line-height: 1.5;
-//      margin-bottom: 0.7rem;
-//      font-weight: 700;
-//    }
-//
-//    > input, > textarea, select {
-//      display: block;
-//      width: 100%;
-//      border: 1px solid #DBDBDB;
-//      padding: .375rem .75rem;
-//      font-size: 1rem;
-//    }
-//
-//    > button {
-//      background-color: #558cb7;
-//      color: #fff;
-//      width: 100%;
-//      padding: .375rem .75rem;
-//      border: 0;
-//      border-radius: 3px;
-//      font-size: 1rem;
-//      cursor: pointer;
-//      outline: none;
-//    }
-//  }
-//
-//  .suggest {
-//    margin-top: 5rem;
-//  }
-//}
 
 @media screen and (max-width: 960px) {
   .container {

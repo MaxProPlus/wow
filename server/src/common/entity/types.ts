@@ -1,5 +1,3 @@
-import {UploadedFile} from 'express-fileupload'
-
 export class Account {
     id = 0
     username = ''
@@ -27,11 +25,11 @@ export class Comment {
     authorUrlAvatar = ''
 }
 
-export class CommentTicket extends Comment{
+export class CommentTicket extends Comment {
     idTicket = 0
 }
 
-export class CommentCharacter extends Comment{
+export class CommentCharacter extends Comment {
     idCharacter = 0
 }
 
@@ -58,11 +56,15 @@ export enum TicketStatus {
     PROGRESS = 1, // в процессе
     CLOSE = 9, // закрыто
 }
+
 export function ticketStatusToString(status: number) {
     switch (status) {
-        case 0: return 'Открыт'
-        case 1: return 'Взято на обработку'
-        case 9: return 'Закрыт'
+        case 0:
+            return 'Открыт'
+        case 1:
+            return 'Взято на обработку'
+        case 9:
+            return 'Закрыт'
     }
 }
 
@@ -114,26 +116,91 @@ export enum CharacterActive {
     RECOUPED = 2, // персонаж отыгрывается
     COMPLETED = 3, // отыгрыш завершен
 }
+
 export function sexToString(sex: number) {
     switch (sex) {
-        case 0: return 'не указан'
-        case 1: return 'женский'
-        case 2: return 'мужской'
+        case 0:
+            return 'не указан'
+        case 1:
+            return 'женский'
+        case 2:
+            return 'мужской'
     }
 }
+
 export function characterStatusToString(status: number) {
     switch (status) {
-        case 0: return 'жив'
-        case 1: return 'мертв'
-        case 2: return 'пропал'
-        case 3: return 'нежить'
+        case 0:
+            return 'жив'
+        case 1:
+            return 'мертв'
+        case 2:
+            return 'пропал'
+        case 3:
+            return 'нежить'
     }
 }
+
 export function activeToString(active: number) {
     switch (active) {
-        case 0: return 'отыгрыш еще не начат'
-        case 1: return 'в поиске отыгрыша'
-        case 2: return 'персонаж отыгрывается'
-        case 3: return 'отыгрыш завершен'
+        case 0:
+            return 'отыгрыш еще не начат'
+        case 1:
+            return 'в поиске отыгрыша'
+        case 2:
+            return 'персонаж отыгрывается'
+        case 3:
+            return 'отыгрыш завершен'
+    }
+}
+
+// Гильдия
+export class Guild {
+    id = 0
+    idAccount = 0
+    urlAvatar = '' // avatar
+
+    // Главное
+    title = '' // Название гильдии
+    gameTitle = '' // Название гильдии в игре
+    ideology = '' // Мировозрение
+    shortDescription = '' // Анонс
+
+    // Основное
+    description = '' // Описание и история
+    rule = '' // Условия и правила
+    articles = [] // Список обсуждений/статей/логов
+    members = [] // Список участников
+    events = [] // Список событий
+
+    // Прочее
+    status = 0 // Статус. 0 - активна, 1 - скоро открытие, 2 - распущена
+    kit = 0 // Набор. 0 - открыт, 1 - закрыт, 2 - временно прекращен
+    style = '' // CSS-стили
+    coauthors = [] // Список соавторов
+    closed = 0 // Закрыть(материал будет доступен только автору)
+    hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
+    comment = 0 // Запретить комментарии
+}
+
+export function guildStatusToString(active: number) {
+    switch (active) {
+        case 0:
+            return 'активна'
+        case 1:
+            return 'скоро открытие'
+        case 2:
+            return 'распущена'
+    }
+}
+
+export function guildKitToString(active: number) {
+    switch (active) {
+        case 0:
+            return 'открыт'
+        case 1:
+            return 'закрыт'
+        case 2:
+            return 'временно прекращен'
     }
 }

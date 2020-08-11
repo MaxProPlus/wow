@@ -65,8 +65,8 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    max-width: 0px;
-    transition: max-width 0.3s ease;
+    max-width: 0;
+    transition: max-width 0.1s ease;
 
     > .header-inner {
       width: 98%;

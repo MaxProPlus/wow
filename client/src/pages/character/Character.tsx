@@ -15,6 +15,7 @@ import Button from "../../components/button/Button"
 import {Link} from "react-router-dom"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
+import {Col, Row} from "react-bootstrap"
 
 type IState = {
     isLoaded: boolean
@@ -96,59 +97,102 @@ class CharacterPage extends React.Component<any, IState> {
                         персонажа</Button></Link>}
                     <div className="title">{this.state.character.title}</div>
                     <div className="nickname">{this.state.character.nickname}</div>
-                    <div className="info">
-                        <div className="info-left">
-                            <div className="info-left-inner">
-                                <img src={this.state.character.urlAvatar} alt=""/>
-                            </div>
-                        </div>
-                        <div className="info-right">
-                            <div className="info-right-block">
-                                <span className="info-desc">Раса</span>
-                                <span className="info-value">{this.state.character.race}</span>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Пол</div>
-                                <div className="info-value">{sexToString(this.state.character.sex)}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Возраст</div>
-                                <div className="info-value">{this.state.character.age}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Нация</div>
-                                <div className="info-value">{this.state.character.nation}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Места</div>
-                                <div className="info-value">{this.state.character.territory}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Класс</div>
-                                <div className="info-value">{this.state.character.className}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Род занятий</div>
-                                <div className="info-value">{this.state.character.occupation}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Верования</div>
-                                <div className="info-value">{this.state.character.religion}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Знания языков</div>
-                                <div className="info-value">{this.state.character.languages}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Статус</div>
-                                <div className="info-value">{characterStatusToString(this.state.character.status)}</div>
-                            </div>
-                            <div className="info-right-block">
-                                <div className="info-desc">Активность</div>
-                                <div className="info-value">{activeToString(this.state.character.active)}</div>
-                            </div>
-                        </div>
-                    </div>
+                    <Row>
+                        <Col md={4}>
+                            <img className="character-avatar" src={this.state.character.urlAvatar} alt=""/>
+                        </Col>
+                        <Col md={8}>
+                            <Row>
+                                <Col xs={4}>
+                                    Раса
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.race}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Пол
+                                </Col>
+                                <Col xs={8}>
+                                    {sexToString(this.state.character.sex)}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Возраст
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.age}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Нация
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.nation}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Места
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.territory}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Класс
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.className}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Род
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.occupation}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Верования
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.religion}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Знания
+                                </Col>
+                                <Col xs={8}>
+                                    {this.state.character.languages}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Статус
+                                </Col>
+                                <Col xs={8}>
+                                    {characterStatusToString(this.state.character.status)}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    Активность
+                                </Col>
+                                <Col xs={8}>
+                                    {activeToString(this.state.character.active)}
+                                </Col>
+                            </Row>
+
+                        </Col>
+                    </Row>
                     <div className="description">
                         {this.state.character.description}
                     </div>

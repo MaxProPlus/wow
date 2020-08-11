@@ -1,4 +1,4 @@
-import {Account, Character, Comment, Ticket, UserPassword} from '../entity/types'
+import {Account, Character, Comment, Guild, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -170,6 +170,12 @@ class Validator {
 
         return err
     }
+
+    validateGuild(g: Guild) {
+        let err = ''
+        return err
+    }
+
 }
 
 export default Validator

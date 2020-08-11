@@ -87,6 +87,10 @@ class CharacterPage extends React.Component<any, IState> {
     }
 
     render() {
+        if (!!this.state.errorMessage) {
+            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+        }
+
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
@@ -202,7 +206,7 @@ class CharacterPage extends React.Component<any, IState> {
                             <Comment key={c.id} {...c}/>
                         )}
                     </div>
-                    {(!this.state.character.comment && !this.state.errorMessage) &&
+                    {(!this.state.character.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
 
                 </div>

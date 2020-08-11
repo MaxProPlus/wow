@@ -5,6 +5,7 @@ import {Link} from "react-router-dom"
 import './CharacterList.scss'
 import {Col, Row} from "react-bootstrap"
 import Button from "../../components/button/Button"
+import Spinner from "../../components/spinner/Spinner"
 
 type IState = {
     isLoaded: boolean,
@@ -63,6 +64,7 @@ class CharacterList extends Component<any, IState> {
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
             <div className="page-character-list">
+                {!this.state.isLoaded && <Spinner/>}
                 <Row>
                     <Col><Link to="/material/character/create"><Button>Создать персонажа</Button></Link></Col>
                 </Row>

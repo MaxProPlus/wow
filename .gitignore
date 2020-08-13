@@ -19,5 +19,7 @@
 !/server/upload/avatar/standart.png
 /server/upload/characterAvatar/*
 !/server/upload/characterAvatar/.gitkeep
+/server/upload/guildAvatar/*
+!/server/upload/guildAvatar/.gitkeep
 
 

@@ -17,6 +17,8 @@ import history from "../../utils/history"
 
 
 type S = {
+    id: string
+    idAccount: number
     isLoaded: boolean
     errorMessage: string
     avatar: any
@@ -44,7 +46,7 @@ type S = {
     comment: number // Запретить комментарии
 }
 
-class GuildCreate extends React.Component<any, S> {
+class GuildEdit extends React.Component<any, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private validator = new Validator()
@@ -52,6 +54,8 @@ class GuildCreate extends React.Component<any, S> {
     constructor(props: any) {
         super(props)
         this.state = {
+            id: props.match.params.id,
+            idAccount: 0,
             isLoaded: true,
             errorMessage: '',
             avatar: '',
@@ -72,6 +76,33 @@ class GuildCreate extends React.Component<any, S> {
             hidden: 0,
             comment: 0,
         }
+    }
+
+    componentDidMount() {
+        this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+            this.setState({
+                errorMessage: 'Нет прав'
+            })
+        }
+    }
+
+    updateData = () => {
+        this.guildApi.getById(this.state.id).then(r => {
+            delete r.id
+            this.setState(r[0])
+        }, err => {
+            this.setState({
+                errorMessage: err
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true
+            })
+        })
     }
 
     handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
@@ -142,7 +173,7 @@ class GuildCreate extends React.Component<any, S> {
         formData.append('closed', String(guild.closed))
         formData.append('hidden', String(guild.hidden))
         formData.append('comment', String(guild.comment))
-        this.guildApi.create(formData).then(r => {
+        this.guildApi.update(this.state.id, formData).then(r => {
             history.push('/material/guild/' + r)
         }, err => {
             this.setState({
@@ -260,4 +291,4 @@ class GuildCreate extends React.Component<any, S> {
     }
 }
 
-export default GuildCreate
+export default GuildEdit

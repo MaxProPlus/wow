@@ -1,9 +1,9 @@
 import Mapper from './mapper'
-import {Character, CommentCharacter, CommentTicket, Ticket, TicketStatus} from '../../common/entity/types'
-import {CharacterUpload, defaultAvatar} from '../../entity/types'
+import {CommentGuild, Guild} from '../../common/entity/types'
+import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
-class CharacterModel {
+class GuildModel {
     private mapper: Mapper
     private uploader = new Uploader()
 
@@ -11,9 +11,9 @@ class CharacterModel {
         this.mapper = new Mapper(connection.getPoolPromise())
     }
 
-    // Создать персонажа
-    create = async (c: CharacterUpload) => {
-        const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
+    // Создать гильдию
+    create = async (c: GuildUpload) => {
+        const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'guildAvatar')
         c.urlAvatar = infoAvatar.url
 
         const id = await this.mapper.insert(c)
@@ -21,15 +21,15 @@ class CharacterModel {
         return id
     }
 
-    // Получить персонажа по id
-    getById = (id: number): Promise<[Character, CommentCharacter]> => {
+    // Получить гильдию по id
+    getById = (id: number): Promise<[Guild, CommentGuild]> => {
         const p = []
         p.push(this.mapper.selectById(id))
-        p.push(this.getComments(id))
-        return Promise.all(p) as Promise<[Character, CommentCharacter]>
+        // p.push(this.getComments(id))
+        return Promise.all(p) as Promise<[Guild, CommentGuild]>
     }
 
-    // Получить всех персонажей
+    // Получить все гильдии
     getAll = async (limit: number, page: number) => {
         const p = []
         p.push(this.mapper.selectAll(limit, page))
@@ -41,8 +41,8 @@ class CharacterModel {
         }
     }
 
-    // Редактировать персонажа
-    update =async (c: CharacterUpload) => {
+    // Редактировать гильдию
+    update = async (c: GuildUpload) => {
         const oldCharacter = await this.mapper.selectById(c.id)
         if (oldCharacter.idAccount !== c.idAccount) {
             return Promise.reject('Нет прав')
@@ -51,35 +51,31 @@ class CharacterModel {
         let infoAvatar
         if (!!c.fileAvatar) {
             this.uploader.remove(oldCharacter.urlAvatar)
-            infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
+            infoAvatar = this.uploader.getInfo(c.fileAvatar, 'guildAvatar')
             c.urlAvatar = infoAvatar.url
             c.fileAvatar.mv(infoAvatar.path)
         }
         return this.mapper.update(c)
     }
 
-    // Удалить персонажа
-    remove = async (character: Character) => {
-        const oldCharacter = await this.mapper.selectById(character.id)
-        if (oldCharacter.idAccount !== character.idAccount) {
-            return Promise.reject('Нет прав')
-        }
-        return this.mapper.remove(character.id)
+    // Удалить гильдию
+    remove = (id: number) => {
+        return this.mapper.remove(id)
     }
 
-    // Создать комментарий к персонажу
-    createComment = async (comment: CommentCharacter) => {
-        const c = await this.mapper.selectById(comment.idCharacter)
+    // Создать комментарий
+    createComment = async (comment: CommentGuild) => {
+        const c = await this.mapper.selectById(comment.idGuild)
         if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
             return Promise.reject('Комментирование запрещено')
         }
         return this.mapper.insertComment(comment)
     }
 
-    // Получить комментарии к персонажу
+    // Получить комментарии
     getComments = async (id: number) => {
-        const comments = await this.mapper.selectCommentsByIdCharacter(id)
-        comments.forEach((c: CommentCharacter) => {
+        const comments = await this.mapper.selectCommentsByIdGuild(id)
+        comments.forEach((c: CommentGuild) => {
             if (!c.authorUrlAvatar) {
                 c.authorUrlAvatar = defaultAvatar
             }
@@ -93,4 +89,4 @@ class CharacterModel {
     }
 }
 
-export default CharacterModel
+export default GuildModel

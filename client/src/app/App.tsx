@@ -19,12 +19,14 @@ import TicketPage from "../pages/ticket/TicketPage"
 import HeaderTop from "../components/headerTop/HeaderTop"
 import AdminDashboard from "../pages/admin/dashboard/AdminDashboard"
 import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins"
-import CharacterCreate from "../pages/character/CharacterCreate"
-import CharacterPage from "../pages/character/Character"
-import CharacterList from "../pages/character/CharacterList"
-import CharacterEdit from "../pages/character/CharacterEdit"
 import GuildCreate from "../pages/guild/Create"
 import GuildList from "../pages/guild/List"
+import GuildPage from "../pages/guild/Show"
+import CharacterList from 'pages/character/List'
+import CharacterCreate from 'pages/character/Create'
+import CharacterEdit from "../pages/character/Edit"
+import CharacterPage from "../pages/character/Show"
+import GuildEdit from "../pages/guild/Edit";
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -159,10 +161,10 @@ class App extends React.Component<{}, IState> {
                                         <Route exact path="/material/guild/create"
                                                render={(props) => (
                                                    <GuildCreate {...props} scrollTop={this.scrollTop}/>)}/>
-                                        {/*<Route path="/material/guild/edit/:id"*/}
-                                        {/*       render={(props) => (*/}
-                                        {/*           <GuildEdit {...props} scrollTop={this.scrollTop}/>)}/>*/}
-                                        {/*<Route path="/material/guild/:id" component={GuildShow}/>*/}
+                                        <Route path="/material/guild/edit/:id"
+                                               render={(props) => (
+                                                   <GuildEdit {...props} scrollTop={this.scrollTop}/>)}/>
+                                        <Route path="/material/guild/:id" component={GuildPage}/>
 
                                         <Route exact path="/admin" component={AdminDashboard}/>
                                         <Route path="/admin/list" component={ListOfAdmins}/>

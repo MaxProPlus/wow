@@ -1,36 +1,36 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {Character, CommentCharacter} from '../common/entity/types'
+import {CommentGuild} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
-import CharacterModel from '../models/character/model'
-import {CharacterUpload} from '../entity/types'
+import {GuildUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
+import GuildModel from '../models/guild/model'
 
-class CharacterController {
-    private characterModel: CharacterModel
+class GuildController {
+    private guildModel: GuildModel
     private rightModel: RightModel
     private auth: Auth
     private validator = new Validator()
 
     constructor() {
-        this.characterModel = new CharacterModel(connection)
+        this.guildModel = new GuildModel(connection)
         this.rightModel = new RightModel(connection)
         this.auth = new Auth(connection)
     }
 
-    // Создать персонажа
+    // Создать гильдию
     create = async (req: Request, res: Response) => {
         if (!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar) {
             return res.json({
                 status: 'INVALID_FILE',
-                errorMessage: 'Не прикрепленна аватарка персонажа',
+                errorMessage: 'Не прикрепленна аватарка гильдии',
             })
         }
-        const c: CharacterUpload = req.body
+        const c: GuildUpload = req.body
         c.fileAvatar = req.files.fileAvatar as UploadedFile
-        let err = this.validator.validateCharacter(c)
+        let err = this.validator.validateGuild(c)
         err += this.validator.validateImg(c.fileAvatar)
         if (!!err) {
             return res.json({
@@ -46,7 +46,7 @@ class CharacterController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.characterModel.create(c).then((r: any) => {
+        return this.guildModel.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -59,7 +59,7 @@ class CharacterController {
         })
     }
 
-    // Получить персонажа по id
+    // Получить гильдию по id
     getById = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
@@ -73,8 +73,8 @@ class CharacterController {
             idAccount = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
         }
-        return this.characterModel.getById(id).then(([character, comments]) => {
-            if (!!character.closed && idAccount !== character.idAccount) {
+        return this.guildModel.getById(id).then(([guild, comments]) => {
+            if (!!guild.closed && idAccount !== guild.idAccount) {
                 return res.json({
                     status: 'ERROR_RIGHT',
                     errorMessage: 'Нет прав для просмотра',
@@ -82,7 +82,7 @@ class CharacterController {
             }
             return res.json({
                 status: 'OK',
-                results: [character, comments],
+                results: [guild, comments],
             })
         }, (err: string) => {
             return res.json({
@@ -92,11 +92,11 @@ class CharacterController {
         })
     }
 
-    // Получить всех персонажей
+    // Получить все гильдии
     getAll = async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
-        return this.characterModel.getAll(limit, page).then((r: any) => {
+        return this.guildModel.getAll(limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -109,7 +109,7 @@ class CharacterController {
         })
     }
 
-    // Редактировать персонажа
+    // Редактировать гильдию
     update = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
@@ -118,9 +118,9 @@ class CharacterController {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const c: CharacterUpload = req.body
+        const c: GuildUpload = req.body
         c.id = id
-        let err = this.validator.validateCharacter(c)
+        let err = this.validator.validateGuild(c)
 
         if (!(!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar)) {
             c.fileAvatar = req.files.fileAvatar as UploadedFile
@@ -140,7 +140,7 @@ class CharacterController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.characterModel.update(c).then((r: any) => {
+        return this.guildModel.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -153,39 +153,13 @@ class CharacterController {
         })
     }
 
-    // Удалить персонажа
+    // Удалить гильдию
     remove = async (req: Request, res: Response) => {
-        const c = new Character()
-        c.id = parseInt(req.params.id)
-        if (isNaN(c.id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
-        }
-        try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
-        } catch (err) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
-        return this.characterModel.remove(c).then(r=>{
-            return res.json({
-                status: 'OK',
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
     }
 
-    // Создать комментарий к персонажу
+    // Создать комментарий
     createComment = async (req: Request, res: Response) => {
-        const c: CommentCharacter = req.body
+        const c: CommentGuild = req.body
         try {
             c.idAccount = await this.auth.checkAuth(req.cookies.token)
             const {ok, err} = this.validator.validateComment(c)
@@ -201,7 +175,7 @@ class CharacterController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.characterModel.createComment(c).then((r: number) => {
+        return this.guildModel.createComment(c).then((r: number) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -214,7 +188,7 @@ class CharacterController {
         })
     }
 
-    // Получить комментарии к персонажу
+    // Получить комментарии
     getComments = async (req: Request, res: Response) => {
         const idCharacter = parseInt(req.params.idCharacter)
         if (isNaN(idCharacter)) {
@@ -223,7 +197,7 @@ class CharacterController {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        return this.characterModel.getComments(idCharacter).then((r) => {
+        return this.guildModel.getComments(idCharacter).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -241,4 +215,4 @@ class CharacterController {
     }
 }
 
-export default CharacterController
+export default GuildController

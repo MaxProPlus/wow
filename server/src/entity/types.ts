@@ -1,4 +1,4 @@
-import {Character} from '../common/entity/types'
+import {Character, Guild} from '../common/entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 export const defaultAvatar = '/avatar/standart.png'
@@ -20,5 +20,9 @@ export class UserAuth {
 }
 
 export class CharacterUpload extends Character {
+    fileAvatar!:UploadedFile
+}
+
+export class GuildUpload extends Guild {
     fileAvatar!:UploadedFile
 }

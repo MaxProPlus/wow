@@ -10,7 +10,7 @@ import {
 import UserContext from "../../utils/userContext"
 import CharacterApi from "../../api/CharacterApi"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import './Character.scss'
+import './Show.scss'
 import Button from "../../components/button/Button"
 import {Link} from "react-router-dom"
 import CommentForm from "../../components/commentFrom/CommentForm"

@@ -33,6 +33,10 @@ export class CommentCharacter extends Comment {
     idCharacter = 0
 }
 
+export class CommentGuild extends Comment {
+    idGuild = 0
+}
+
 export class Ticket {
     id = 0
     title = ''

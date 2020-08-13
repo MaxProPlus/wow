@@ -2,19 +2,19 @@ import React, {Component} from "react"
 import CharacterApi from "../../api/CharacterApi"
 import {Character} from "../../../../server/src/common/entity/types"
 import {Link} from "react-router-dom"
-import './CharacterList.scss'
+import './List.scss'
 import {Col, Row} from "react-bootstrap"
 import Button from "../../components/button/Button"
 import Spinner from "../../components/spinner/Spinner"
 
-type IState = {
+type S = {
     isLoaded: boolean,
     count: number,
     list: Character[],
 }
 
 
-class CharacterList extends Component<any, IState> {
+class CharacterList extends Component<any, S> {
     private characterApi = new CharacterApi()
     private page = 1
     private limit = 10
@@ -35,7 +35,7 @@ class CharacterList extends Component<any, IState> {
 
     updateData = () => {
         this.characterApi.getAll(this.limit, this.page).then(r => {
-            this.setState((prevState: IState) => {
+            this.setState((prevState: S) => {
                 return {
                     list: prevState.list.concat(r.data),
                     count: r.count,

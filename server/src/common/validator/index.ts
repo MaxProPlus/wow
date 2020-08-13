@@ -172,10 +172,25 @@ class Validator {
     }
 
     validateGuild(g: Guild) {
-        let err = ''
+        let err = '';
+        (['title', 'gameTitle', 'ideology', 'shortDescription'] as string[]).forEach(((el: string) => {
+            // @ts-ignore
+            g[el] = this.trim(g[el])
+        }))
+        if (g.title.length < 3 || g.title.length > 35) {
+            err += 'Длина имени гильдии должна быть от 3 до 35 символов.\n'
+        }
+        if (g.gameTitle.length < 3 || g.gameTitle.length > 35) {
+            err += 'Длина игрового имени гильдии должна быть от 3 до 35 символов.\n'
+        }
+        if (g.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
+        }
+        if (g.rule.length < 1) {
+            err += 'Правила обязательны для заполнения.\n'
+        }
         return err
     }
-
 }
 
 export default Validator

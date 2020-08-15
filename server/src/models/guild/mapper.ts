@@ -10,12 +10,12 @@ class Mapper {
 
     // Создать гильдию
     insert = (guild: Guild) => {
-        const {idAccount, urlAvatar, title, gameTitle,ideology, shortDescription, description, rule, status, kit, closed, hidden, comment, style} = guild
+        const {idAccount, urlAvatar, title, gameTitle,ideology, shortDescription, description, rule,more, status, kit, closed, hidden, comment, style} = guild
         const sql = `INSERT INTO guild (id_account, url_avatar, title, game_title, ideology, short_description,
-                                        description, rule,
+                                        description, rule,more,
                                         status, kit, closed, hidden, comment, style)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule,
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule,more,
             status, kit, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -35,6 +35,7 @@ class Mapper {
                             ideology,
                             description,
                             rule,
+                            more,
                             status,
                             kit,
                             closed,
@@ -66,6 +67,7 @@ class Mapper {
                             ideology,
                             description,
                             rule,
+                            more,
                             status,
                             kit,
                             closed,
@@ -103,7 +105,7 @@ class Mapper {
 
     // Редактировать гильдию
     update = (guild: Guild) => {
-        const {id, idAccount, urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, status, kit, closed, hidden, comment, style} = guild
+        const {id, idAccount, urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more,status, kit, closed, hidden, comment, style} = guild
         const sql = `UPDATE guild
                      SET url_avatar        = ?,
                          title             = ?,
@@ -112,6 +114,7 @@ class Mapper {
                          ideology          = ?,
                          description       = ?,
                          rule              = ?,
+                         more              = ?,
                          status            = ?,
                          kit               = ?,
                          closed            = ?,
@@ -120,7 +123,7 @@ class Mapper {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
+        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule,more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Не найдена гильдия')
             }

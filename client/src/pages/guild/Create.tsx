@@ -14,6 +14,7 @@ import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import GuildApi from "../../api/guildApi"
 import history from "../../utils/history"
+import icon from "../../components/edit/icon.svg"
 
 
 type S = {
@@ -30,6 +31,7 @@ type S = {
     // Основное
     description: string // Описание и история
     rule: string // Условия и правила
+    more: string // Дополнительные сведения
     articles: string // Список обсуждений/статей/логов
     members: string // Список участников
     events: string // Список событий
@@ -61,6 +63,7 @@ class GuildCreate extends React.Component<any, S> {
             shortDescription: '',
             description: '',
             rule: '',
+            more: '',
             articles: '',
             members: '',
             events: '',
@@ -136,6 +139,7 @@ class GuildCreate extends React.Component<any, S> {
         formData.append('shortDescription', guild.shortDescription)
         formData.append('description', guild.description)
         formData.append('rule', guild.rule)
+        formData.append('more', guild.more)
         formData.append('status', String(guild.status))
         formData.append('kit', String(guild.kit))
         formData.append('style', guild.style)
@@ -161,8 +165,11 @@ class GuildCreate extends React.Component<any, S> {
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="edit-page guild-create">
-                    <h1 className="title-page"><span className="title-page__icon"></span> Создание гильдии</h1>
+                <div className="page-edit guild-create">
+                    <div className="page-title">
+                        <h1>
+                            <img src={icon} alt=""/>Создание гильдии</h1>
+                    </div>
                     <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
@@ -171,7 +178,7 @@ class GuildCreate extends React.Component<any, S> {
                                             id="avatar" onChange={this.handleImageChange}/>
                             </Col>
                             <Col md={6}>
-                                <h2 className="edit-page__subtitle">Главное</h2>
+                                <h2 className="page-edit__subtitle">Главное</h2>
                                 <InputField id="title" label="Название гильдии" placeholder="Введите название гильдии"
                                             type="text" value={this.state.title}
                                             onChange={this.handleChange}/>
@@ -192,7 +199,7 @@ class GuildCreate extends React.Component<any, S> {
                         </Row>
                         <Row>
                             <Col md={6}>
-                                <h2 className="edit-page__subtitle">Основное</h2>
+                                <h2 className="page-edit__subtitle">Основное</h2>
                                 <Textarea id="description" label="Описание и история гильдии"
                                           placeholder="Опишите вашу гильдию и ее историю..."
                                           value={this.state.description}
@@ -200,6 +207,10 @@ class GuildCreate extends React.Component<any, S> {
                                 <Textarea id="rule" label="Условия и правила"
                                           placeholder="Напишите условия и правила для вашей гильдии..."
                                           value={this.state.rule}
+                                          onChange={this.handleChange}/>
+                                <Textarea id="more" label="Дополнительные сведения"
+                                          placeholder="Если есть то, что вы еще не написали, то это тут..."
+                                          value={this.state.more}
                                           onChange={this.handleChange}/>
                                 <Textarea id="articles" label="Список обсуждений/статей/логов"
                                           placeholder="Напишите список тут..."
@@ -215,7 +226,7 @@ class GuildCreate extends React.Component<any, S> {
                                           onChange={this.handleChange}/>
                             </Col>
                             <Col md={6}>
-                                <h2 className="edit-page__subtitle">Прочее</h2>
+                                <h2 className="page-edit__subtitle">Прочее</h2>
                                 <Select id="status" label="Статус" placeholder="Выберите статус гильдии"
                                         value={this.state.status}
                                         onChange={this.handleChangeSelect}>

@@ -1,11 +1,11 @@
 import React, {Component} from "react"
 import {Link} from "react-router-dom"
-import {Character, Guild} from "../../../../server/src/common/entity/types";
-import CharacterApi from "../../api/CharacterApi";
-import GuildApi from "../../api/guildApi";
-import Button from "../../components/button/Button";
-import {Col, Row} from "react-bootstrap";
+import {Guild} from "../../../../server/src/common/entity/types"
+import GuildApi from "../../api/guildApi"
+import Button from "../../components/button/Button"
+import {Col, Row} from "react-bootstrap"
 import './List.scss'
+import icon from "./guild.svg"
 
 type S = {
     isLoaded: boolean,
@@ -63,7 +63,13 @@ class GuildList extends Component<any, S> {
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
             <div className="guild-list">
-                <Link to="/material/guild/create">Создать гильдию</Link>
+                <div className="page-title">
+                    <h1>
+                        <img src={icon} alt=""/>Гильдии</h1>
+                    <div className="d-flex">
+                        <Link className="btn" to="/material/guild/create">Создать гильдию</Link>
+                    </div>
+                </div>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
@@ -71,7 +77,7 @@ class GuildList extends Component<any, S> {
                         )}
                     </Row>
                     :
-                    'Нет перонажей'}
+                    'Нет гильдий'}
                 {more}
             </div>
         )

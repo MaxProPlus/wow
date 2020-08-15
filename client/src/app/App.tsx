@@ -26,7 +26,7 @@ import CharacterList from 'pages/character/List'
 import CharacterCreate from 'pages/character/Create'
 import CharacterEdit from "../pages/character/Edit"
 import CharacterPage from "../pages/character/Show"
-import GuildEdit from "../pages/guild/Edit";
+import GuildEdit from "../pages/guild/Edit"
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -131,8 +131,8 @@ class App extends React.Component<{}, IState> {
                     <div className="app">
                         <Header ref={this.setWrapperRef} showMenu={this.state.showMenu} hideMenu={this.hideMenu}/>
                         <div ref={this.setContainerRef} className="my-container">
+                            <HeaderTop onClickMenu={this.handleToggleMenu}/>
                             <div className="container-inner">
-                                <HeaderTop onClickMenu={this.handleToggleMenu}/>
                                 <div className="page">
                                     <Switch>
                                         <Route exact path="/" component={Home}/>

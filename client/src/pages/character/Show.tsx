@@ -16,6 +16,7 @@ import {Link} from "react-router-dom"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
+import icon from "../guild/guild.svg"
 
 type IState = {
     isLoaded: boolean
@@ -95,12 +96,18 @@ class CharacterPage extends React.Component<any, IState> {
             <div>
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="page-character">
-                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                    {this.context.user.id === this.state.character.idAccount &&
-                    <Link to={`/material/character/edit/${this.state.id}`}><Button>Редактировать
-                        персонажа</Button></Link>}
-                    <div className="title">{this.state.character.title}</div>
-                    <div className="nickname">{this.state.character.nickname}</div>
+                    <div className="page-title">
+                        <h1>
+                            <img src={icon} alt=""/>
+                            Персонажи
+                        </h1>
+                        <div className="d-flex justify-content-end">
+                            {this.context.user.id === this.state.character.idAccount &&
+                            <Link className="btn" to={`/material/character/edit/${this.state.id}`}>Редактировать</Link>}
+                            {this.context.user.id === this.state.character.idAccount &&
+                            <Button>Удалить персонажа</Button>}
+                        </div>
+                    </div>
                     <Row>
                         <Col md={4}>
                             <img className="character-avatar" src={this.state.character.urlAvatar} alt=""/>

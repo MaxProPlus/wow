@@ -2,16 +2,18 @@
   display: inline-flex;
   align-items: center;
   padding: .375rem .75rem;
-  color: #fff;
-  font-size: 1rem;
+  color: #EBF1FF;
+  font-size: .875rem;
+  text-transform: uppercase;
+  font-weight: 400;
   word-wrap: normal;
-  background-color: #4e6471;
+  background-color: #5B87EF;
   border: none;
   outline: none;
-  border-radius: .25rem;
+  //border-radius: .25rem;
 
   &:focus, &:hover {
-    background-color: rgba(78, 100, 113, 0.9);
+    background-color: #4773db;
   }
 }
 

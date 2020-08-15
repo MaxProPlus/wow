@@ -19,6 +19,7 @@ import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
 import {Col, Row} from "react-bootstrap"
+import icon from "../../components/edit/icon.svg"
 
 type IState = {
     isLoaded: boolean
@@ -178,8 +179,11 @@ class CharacterCreate extends React.Component<any, IState> {
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="edit-page page-character-create">
-                    <h1 className="title-page"><span className="title-page__icon"></span>Создание персонажа</h1>
+                <div className="page-edit page-character-create">
+                    <div className="page-title">
+                        <h1>
+                            <img src={icon} alt=""/>Создание персонажа</h1>
+                    </div>
                     <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
@@ -192,7 +196,7 @@ class CharacterCreate extends React.Component<any, IState> {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <h2 className="edit-page__subtitle">Основное</h2>
+                                        <h2 className="page-edit__subtitle">Основное</h2>
                                         <Textarea label="Описание" id="description" value={this.state.description}
                                                   onChange={this.handleChange}
                                                   rows={10}/>
@@ -200,7 +204,7 @@ class CharacterCreate extends React.Component<any, IState> {
                                 </Row>
                             </Col>
                             <Col md={6}>
-                                <h2 className="edit-page__subtitle">Главное</h2>
+                                <h2 className="page-edit__subtitle">Главное</h2>
                                 <InputField id="title" label="Имя" placeholder="Введите имя персонажа" type="text"
                                             value={this.state.title}
                                             onChange={this.handleChange}/>
@@ -246,7 +250,7 @@ class CharacterCreate extends React.Component<any, IState> {
                         </Row>
                         <Row>
                             <Col>
-                                <h2 className="edit-page__subtitle">Прочее</h2>
+                                <h2 className="page-edit__subtitle">Прочее</h2>
                                 <Row className="un-board">
                                     <Col className="un-board" md={4}>
                                         <Select label="Пол" id="sex" value={this.state.sex}

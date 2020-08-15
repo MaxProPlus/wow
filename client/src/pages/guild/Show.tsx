@@ -1,12 +1,6 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {
-    activeToString,
-    Character,
-    characterStatusToString,
-    CommentCharacter, CommentGuild, Guild, guildKitToString, guildStatusToString,
-    sexToString
-} from "../../../../server/src/common/entity/types"
+import {CommentGuild, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
@@ -16,6 +10,7 @@ import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
 import GuildApi from "../../api/guildApi"
 import './Show.scss'
+import icon from './guild.svg'
 
 type S = {
     isLoaded: boolean
@@ -95,16 +90,18 @@ class GuildPage extends React.Component<any, S> {
             <div>
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="page-guild">
-                    <Row>
-                        <Col xs={6}>Гильдии</Col>
-                        <Col className="d-flex justify-content-end" xs={6}>
+                    <div className="page-title">
+                        <h1>
+                            <img src={icon} alt=""/>
+                            Гильдии
+                        </h1>
+                        <div className="d-flex justify-content-end">
                             {this.context.user.id === this.state.guild.idAccount &&
-                            <Link to={`/material/guild/edit/${this.state.id}`}><Button>Редактировать
-                                гильдию</Button></Link>}
+                            <Link className="btn" to={`/material/guild/edit/${this.state.id}`}>Редактировать</Link>}
                             {this.context.user.id === this.state.guild.idAccount &&
                             <Button>Удалить гильдию</Button>}
-                        </Col>
-                    </Row>
+                        </div>
+                    </div>
                     {/*<div className="nickname">{this.state.guild.nickname}</div>*/}
                     <Row>
                         <Col md={4}>
@@ -168,7 +165,7 @@ class GuildPage extends React.Component<any, S> {
                     <div className="block">
                         <div className="block__title">Дополнительные сведения</div>
                         <div className="block__description">
-                            ???
+                            {this.state.guild.more}
                         </div>
                     </div>
 

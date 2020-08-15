@@ -6,6 +6,7 @@ import './List.scss'
 import {Col, Row} from "react-bootstrap"
 import Button from "../../components/button/Button"
 import Spinner from "../../components/spinner/Spinner"
+import icon from "./char.svg"
 
 type S = {
     isLoaded: boolean,
@@ -63,11 +64,15 @@ class CharacterList extends Component<any, S> {
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
-            <div className="page-character-list">
+            <div className="character-list">
                 {!this.state.isLoaded && <Spinner/>}
-                <Row>
-                    <Col><Link to="/material/character/create"><Button>Создать персонажа</Button></Link></Col>
-                </Row>
+                <div className="page-title">
+                    <h1>
+                        <img src={icon} alt=""/>Персонажи</h1>
+                    <div className="d-flex">
+                        <Link className="btn" to="/material/character/create">Создать персонажа</Link>
+                    </div>
+                </div>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

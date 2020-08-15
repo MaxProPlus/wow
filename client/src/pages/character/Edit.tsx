@@ -18,6 +18,7 @@ import Textarea from "../../components/form/textarea/Textarea"
 import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
+import icon from "../../components/edit/icon.svg"
 
 type IState = {
     id: string
@@ -209,9 +210,12 @@ class CharacterEdit extends React.Component<any, IState> {
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="page-character-create">
+                <div className="character-create">
+                    <div className="page-title">
+                        <h1>
+                            <img src={icon} alt=""/>Редактирование персонажа</h1>
+                    </div>
                     <Form onSubmit={this.handleSubmit}>
-                        <div className="title">Редактирование персонажа</div>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <InputField label="Аватарка персонажа" type="file"
                                     id="avatar" onChange={this.handleImageChange}/>

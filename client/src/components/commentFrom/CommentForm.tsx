@@ -21,8 +21,8 @@ type S = {
 }
 
 class CommentForm extends Component<P, S> {
-    static contextType = userContext;
-    private validator = new Validator();
+    static contextType = userContext
+    private validator = new Validator()
 
     constructor(props: P) {
         super(props)

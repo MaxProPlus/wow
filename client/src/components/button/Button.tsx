@@ -1,12 +1,17 @@
 import React from "react"
-import './Button.scss'
+import styles from './Button.module.scss'
+import {Link} from "react-router-dom"
 
 export default (props: any) => {
-    let className = 'btn'
+    let className = styles.btn
     if (props.className) {
         className += ' ' + props.className
     }
+    const Tag: any = (!!props.to) ? Link : 'button'
+    if (props.to) {
+
+    }
     return (
-        <button {...props} className={className}>{props.children}</button>
+        <Tag {...props} className={className}>{props.children}</Tag>
     )
 }

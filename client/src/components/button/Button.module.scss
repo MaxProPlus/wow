@@ -10,7 +10,8 @@
   background-color: #5B87EF;
   border: none;
   outline: none;
-  //border-radius: .25rem;
+  cursor: pointer;
+  transition: background-color .3s ease;
 
   &:focus, &:hover {
     background-color: #4773db;

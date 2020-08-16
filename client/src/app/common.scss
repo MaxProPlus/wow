@@ -18,8 +18,10 @@
   border-bottom: 2px solid #21283B;
   padding-left: 30px;
   margin: 0 -15px;
+
   h1 {
     margin: 6px 0;
+
     img {
       display: inline;
       min-width: auto;
@@ -33,18 +35,22 @@
 
 .page-edit {
   .page-edit__subtitle {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     margin-bottom: 15px;
   }
-  >.form {
+
+  > .form {
     .un-board {
       border: 0 !important;
     }
+
     .row {
       border-bottom: 2px solid #21283B;
     }
-    >.row {
+
+    > .row {
       border-bottom: 2px solid #21283B;
+
       &:last-child {
         border-bottom: none;
       }
@@ -55,18 +61,21 @@
 @media (min-width: 768px) {
 
   .page-edit {
-    >.form {
-      >.row {
-        >div {
+    > .form {
+      > .row {
+        > div {
           border-right: 2px solid #21283B;
         }
       }
+
       .row {
         &:last-child {
           border-bottom: none;
         }
-        >div {
+
+        > div {
           border-right: 2px solid #21283B;
+
           &:last-child {
             border-right: none;
           }

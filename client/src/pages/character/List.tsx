@@ -2,11 +2,11 @@ import React, {Component} from "react"
 import CharacterApi from "../../api/CharacterApi"
 import {Character} from "../../../../server/src/common/entity/types"
 import {Link} from "react-router-dom"
-import './List.scss'
 import {Col, Row} from "react-bootstrap"
 import Button from "../../components/button/Button"
 import Spinner from "../../components/spinner/Spinner"
-import icon from "./char.svg"
+import icon from "./img/char.svg"
+import styles from "./List.module.scss"
 
 type S = {
     isLoaded: boolean,
@@ -66,11 +66,11 @@ class CharacterList extends Component<any, S> {
         return (
             <div className="character-list">
                 {!this.state.isLoaded && <Spinner/>}
-                <div className="page-title">
+                <div className={`page-title ${styles.list}`}>
                     <h1>
                         <img src={icon} alt=""/>Персонажи</h1>
                     <div className="d-flex">
-                        <Link className="btn" to="/material/character/create">Создать персонажа</Link>
+                        <Button to="/material/character/create">Создать персонажа</Button>
                     </div>
                 </div>
                 {this.state.list.length > 0 ?
@@ -79,8 +79,8 @@ class CharacterList extends Component<any, S> {
                             (<CharacterBlock key={el.id} {...el}/>)
                         )}
                     </Row>
-                :
-                'Нет перонажей'}
+                    :
+                    'Нет перонажей'}
                 {more}
             </div>
         )
@@ -89,14 +89,22 @@ class CharacterList extends Component<any, S> {
 
 const CharacterBlock = (props: Character) => {
     return (
-        <Col lg={4}>
-            <div className="character">
-                <Link to={"/material/character/" + props.id}>
-                    <img src={props.urlAvatar} alt=""/>
-                    <div className="title">{props.title}</div>
-                    <div className="nickname">{props.nickname}</div>
-                </Link>
-            </div>
+        // <Col lg={4}>
+        //     <div className="character">
+        //         <Link to={"/material/character/" + props.id}>
+        //             <img src={props.urlAvatar} alt=""/>
+        //             <div className="title">{props.title}</div>
+        //             <div className="nickname">{props.nickname}</div>
+        //         </Link>
+        //     </div>
+        // </Col>
+        <Col className={styles.blockCharacter} lg={3}>
+            <Link to={"/material/character/" + props.id}>
+                <img src={props.urlAvatar} alt=""/>
+                <div className={styles.block__background}/>
+                <div className={styles.blockCharacter__title}>{props.title}</div>
+                <div className={styles.blockCharacter__gameTitle}>{props.nickname}</div>
+            </Link>
         </Col>
     )
 }

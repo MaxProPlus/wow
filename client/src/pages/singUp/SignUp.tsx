@@ -20,9 +20,9 @@ type stateTypes = {
 }
 
 class SignUp extends Component<{}, stateTypes> {
-    static contextType = UserContext;
-    validator = new Validator();
-    userApi = new UserApi();
+    static contextType = UserContext
+    validator = new Validator()
+    userApi = new UserApi()
 
     constructor(props: any) {
         super(props)
@@ -58,14 +58,14 @@ class SignUp extends Component<{}, stateTypes> {
                 errorMessage: err,
             })
         })
-    };
+    }
     handleChange = (e: any) => {
         // @ts-ignore
         this.setState({
             errorMessage: '',
             [e.target.name]: e.target.value,
         })
-    };
+    }
 
     render() {
         return (

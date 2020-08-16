@@ -40,7 +40,7 @@ class Mapper {
         where id_ticket_type = ?`
         return this.pool.query(sql, [id]).then(([r]: any) => {
             if (!r.length) {
-                return Promise.reject('Не найден тикет')
+                return Promise.reject('Тикет не найден')
             }
             return Promise.resolve(r[0].count)
         }, (err: any) => {
@@ -67,7 +67,7 @@ class Mapper {
         where t.id = ?`
         return this.pool.query(sql, [id]).then(([r]: [Account[]]) => {
             if (!r.length) {
-                return Promise.reject('Не найден тикет')
+                return Promise.reject('Тикет не найден')
             }
             return Promise.resolve(r[0])
         }, (err: any) => {
@@ -102,7 +102,7 @@ class Mapper {
             where t.id = ?`
         return this.pool.query(sql, [idType]).then(([r]: [TicketType[]]) => {
             if (!r.length) {
-                return Promise.reject('Не найдена категория заявок')
+                return Promise.reject('Категория заявок не найдена')
             }
             return Promise.resolve(r[0])
         }, (err: any) => {
@@ -117,7 +117,7 @@ class Mapper {
             from ticket_type t`
         return this.pool.query(sql).then(([r]: [TicketType[]]) => {
             if (!r.length) {
-                return Promise.reject('Не найдены категории заявок')
+                return Promise.reject('Категории заявок не найдены')
             }
             return Promise.resolve(r)
         }, (err: any) => {
@@ -143,7 +143,7 @@ class Mapper {
         const sql = `UPDATE ticket SET status=? where id = ?`
         return this.pool.query(sql, [status, idTicket]).then((r:any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найден тикет')
+                return Promise.reject('Тикет не найден')
             }
             return Promise.resolve(idTicket)
         }, (err: any) => {

@@ -25,7 +25,7 @@ class GuildModel {
     getById = (id: number): Promise<[Guild, CommentGuild]> => {
         const p = []
         p.push(this.mapper.selectById(id))
-        // p.push(this.getComments(id))
+        p.push(this.getComments(id))
         return Promise.all(p) as Promise<[Guild, CommentGuild]>
     }
 

@@ -69,6 +69,8 @@ export function ticketStatusToString(status: number) {
             return 'Взято на обработку'
         case 9:
             return 'Закрыт'
+        default:
+            return ''
     }
 }
 
@@ -87,7 +89,9 @@ export class Character {
     occupation = '' // Род занятий
     religion = '' // Верования
     languages = '' // Знание языков
-    description = '' // Описание???
+    description = '' // Внешность и характер
+    history = '' // История персонажа
+    more = '' // Дополнительные сведения
     chars = [] // Список друзей
 
     // Прочее
@@ -121,7 +125,7 @@ export enum CharacterActive {
     COMPLETED = 3, // отыгрыш завершен
 }
 
-export function sexToString(sex: number) {
+export function sexToString(sex: number): string {
     switch (sex) {
         case 0:
             return 'не указан'
@@ -129,6 +133,8 @@ export function sexToString(sex: number) {
             return 'женский'
         case 2:
             return 'мужской'
+        default:
+            return ''
     }
 }
 
@@ -142,6 +148,8 @@ export function characterStatusToString(status: number) {
             return 'пропал'
         case 3:
             return 'нежить'
+        default:
+            return ''
     }
 }
 
@@ -155,6 +163,8 @@ export function activeToString(active: number) {
             return 'персонаж отыгрывается'
         case 3:
             return 'отыгрыш завершен'
+        default:
+            return ''
     }
 }
 
@@ -196,6 +206,8 @@ export function guildStatusToString(active: number) {
             return 'скоро открытие'
         case 2:
             return 'распущена'
+        default:
+            return ''
     }
 }
 
@@ -207,5 +219,7 @@ export function guildKitToString(active: number) {
             return 'закрыт'
         case 2:
             return 'временно прекращен'
+        default:
+            return ''
     }
 }

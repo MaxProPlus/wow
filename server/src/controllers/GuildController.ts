@@ -25,7 +25,7 @@ class GuildController {
         if (!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar) {
             return res.json({
                 status: 'INVALID_FILE',
-                errorMessage: 'Не прикрепленна аватарка гильдии',
+                errorMessage: 'Аватарка гильдии не прикреплена',
             })
         }
         const c: GuildUpload = req.body

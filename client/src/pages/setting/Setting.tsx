@@ -29,9 +29,9 @@ type IState = {
 }
 
 class Setting extends React.Component<any, IState> {
-    static contextType = userContext;
-    userApi = new UserApi();
-    validator = new Validator();
+    static contextType = userContext
+    userApi = new UserApi()
+    validator = new Validator()
 
     constructor(props: any) {
         super(props)

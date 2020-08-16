@@ -10,7 +10,7 @@ type IProps = {
 }
 
 class HeaderTop extends Component<IProps, {}> {
-    static contextType = UserContext;
+    static contextType = UserContext
 
     render() {
         const $profile = (this.context.user.id <= 0) ? (

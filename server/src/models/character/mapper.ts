@@ -13,11 +13,12 @@ class Mapper {
         const sql = `INSERT INTO \`character\` (id_account, url_avatar, title, nickname, short_description, race,
                                                 nation,
                                                 territory, age, class, occupation, religion, languages, description,
+                                                history, more,
                                                 sex,
                                                 status, active, closed, hidden, comment, style)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [character.idAccount, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
-            character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.sex,
+            character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
             character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -43,6 +44,8 @@ class Mapper {
                             religion,
                             languages,
                             description,
+                            history,
+                            more,
                             sex,
                             status,
                             active,
@@ -55,7 +58,7 @@ class Mapper {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
             if (!r.length) {
-                return Promise.reject('Не найден персонаж')
+                return Promise.reject('Персонаж не найден')
             }
             return Promise.resolve(r[0])
         }, (err: any) => {
@@ -81,6 +84,8 @@ class Mapper {
                             religion,
                             languages,
                             description,
+                            history,
+                            more,
                             sex,
                             status,
                             active,
@@ -134,6 +139,8 @@ class Mapper {
                          religion          = ?,
                          languages         = ?,
                          description       = ?,
+                         history           = ?,
+                         more              = ?,
                          sex               = ?,
                          status            = ?,
                          active            = ?,
@@ -144,10 +151,10 @@ class Mapper {
                      where id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
-            character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.sex,
+            character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
             character.status, character.active, character.closed, character.hidden, character.comment, character.style, character.id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найден персонаж')
+                return Promise.reject('Персонаж не найден')
             }
             return Promise.resolve(character.id)
         }, (err: any) => {
@@ -163,7 +170,7 @@ class Mapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найден персонаж')
+                return Promise.reject('Персонаж не найден')
             }
             return Promise.resolve(id)
         }, (err: any) => {
@@ -211,7 +218,7 @@ class Mapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найден комментарий')
+                return Promise.reject('Комментай не найден')
             }
             return Promise.resolve(id)
         }, (err: any) => {

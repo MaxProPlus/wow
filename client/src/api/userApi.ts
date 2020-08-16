@@ -36,7 +36,7 @@ class UserApi extends Api {
                 return Promise.reject(r.errorMessage)
             return Promise.resolve()
         })
-    };
+    }
 
     getGeneral() {
         const url = '/api/users/general'

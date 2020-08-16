@@ -4,13 +4,20 @@ import {CommentGuild, Guild, guildKitToString, guildStatusToString} from "../../
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Link} from "react-router-dom"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
 import GuildApi from "../../api/guildApi"
 import './Show.scss'
-import icon from './guild.svg'
+import InfoBlockInline from "../../components/show/InfoBlockInline"
+import InfoBlock from "../../components/show/InfoBlock"
+import Title from "../../components/show/Title"
+import SubTitle from "../../components/show/SubTitle"
+import Motto from "../../components/show/Motto"
+import icon from './img/guild.svg'
+import ideologyIcon from './img/ideology.svg'
+import kitIcon from './img/kit.svg'
+import statusIcon from './img/status.svg'
 
 type S = {
     isLoaded: boolean
@@ -43,7 +50,7 @@ class GuildPage extends React.Component<any, S> {
         this.guildApi.getById(this.state.id).then(r => {
             this.setState({
                 guild: r[0],
-                // comments: r[1],
+                comments: r[1],
             })
         }, err => {
             this.setState({
@@ -97,78 +104,30 @@ class GuildPage extends React.Component<any, S> {
                         </h1>
                         <div className="d-flex justify-content-end">
                             {this.context.user.id === this.state.guild.idAccount &&
-                            <Link className="btn" to={`/material/guild/edit/${this.state.id}`}>Редактировать</Link>}
+                            <Button to={`/material/guild/edit/${this.state.id}`}>Редактировать</Button>}
                             {this.context.user.id === this.state.guild.idAccount &&
                             <Button>Удалить гильдию</Button>}
                         </div>
                     </div>
-                    {/*<div className="nickname">{this.state.guild.nickname}</div>*/}
                     <Row>
                         <Col md={4}>
                             <img className="guild-avatar" src={this.state.guild.urlAvatar} alt=""/>
                         </Col>
                         <Col md={8}>
-                            <Row>
-                                <Col>
-                                    {this.state.guild.title}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    {this.state.guild.gameTitle}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    {this.state.guild.shortDescription}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    Мировоззрение
-                                </Col>
-                                <Col xs={8}>
-                                    {this.state.guild.ideology}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    Набор
-                                </Col>
-                                <Col xs={8}>
-                                    {guildKitToString(this.state.guild.kit)}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    Статус
-                                </Col>
-                                <Col xs={8}>
-                                    {guildStatusToString(this.state.guild.status)}
-                                </Col>
-                            </Row>
-
+                            <Title>{this.state.guild.title}</Title>
+                            <SubTitle>{this.state.guild.gameTitle}</SubTitle>
+                            <Motto>{this.state.guild.shortDescription}</Motto>
+                            <InfoBlockInline icon={ideologyIcon} title="Мировоззрение"
+                                             value={this.state.guild.ideology}/>
+                            <InfoBlockInline icon={kitIcon} title="Набор"
+                                             value={guildKitToString(this.state.guild.kit)}/>
+                            <InfoBlockInline icon={statusIcon} title="Статус"
+                                             value={guildStatusToString(this.state.guild.status)}/>
                         </Col>
                     </Row>
-                    <div className="block">
-                        <div className="block__title">Описание и история</div>
-                        <div className="block__description">
-                            {this.state.guild.description}
-                        </div>
-                    </div>
-                    <div className="block">
-                        <div className="block__title">Условия и правила</div>
-                        <div className="block__description">
-                            {this.state.guild.rule}
-                        </div>
-                    </div>
-                    <div className="block">
-                        <div className="block__title">Дополнительные сведения</div>
-                        <div className="block__description">
-                            {this.state.guild.more}
-                        </div>
-                    </div>
-
+                    <InfoBlock title="Описание и история" value={this.state.guild.description}/>
+                    <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
+                    <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
                     <div className="comments">
                         {this.state.comments.map((c) =>
                             <Comment key={c.id} {...c}/>

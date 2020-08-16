@@ -18,8 +18,8 @@ type stateTypes = {
 }
 
 class SignIn extends Component<any, stateTypes> {
-    static contextType = UserContext;
-    userApi = new UserApi();
+    static contextType = UserContext
+    userApi = new UserApi()
 
     constructor(props: any) {
         super(props)
@@ -61,7 +61,7 @@ class SignIn extends Component<any, stateTypes> {
             errorMessage: '',
             [e.target.id]: e.target.value,
         } as { [K in keyof stateTypes]: stateTypes[K] })
-    };
+    }
 
     render() {
         return (

@@ -9,7 +9,7 @@ type IState = {
 }
 
 class AdminDashboard extends React.Component<{}, IState> {
-    static contextType = UserContext;
+    static contextType = UserContext
 
     constructor(props: any) {
         super(props)

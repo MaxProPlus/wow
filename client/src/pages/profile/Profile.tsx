@@ -13,8 +13,8 @@ type stateTypes = {
 }
 
 class ProfilePage extends React.Component<any, stateTypes> {
-    static contextType = UserContext;
-    private userApi = new UserApi();
+    static contextType = UserContext
+    private userApi = new UserApi()
 
     constructor(props: any) {
         super(props)

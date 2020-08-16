@@ -22,7 +22,7 @@ type IState = {
 
 class TicketPage extends React.Component<any, IState> {
 
-    static contextType = UserContext;
+    static contextType = UserContext
     private ticketApi = new TicketApi()
 
     constructor(props: any) {

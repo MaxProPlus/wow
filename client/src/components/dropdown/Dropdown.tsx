@@ -11,9 +11,9 @@ type stateTypes = {
 }
 
 class Dropdown extends Component<{}, stateTypes> {
-    static contextType = UserContext;
-    userApi = new UserApi();
-    wrapperRef?: HTMLElement;
+    static contextType = UserContext
+    userApi = new UserApi()
+    wrapperRef?: HTMLElement
 
     constructor(props: any) {
         super(props)
@@ -34,28 +34,28 @@ class Dropdown extends Component<{}, stateTypes> {
         if (this.wrapperRef && !this.wrapperRef.contains(e.target)) {
             this.hideMenu()
         }
-    };
+    }
 
     toggleMenu = () => {
         this.setState((state: any) => {
             return {visible: !state.visible}
         })
-    };
+    }
 
     hideMenu = () => {
         this.setState({visible: false})
-    };
+    }
 
     setWrapperRef = (node: HTMLElement) => {
         this.wrapperRef = node
-    };
+    }
 
     logout = () => {
         this.userApi.logout().then(() => {
             this.context.updateLogin()
             history.push('/')
         })
-    };
+    }
 
     renderMenu = () => {
         return (<div className="dropdown">
@@ -64,7 +64,7 @@ class Dropdown extends Component<{}, stateTypes> {
                 <div className="item" onClick={this.logout}>Выйти</div>
             </div>
         )
-    };
+    }
 
     render() {
         const $menu = this.state.visible ? this.renderMenu() : null

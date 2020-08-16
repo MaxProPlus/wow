@@ -4,8 +4,8 @@ import {Guild} from "../../../../server/src/common/entity/types"
 import GuildApi from "../../api/guildApi"
 import Button from "../../components/button/Button"
 import {Col, Row} from "react-bootstrap"
-import './List.scss'
-import icon from "./guild.svg"
+import styles from './List.module.scss'
+import icon from "./img/guild.svg"
 
 type S = {
     isLoaded: boolean,
@@ -62,18 +62,18 @@ class GuildList extends Component<any, S> {
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
-            <div className="guild-list">
-                <div className="page-title">
+            <div>
+                <div className={`page-title ${styles.list}`}>
                     <h1>
                         <img src={icon} alt=""/>Гильдии</h1>
                     <div className="d-flex">
-                        <Link className="btn" to="/material/guild/create">Создать гильдию</Link>
+                        <Button to="/material/guild/create">Создать гильдию</Button>
                     </div>
                 </div>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
-                            (<GuildBlock key={el.id} {...el}/>)
+                            (<BlockGuild key={el.id} {...el}/>)
                         )}
                     </Row>
                     :
@@ -84,16 +84,15 @@ class GuildList extends Component<any, S> {
     }
 }
 
-const GuildBlock = (props: Guild) => {
+const BlockGuild = (props: Guild) => {
     return (
-        <Col lg={4}>
-            <div className="guild">
-                <Link to={"/material/guild/" + props.id}>
-                    <img src={props.urlAvatar} alt=""/>
-                    <div className="title">{props.title}</div>
-                    <div className="game-title">{props.gameTitle}</div>
-                </Link>
-            </div>
+        <Col className={styles.blockGuild} lg={4}>
+            <Link to={"/material/guild/" + props.id}>
+                <img src={props.urlAvatar} alt=""/>
+                <div className={styles.block__background}/>
+                <div className={styles.blockGuild__title}>{props.title}</div>
+                <div className={styles.blockGuild__gameTitle}>{props.gameTitle}</div>
+            </Link>
         </Col>
     )
 }

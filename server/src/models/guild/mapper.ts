@@ -47,7 +47,7 @@ class Mapper {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
             if (!r.length) {
-                return Promise.reject('Не найдена гильдия')
+                return Promise.reject('Гильдия не найдена')
             }
             return Promise.resolve(r[0])
         }, (err: any) => {
@@ -125,7 +125,7 @@ class Mapper {
                        and is_remove = 0`
         return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule,more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найдена гильдия')
+                return Promise.reject('Гильдия не найдена')
             }
             return Promise.resolve(guild.id)
         }, (err: any) => {
@@ -141,7 +141,7 @@ class Mapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найдена гильдия')
+                return Promise.reject('Гильдия не найдена')
             }
             return Promise.resolve(id)
         }, (err: any) => {
@@ -189,7 +189,7 @@ class Mapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Не найден комментарий')
+                return Promise.reject('Комментарий не найден')
             }
             return Promise.resolve(id)
         }, (err: any) => {

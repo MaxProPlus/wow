@@ -11,11 +11,11 @@ type P = {
 const InfoBlockInline = ({icon, title, value}: P) => {
     return (
         <Row className={styles.block}>
-            <Col xs={4}>
-                <img src={icon} alt=""/>
-                {title}
+            <Col xs={5}>
+                <div className={styles.img}><img src={icon} alt=""/></div>
+                <span className="title">{title}</span>
             </Col>
-            <Col className={styles.value} xs={8}>
+            <Col className={styles.value} xs={7}>
                 {value}
             </Col>
         </Row>

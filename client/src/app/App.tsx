@@ -27,6 +27,10 @@ import CharacterCreate from 'pages/character/Create'
 import CharacterEdit from "../pages/character/Edit"
 import CharacterPage from "../pages/character/Show"
 import GuildEdit from "../pages/guild/Edit"
+import StoryList from "../pages/story/List"
+import StoryCreate from "../pages/story/Create"
+import StoryEdit from "../pages/story/Edit"
+import StoryPage from "../pages/story/Show"
 
 let getCookie = (name: string) => {
     let matches = document.cookie.match(new RegExp(
@@ -165,6 +169,15 @@ class App extends React.Component<{}, IState> {
                                                render={(props) => (
                                                    <GuildEdit {...props} scrollTop={this.scrollTop}/>)}/>
                                         <Route path="/material/guild/:id" component={GuildPage}/>
+
+                                        <Route exact path="/material/story" component={StoryList}/>
+                                        <Route exact path="/material/story/create"
+                                               render={(props) => (
+                                                   <StoryCreate {...props} scrollTop={this.scrollTop}/>)}/>
+                                        <Route path="/material/story/edit/:id"
+                                               render={(props) => (
+                                                   <StoryEdit {...props} scrollTop={this.scrollTop}/>)}/>
+                                        <Route path="/material/story/:id" component={StoryPage}/>
 
                                         <Route exact path="/admin" component={AdminDashboard}/>
                                         <Route path="/admin/list" component={ListOfAdmins}/>

@@ -1,35 +1,33 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {CommentGuild, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
+import {CommentStory, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
-import GuildApi from "../../api/guildApi"
-import './Show.scss'
 import InfoBlockInline from "../../components/show/InfoBlockInline"
 import InfoBlock from "../../components/show/InfoBlock"
 import Title from "../../components/show/Title"
-import SubTitle from "../../components/show/SubTitle"
 import Motto from "../../components/show/Motto"
-import icon from './img/guild.svg'
-import ideologyIcon from './img/ideology.svg'
-import kitIcon from './img/kit.svg'
+import icon from './img/icon.svg'
+import StoryApi from "../../api/storyApi"
+import dateIcon from './img/date.svg'
 import statusIcon from '../../img/status.svg'
+import styles from './Show.module.scss'
 
 type S = {
     isLoaded: boolean
     errorMessage: string
     id: string
-    guild: Guild
-    comments: CommentGuild[]
+    story: Story
+    comments: CommentStory[]
 }
 
-class GuildPage extends React.Component<any, S> {
+class StoryPage extends React.Component<any, S> {
     static contextType = UserContext
-    private guildApi = new GuildApi()
+    private storyApi = new StoryApi()
 
     constructor(props: any) {
         super(props)
@@ -37,7 +35,7 @@ class GuildPage extends React.Component<any, S> {
             isLoaded: false,
             errorMessage: '',
             id: props.match.params.id,
-            guild: new Guild(),
+            story: new Story(),
             comments: [],
         }
     }
@@ -47,9 +45,9 @@ class GuildPage extends React.Component<any, S> {
     }
 
     updateData = () => {
-        this.guildApi.getById(this.state.id).then(r => {
+        this.storyApi.getById(this.state.id).then(r => {
             this.setState({
-                guild: r[0],
+                story: r[0],
                 comments: r[1],
             })
         }, err => {
@@ -67,7 +65,7 @@ class GuildPage extends React.Component<any, S> {
         this.setState({
             isLoaded: false,
         })
-        this.guildApi.getComments(this.state.id).then(r => {
+        this.storyApi.getComments(this.state.id).then(r => {
             this.setState({
                 comments: r,
             })
@@ -83,9 +81,9 @@ class GuildPage extends React.Component<any, S> {
 
     }
 
-    handleSendComment = (comment: CommentGuild) => {
-        comment.idGuild = this.state.guild.id
-        return this.guildApi.addComment(comment)
+    handleSendComment = (comment: CommentStory) => {
+        comment.idStory = this.state.story.id
+        return this.storyApi.addComment(comment)
     }
 
     render() {
@@ -100,40 +98,37 @@ class GuildPage extends React.Component<any, S> {
                     <div className="page-title">
                         <h1>
                             <img src={icon} alt=""/>
-                            Гильдии
+                            Сюжеты
                         </h1>
                         <div className="d-flex justify-content-end">
-                            {this.context.user.id === this.state.guild.idAccount &&
-                            <Button to={`/material/guild/edit/${this.state.id}`}>Редактировать</Button>}
-                            {this.context.user.id === this.state.guild.idAccount &&
-                            <Button>Удалить гильдию</Button>}
+                            {this.context.user.id === this.state.story.idAccount &&
+                            <Button to={`/material/story/edit/${this.state.id}`}>Редактировать</Button>}
+                            {this.context.user.id === this.state.story.idAccount &&
+                            <Button>Удалить сюжет</Button>}
                         </div>
                     </div>
                     <Row>
                         <Col md={4}>
-                            <img className="guild-avatar" src={this.state.guild.urlAvatar} alt=""/>
+                            <img className={styles.avatar} src={this.state.story.urlAvatar} alt=""/>
                         </Col>
                         <Col md={8}>
-                            <Title>{this.state.guild.title}</Title>
-                            <SubTitle>{this.state.guild.gameTitle}</SubTitle>
-                            <Motto>{this.state.guild.shortDescription}</Motto>
-                            <InfoBlockInline icon={ideologyIcon} title="Мировоззрение"
-                                             value={this.state.guild.ideology}/>
-                            <InfoBlockInline icon={kitIcon} title="Набор"
-                                             value={guildKitToString(this.state.guild.kit)}/>
+                            <Title>{this.state.story.title}</Title>
+                            <Motto>{this.state.story.shortDescription}</Motto>
+                            <InfoBlockInline icon={dateIcon} title="Дата начала"
+                                             value={(new Date(this.state.story.dateStart)).toDateString()}/>
                             <InfoBlockInline icon={statusIcon} title="Статус"
-                                             value={guildStatusToString(this.state.guild.status)}/>
+                                             value={storyStatusToString(this.state.story.status)}/>
                         </Col>
                     </Row>
-                    <InfoBlock title="Описание и история" value={this.state.guild.description}/>
-                    <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
-                    <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
+                    <InfoBlock title="Сюжет" value={this.state.story.description}/>
+                    <InfoBlock title="Важное" value={this.state.story.important}/>
+                    <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
                     <div className="comments">
                         {this.state.comments.map((c) =>
                             <Comment key={c.id} {...c}/>
                         )}
                     </div>
-                    {(!this.state.guild.comment && this.context.user.id !== -1) &&
+                    {(!this.state.story.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
 
                 </div>
@@ -142,4 +137,4 @@ class GuildPage extends React.Component<any, S> {
     }
 }
 
-export default GuildPage
+export default StoryPage

@@ -3,6 +3,7 @@ import AccountController from '../controllers/AccountController'
 import TicketController from '../controllers/TicketController'
 import CharacterController from '../controllers/CharacterController'
 import GuildController from '../controllers/GuildController'
+import StoryController from '../controllers/StoryController'
 
 const router = Router()
 
@@ -10,6 +11,7 @@ const accountController = new AccountController()
 const ticketController = new TicketController()
 const characterController = new CharacterController()
 const guildController = new GuildController()
+const storyController = new StoryController()
 
 router.post('/users/general', accountController.updateGeneral)
 router.post('/users/avatar', accountController.updateAvatar)
@@ -50,5 +52,15 @@ router.put('/guilds/:id', guildController.update)
 router.post('/guilds/comments', guildController.createComment)
 router.get('/guilds/:idCharacter/comments', guildController.getComments)
 // router.delete('/guilds/:idCharacter/comments/:idComment', guildController.removeComment)
+
+// Сюжеты
+router.post('/stories', storyController.create)
+router.get('/stories', storyController.getAll)
+router.get('/stories/:id', storyController.getById)
+router.put('/stories/:id', storyController.update)
+// router.delete('/stories', storyController.remove)
+router.post('/stories/comments', storyController.createComment)
+router.get('/stories/:id/comments', storyController.getComments)
+// router.delete('/stories/:idCharacter/comments/:idComment', storyController.removeComment)
 
 export default router

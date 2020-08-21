@@ -4,10 +4,16 @@
   margin: 0 0 7px;
 
   img {
+    display: block;
     height: .875rem;
     min-width: auto;
-    margin: 0 7px -2px auto;
+    margin: 0 auto -2px;
   }
+}
+
+.img {
+  display: inline-block;
+  width: 20px;
 }
 
 .value {

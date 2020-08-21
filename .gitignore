@@ -21,5 +21,7 @@
 !/server/upload/characterAvatar/.gitkeep
 /server/upload/guildAvatar/*
 !/server/upload/guildAvatar/.gitkeep
+/server/upload/storyAvatar/*
+!/server/upload/storyAvatar/.gitkeep
 
 

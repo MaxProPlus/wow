@@ -15,6 +15,7 @@ import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
 import icon from "./img/char.svg"
+import raceIcon from './img/race.svg'
 import sexIcon from './img/sex.svg'
 import ageIcon from './img/age.svg'
 import nationIcon from './img/nation.svg'
@@ -130,13 +131,13 @@ class CharacterPage extends React.Component<any, IState> {
                             <Title>{this.state.character.title}</Title>
                             <SubTitle>{this.state.character.nickname}</SubTitle>
                             <Motto>{this.state.character.shortDescription}</Motto>
-                            <InfoBlockInline icon={""} title="Раса" value={this.state.character.race}/>
+                            <InfoBlockInline icon={raceIcon} title="Раса" value={this.state.character.race}/>
                             <InfoBlockInline icon={sexIcon} title="Пол" value={sexToString(this.state.character.sex)}/>
                             <InfoBlockInline icon={ageIcon} title="Возраст" value={this.state.character.age}/>
                             <InfoBlockInline icon={nationIcon} title="Нация" value={this.state.character.nation}/>
                             <InfoBlockInline icon={territoryIcon} title="Места" value={this.state.character.territory}/>
                             <InfoBlockInline icon={classIcon} title="Класс" value={this.state.character.className}/>
-                            <InfoBlockInline icon={occupationIcon} title="Род" value={this.state.character.occupation}/>
+                            <InfoBlockInline icon={occupationIcon} title="Род занятий" value={this.state.character.occupation}/>
                             <InfoBlockInline icon={religionIcon} title="Верования"
                                              value={this.state.character.religion}/>
                             <InfoBlockInline icon={languagesIcon} title="Знания"

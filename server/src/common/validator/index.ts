@@ -1,4 +1,4 @@
-import {Account, Character, Comment, Guild, Ticket, UserPassword} from '../entity/types'
+import {Account, Character, Comment, Guild, Story, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -188,6 +188,25 @@ class Validator {
         }
         if (g.rule.length < 1) {
             err += 'Правила обязательны для заполнения.\n'
+        }
+        return err
+    }
+
+    validateStory(g: Story) {
+        let err = '';
+        (['title', 'period', 'shortDescription'] as string[]).forEach(((el: string) => {
+            // @ts-ignore
+            g[el] = this.trim(g[el])
+        }))
+        console.log(g.dateStart)
+        if (!g.dateStart) {
+            g.dateStart = (new Date()).toISOString().substr(0, 10)
+        }
+        if (g.title.length < 3 || g.title.length > 35) {
+            err += 'Длина имени сюжета должна быть от 3 до 35 символов.\n'
+        }
+        if (g.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
         }
         return err
     }

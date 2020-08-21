@@ -37,6 +37,10 @@ export class CommentGuild extends Comment {
     idGuild = 0
 }
 
+export class CommentStory extends Comment {
+    idStory = 0
+}
+
 export class Ticket {
     id = 0
     title = ''
@@ -219,6 +223,51 @@ export function guildKitToString(active: number) {
             return 'закрыт'
         case 2:
             return 'временно прекращен'
+        default:
+            return ''
+    }
+}
+
+// Сюжет
+export class Story {
+    id = 0
+    idAccount = 0
+    urlAvatar = '' // avatar
+
+    // Главное
+    title = '' // Название гильдии
+    dateStart = '' // Дата начала
+    period = '' // Планируемый период отыгрыша
+    shortDescription = '' // Анонс
+
+    // Основное
+    description = '' // Описание сюжета
+    important = '' // Важная информация
+    more = '' // Дополнительные сведения
+    articles = [] // Список обсуждений/статей/логов
+    members = [] // Список персонажей-участников
+    guilds = [] // Список гильдий
+    events = [] // Список событий
+
+    // Прочее
+    status = 0 // Статус. 0 - еще не начат, 1 - активен, 2 - отложен, 3 - завершен
+    style = '' // CSS-стили
+    coauthors = [] // Список соавторов
+    closed = 0 // Закрыть(материал будет доступен только автору)
+    hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
+    comment = 0 // Запретить комментарии
+}
+
+export function storyStatusToString(status: number) {
+    switch (status) {
+        case 0:
+            return 'еще не начат'
+        case 1:
+            return 'активен'
+        case 2:
+            return 'отложен'
+        case 3:
+            return 'завершен'
         default:
             return ''
     }

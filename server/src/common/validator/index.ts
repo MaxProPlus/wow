@@ -208,6 +208,9 @@ class Validator {
         if (g.description.length < 1) {
             err += 'Описание обязательно для заполнения.\n'
         }
+        if (g.rule.length < 1) {
+            err += 'Условия и правила обязательно для заполнения.\n'
+        }
         return err
     }
 }

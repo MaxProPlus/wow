@@ -121,7 +121,7 @@ class StoryPage extends React.Component<any, S> {
                         </Col>
                     </Row>
                     <InfoBlock title="Сюжет" value={this.state.story.description}/>
-                    <InfoBlock title="Важное" value={this.state.story.important}/>
+                    <InfoBlock title="Условия и правила" value={this.state.story.rule}/>
                     <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
                     <div className="comments">
                         {this.state.comments.map((c) =>

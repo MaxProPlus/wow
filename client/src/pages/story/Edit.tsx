@@ -32,7 +32,7 @@ type S = {
 
     // Основное
     description: string // Описание и история
-    important: string // Важная информация
+    rule: string // Условия и правила
     more: string // Дополнительные сведения
     articles: string // Список обсуждений/статей/логов
     members: string // Список участников
@@ -66,7 +66,7 @@ class StoryEdit extends React.Component<any, S> {
             period: '',
             shortDescription: '',
             description: '',
-            important: '',
+            rule: '',
             more: '',
             articles: '',
             members: '',
@@ -169,7 +169,7 @@ class StoryEdit extends React.Component<any, S> {
         formData.append('period', story.period)
         formData.append('shortDescription', story.shortDescription)
         formData.append('description', story.description)
-        formData.append('important', story.important)
+        formData.append('rule', story.rule)
         formData.append('more', story.more)
         formData.append('status', String(story.status))
         formData.append('style', story.style)
@@ -233,9 +233,9 @@ class StoryEdit extends React.Component<any, S> {
                                           placeholder="Опишите ваш сюжет..."
                                           value={this.state.description}
                                           onChange={this.handleChange}/>
-                                <Textarea id="important" label="Важная информация"
+                                <Textarea id="rule" label="Условия и правила"
                                           placeholder="Введите важные детали или информацию в вашем сюжете..."
-                                          value={this.state.important}
+                                          value={this.state.rule}
                                           onChange={this.handleChange}/>
                                 <Textarea id="more" label="Дополнительные сведения"
                                           placeholder="Если есть то, что вы еще не написали, то это тут..."

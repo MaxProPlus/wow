@@ -10,13 +10,13 @@ class Mapper {
 
     // Создать сюжет
     insert = (story: Story) => {
-        const {idAccount, urlAvatar, title, dateStart, period, shortDescription, description, important, more, status, closed, hidden, comment, style} = story
+        const {idAccount, urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style} = story
         const sql = `INSERT INTO story (id_account, url_avatar, title, period, date_start, short_description,
-                                        description, important, more,
+                                        description, rule, more,
                                         status, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idAccount, urlAvatar, title, period, dateStart, shortDescription,
-            description, important, more, status, closed, hidden, comment, style]).then(([r]: any) => {
+            description, rule, more, status, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -34,7 +34,7 @@ class Mapper {
                             period,
                             short_description as shortDescription,
                             description,
-                            important,
+                            rule,
                             more,
                             status,
                             closed,
@@ -50,7 +50,7 @@ class Mapper {
             }
             console.log(r[0].dateStart)
             // @ts-ignore
-            r[0].dateStart.setMinutes(r[0].dateStart.getTimezoneOffset()*-1)
+            r[0].dateStart.setMinutes(r[0].dateStart.getTimezoneOffset() * -1)
             // @ts-ignore
             r[0].dateStart = r[0].dateStart.toISOString().substr(0, 10)
             return Promise.resolve(r[0])
@@ -70,7 +70,7 @@ class Mapper {
                             period,
                             short_description as shortDescription,
                             description,
-                            important,
+                            rule,
                             more,
                             status,
                             closed,
@@ -108,7 +108,7 @@ class Mapper {
 
     // Редактировать сюжет
     update = (story: Story) => {
-        const {id, urlAvatar, title, dateStart, period, shortDescription, description, important, more, status, closed, hidden, comment, style} = story
+        const {id, urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style} = story
         const sql = `UPDATE story
                      SET url_avatar        = ?,
                          title             = ?,
@@ -116,7 +116,7 @@ class Mapper {
                          period            = ?,
                          short_description = ?,
                          description       = ?,
-                         important         = ?,
+                         rule              = ?,
                          more              = ?,
                          status            = ?,
                          closed            = ?,
@@ -125,7 +125,7 @@ class Mapper {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, dateStart, period, shortDescription, description, important, more, status, closed, hidden, comment, style, id]).then((r: any) => {
+        return this.pool.query(sql, [urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Сюжет не найдена')
             }

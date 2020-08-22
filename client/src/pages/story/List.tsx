@@ -6,6 +6,7 @@ import {Col, Row} from "react-bootstrap"
 import styles from './List.module.scss'
 import icon from "./img/icon.svg"
 import StoryApi from "../../api/storyApi"
+import Spinner from "../../components/spinner/Spinner"
 
 type S = {
     isLoaded: boolean,
@@ -63,6 +64,7 @@ class StoryList extends Component<any, S> {
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
             <div>
+                {!this.state.isLoaded && <Spinner/>}
                 <div className={`page-title ${styles.list}`}>
                     <h1>
                         <img src={icon} alt=""/>Сюжеты</h1>

@@ -6,6 +6,7 @@ import Button from "../../components/button/Button"
 import {Col, Row} from "react-bootstrap"
 import styles from './List.module.scss'
 import icon from "./img/guild.svg"
+import Spinner from "../../components/spinner/Spinner"
 
 type S = {
     isLoaded: boolean,
@@ -63,6 +64,7 @@ class GuildList extends Component<any, S> {
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
             <div>
+                {!this.state.isLoaded && <Spinner/>}
                 <div className={`page-title ${styles.list}`}>
                     <h1>
                         <img src={icon} alt=""/>Гильдии</h1>

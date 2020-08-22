@@ -1,8 +1,10 @@
+@import '../../css/variables';
+
 .btn {
   display: inline-flex;
   align-items: center;
   padding: .375rem .75rem;
-  color: #EBF1FF;
+  color: $color1;
   font-size: .875rem;
   text-transform: uppercase;
   font-weight: 400;

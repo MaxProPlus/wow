@@ -1,3 +1,5 @@
+@import '../../css/variables';
+
 .form {
   > .title {
     margin-bottom: 2rem;
@@ -15,15 +17,15 @@
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #EBF1FF;
+  color: $color1;
   background-color: rgba(33, 40, 59, 0.35);
   background-clip: padding-box;
-  border: 1px solid #21283B;
+  border: 1px solid $border-color;
   //border-radius: .25rem;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 
   &::placeholder {
-    color: #A0A2A6;
+    color: $color2;
     //opacity: 1;
   }
 

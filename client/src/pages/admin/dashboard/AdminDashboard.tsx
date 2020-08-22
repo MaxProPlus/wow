@@ -4,11 +4,11 @@ import Spinner from "../../../components/spinner/Spinner"
 import UserContext from "../../../utils/userContext"
 import {Link} from "react-router-dom"
 
-type IState = {
+type S = {
     isLoaded: true
 }
 
-class AdminDashboard extends React.Component<{}, IState> {
+class AdminDashboard extends React.Component<{}, S> {
     static contextType = UserContext
 
     constructor(props: any) {

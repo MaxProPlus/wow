@@ -8,7 +8,7 @@ import './TicketsByType.scss'
 import Button from "../../components/button/Button"
 import UserContext from "../../utils/userContext"
 
-type IState = {
+type S = {
     isLoaded: boolean
     id: string
     type: TicketType,
@@ -16,7 +16,7 @@ type IState = {
     data: Ticket[],
 }
 
-class TicketsByType extends React.Component<any, IState> {
+class TicketsByType extends React.Component<any, S> {
     static contextType = UserContext
     private ticketApi = new TicketApi()
     private page = 1
@@ -33,7 +33,7 @@ class TicketsByType extends React.Component<any, IState> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: IState) {
+    static getDerivedStateFromProps(nextProps: any, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -46,7 +46,7 @@ class TicketsByType extends React.Component<any, IState> {
         return null
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<IState>) {
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
@@ -61,7 +61,7 @@ class TicketsByType extends React.Component<any, IState> {
 
     updateData = () => {
         this.ticketApi.getTicketsByType(this.state.id, this.limit, this.page).then(r => {
-            this.setState((prevState: IState) => {
+            this.setState((prevState: S) => {
                 return {
                     type: r.type,
                     data: prevState.data.concat(r.data),

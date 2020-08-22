@@ -25,14 +25,14 @@ import occupationIcon from './img/occupation.svg'
 import religionIcon from './img/religion.svg'
 import languagesIcon from './img/languages.svg'
 import statusIcon from './img/status.svg'
-import activeIcon from './img/active.svg'
+import activeIcon from '../../img/status.svg'
 import InfoBlockInline from "../../components/show/InfoBlockInline"
 import InfoBlock from "../../components/show/InfoBlock"
 import Title from "../../components/show/Title"
 import SubTitle from "../../components/show/SubTitle"
 import Motto from "../../components/show/Motto"
 
-type IState = {
+type S = {
     isLoaded: boolean
     errorMessage: string
     id: string
@@ -40,7 +40,7 @@ type IState = {
     comments: CommentCharacter[]
 }
 
-class CharacterPage extends React.Component<any, IState> {
+class CharacterPage extends React.Component<any, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
 
@@ -137,7 +137,8 @@ class CharacterPage extends React.Component<any, IState> {
                             <InfoBlockInline icon={nationIcon} title="Нация" value={this.state.character.nation}/>
                             <InfoBlockInline icon={territoryIcon} title="Места" value={this.state.character.territory}/>
                             <InfoBlockInline icon={classIcon} title="Класс" value={this.state.character.className}/>
-                            <InfoBlockInline icon={occupationIcon} title="Род занятий" value={this.state.character.occupation}/>
+                            <InfoBlockInline icon={occupationIcon} title="Род занятий"
+                                             value={this.state.character.occupation}/>
                             <InfoBlockInline icon={religionIcon} title="Верования"
                                              value={this.state.character.religion}/>
                             <InfoBlockInline icon={languagesIcon} title="Знания"

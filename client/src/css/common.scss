@@ -1,3 +1,5 @@
+@import 'variables';
+
 .fc {
   display: flex;
   justify-content: center;
@@ -15,7 +17,7 @@
   font-weight: 600;
   line-height: 1;
   text-transform: uppercase;
-  border-bottom: 2px solid #21283B;
+  border-bottom: 2px solid $border-color;
   padding-left: 30px;
   margin: 0 -15px;
 
@@ -45,11 +47,11 @@
     }
 
     .row {
-      border-bottom: 2px solid #21283B;
+      border-bottom: 2px solid $border-color;
     }
 
     > .row {
-      border-bottom: 2px solid #21283B;
+      border-bottom: 2px solid $border-color;
 
       &:last-child {
         border-bottom: none;
@@ -64,7 +66,7 @@
     > .form {
       > .row {
         > div {
-          border-right: 2px solid #21283B;
+          border-right: 2px solid $border-color;
         }
       }
 
@@ -74,7 +76,7 @@
         }
 
         > div {
-          border-right: 2px solid #21283B;
+          border-right: 2px solid $border-color;
 
           &:last-child {
             border-right: none;

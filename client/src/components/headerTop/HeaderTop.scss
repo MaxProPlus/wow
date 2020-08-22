@@ -1,6 +1,8 @@
+@import '../../css/variables';
+
 .header-top {
   background-color: rgba(195, 206, 212, 0.8);
-  color: #21283B;
+  color: $border-color;
   padding: .25rem 0;
 
   > .header-inner {

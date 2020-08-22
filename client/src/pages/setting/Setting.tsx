@@ -12,7 +12,7 @@ import Form from "../../components/form/Form"
 import Button from "../../components/button/Button"
 import './Setting.scss'
 
-type IState = {
+type S = {
     email: string,
     username: string,
     passwordAccept: string,
@@ -28,7 +28,7 @@ type IState = {
     isLoaded: boolean,
 }
 
-class Setting extends React.Component<any, IState> {
+class Setting extends React.Component<any, S> {
     static contextType = userContext
     userApi = new UserApi()
     validator = new Validator()
@@ -70,7 +70,7 @@ class Setting extends React.Component<any, IState> {
             errorSecure: '',
             errorPassword: '',
             [e.target.name]: e.target.value,
-        } as { [K in keyof IState]: IState[K] })
+        } as { [K in keyof S]: S[K] })
     }
 
     handleImageChange = (e: any) => {

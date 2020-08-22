@@ -1,8 +1,8 @@
 import React, {Component} from "react"
 
-type IState = {}
+type S = {}
 
-class ListOfAdmins extends Component<{}, IState> {
+class ListOfAdmins extends Component<{}, S> {
     constructor(props: {}) {
         super(props)
         this.state = {}

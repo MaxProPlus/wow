@@ -21,7 +21,7 @@ import Form from "../../components/form/Form"
 import icon from "../../components/edit/icon.svg"
 import {Col, Row} from "react-bootstrap"
 
-type IState = {
+type S = {
     id: string
     isLoaded: boolean
     errorMessage: string
@@ -54,7 +54,7 @@ type IState = {
     idAccount: number
 }
 
-class CharacterEdit extends React.Component<any, IState> {
+class CharacterEdit extends React.Component<any, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
@@ -97,7 +97,7 @@ class CharacterEdit extends React.Component<any, IState> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<IState>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
         if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
             this.setState({
                 errorMessage: 'Нет прав'

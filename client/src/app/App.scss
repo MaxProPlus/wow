@@ -1,11 +1,5 @@
 @import "~bootstrap/scss/bootstrap-grid";
-
-@font-face {
-  font-family: 'ProximaNovaT-Thin';
-  src: url('ProximaNovaT-Thin.ttf');
-  font-style: normal;
-  font-weight: normal;
-}
+@import '../css/variables';
 
 html, body, #root {
   height: 100%;
@@ -22,7 +16,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
   background-color: #fff;
-  //background-image: url("./square_bg.png");
 }
 
 code {
@@ -52,7 +45,7 @@ img {
 .app {
   display: flex;
   height: 100%;
-  background-image: url("./LichKing.png");
+  background-image: url("../img/LichKing.png");
   background-size: cover;
 
   &div {
@@ -82,8 +75,8 @@ img {
       max-width: 1200px;
       width: 95%;
       margin: 0 auto;
-      background-color: rgba(33, 40, 59, 0.45);
-      border: 2px solid #21283B;
+      background-color: transparentize($border-color, .55);
+      border: 2px solid $border-color;
     }
   }
 }

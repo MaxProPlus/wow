@@ -11,7 +11,7 @@ import UserContext from "../../utils/userContext"
 import {Redirect} from "react-router-dom"
 import Select from "../../components/form/select/Select"
 
-type IState = {
+type S = {
     status: number,
     isLoaded: boolean
     errorMessage: string
@@ -20,7 +20,7 @@ type IState = {
     comments: CommentTicket[]
 }
 
-class TicketPage extends React.Component<any, IState> {
+class TicketPage extends React.Component<any, S> {
 
     static contextType = UserContext
     private ticketApi = new TicketApi()
@@ -37,7 +37,7 @@ class TicketPage extends React.Component<any, IState> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: IState) {
+    static getDerivedStateFromProps(nextProps: any, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -50,7 +50,7 @@ class TicketPage extends React.Component<any, IState> {
         return null
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<IState>) {
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.updateData()
         }

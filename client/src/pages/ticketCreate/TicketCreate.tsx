@@ -13,7 +13,7 @@ import Form from "../../components/form/Form"
 import Select from "../../components/form/select/Select"
 import Textarea from "../../components/form/textarea/Textarea"
 
-type IState = {
+type S = {
     isLoaded: boolean
     title: string
     idTicketType: 0
@@ -22,7 +22,7 @@ type IState = {
     error: string
 }
 
-class TicketCreate extends React.Component<any, IState> {
+class TicketCreate extends React.Component<any, S> {
     static contextType = UserContext
     private ticketApi = new TicketApi()
     private validator = new Validator()
@@ -63,13 +63,13 @@ class TicketCreate extends React.Component<any, IState> {
     handleChangeSelect = (e: any) => {
         this.setState({
             idTicketType: Number(e.target.value)
-        } as IState)
+        } as S)
     }
 
     handleChange = (e: any) => {
         this.setState({
             [e.target.id]: e.target.value
-        } as { [K in keyof IState]: IState[K] })
+        } as { [K in keyof S]: S[K] })
     }
     handleSubmit = (e: any) => {
         e.preventDefault()

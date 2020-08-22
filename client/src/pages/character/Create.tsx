@@ -21,7 +21,7 @@ import Form from "../../components/form/Form"
 import {Col, Row} from "react-bootstrap"
 import icon from "../../components/edit/icon.svg"
 
-type IState = {
+type S = {
     isLoaded: boolean
     errorMessage: string
     avatar: any
@@ -52,7 +52,7 @@ type IState = {
     coauthors: [] // Список соавторов
 }
 
-class CharacterCreate extends React.Component<any, IState> {
+class CharacterCreate extends React.Component<any, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()

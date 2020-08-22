@@ -5,11 +5,11 @@ import Dropdown from 'components/dropdown/Dropdown'
 import './HeaderTop.scss'
 import menuImg from './menu-black-18dp.svg'
 
-type IProps = {
+type P = {
     onClickMenu: (e: any) => void
 }
 
-class HeaderTop extends Component<IProps, {}> {
+class HeaderTop extends Component<P, {}> {
     static contextType = UserContext
 
     render() {

@@ -1,9 +1,12 @@
+@import '../../css/variables';
+
 .page-guild {
   .page-title {
     margin-bottom: 15px;
   }
+
   .guild-avatar {
     width: 100%;
-    border: 2px solid #21283B;
+    border: 2px solid $border-color;
   }
 }

@@ -7,12 +7,12 @@ import {TicketType} from "../../../../server/src/common/entity/types"
 import './TypesOfTicket.scss'
 import UserContext from "../../utils/userContext"
 
-type IState = {
+type S = {
     isLoaded: boolean
     list: TicketType[]
 }
 
-class TypesOfTicket extends React.Component<any, IState> {
+class TypesOfTicket extends React.Component<any, S> {
     static contextType = UserContext
 
     private ticketApi = new TicketApi()

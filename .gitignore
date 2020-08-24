@@ -19,9 +19,12 @@
 !/server/upload/avatar/standart.png
 /server/upload/characterAvatar/*
 !/server/upload/characterAvatar/.gitkeep
+!/server/upload/characterAvatar/standart.png
 /server/upload/guildAvatar/*
 !/server/upload/guildAvatar/.gitkeep
+!/server/upload/guildAvatar/standart.png
 /server/upload/storyAvatar/*
 !/server/upload/storyAvatar/.gitkeep
+!/server/upload/storyAvatar/standart.png
 
 

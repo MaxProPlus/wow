@@ -1,0 +1,30 @@
+@import '../../css/variables';
+.block {
+  overflow: hidden;
+}
+
+.block__crop {
+  overflow: hidden;
+  height: 335px;
+  padding: 15px;
+  border-right: none !important;
+}
+
+.block__handle {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 15px;
+}
+
+.block__title {
+  font-size: 1.375rem;
+}
+
+.block__desc {
+  color: $color2;
+  font-size: .75rem;
+}
+
+.block__btn {
+  margin-top: auto;
+}

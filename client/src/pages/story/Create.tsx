@@ -6,7 +6,7 @@ import {Redirect} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Story, storyStatusToString} from "../../../../server/src/common/entity/types"
+import {defaultStoryAvatar, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -15,6 +15,8 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import history from "../../utils/history"
 import icon from "../../components/edit/icon.svg"
 import StoryApi from "../../api/storyApi"
+import MyCropper from "../../components/myCropper/MyCropper"
+import Helper from "../../utils/helper"
 
 
 type S = {
@@ -100,18 +102,10 @@ class StoryCreate extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
     handleSubmit = (e: any) => {
@@ -173,8 +167,8 @@ class StoryCreate extends React.Component<any, S> {
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
                             <Col md={6}>
-                                <InputField label="Загрузите изображение сюжета" type="file"
-                                            id="avatar" onChange={this.handleImageChange}/>
+                                <MyCropper label="Загрузите изображение сюжета" src={defaultStoryAvatar} ratio={260 / 190}
+                                           onChange={this.handleImageChange}/>
                             </Col>
                             <Col md={6}>
                                 <h2 className="page-edit__subtitle">Главное</h2>

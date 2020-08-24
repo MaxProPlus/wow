@@ -20,12 +20,15 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
 import icon from "../../components/edit/icon.svg"
 import {Col, Row} from "react-bootstrap"
+import Helper from "../../utils/helper"
+import MyCropper from "../../components/myCropper/MyCropper"
 
 type S = {
     id: string
     isLoaded: boolean
     errorMessage: string
     avatar: any
+    urlAvatar: string,
     title: string // Полное имя персонажа
     nickname: string // Игровое имя
     shortDescription: string // Девиз персонажа
@@ -66,6 +69,7 @@ class CharacterEdit extends React.Component<any, S> {
             isLoaded: false,
             errorMessage: '',
             avatar: '',
+            urlAvatar: '',
             title: '',
             nickname: '',
             shortDescription: '',
@@ -144,20 +148,13 @@ class CharacterEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -167,7 +164,7 @@ class CharacterEdit extends React.Component<any, S> {
         })
         let character = this.state as unknown as Character
         let err = this.validator.validateCharacter(character)
-        // err += this.validator.validateImg(this.state.avatar)
+        err += this.validator.validateImg(this.state.avatar)
         if (!!err) {
             this.setState({
                 errorMessage: err,
@@ -227,8 +224,8 @@ class CharacterEdit extends React.Component<any, S> {
                         <Col md={6}>
                             <Row>
                                 <Col>
-                                    <InputField label="Загрузите изображение персонажа" type="file"
-                                                id="avatar" onChange={this.handleImageChange}/>
+                                    <MyCropper label="Загрузите изображение персонажа" src={this.state.urlAvatar} ratio={190 / 260}
+                                               onChange={this.handleImageChange}/>
                                 </Col>
                             </Row>
                             <Row>

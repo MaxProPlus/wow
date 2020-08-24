@@ -7,9 +7,9 @@ export default (props: any) => {
     if (props.className) {
         className += ' ' + props.className
     }
-    const Tag: any = (!!props.to) ? Link : 'button'
-    if (props.to) {
-
+    let Tag: any = (!!props.to) ? Link : 'button'
+    if (!!props.as) {
+        Tag = props.as
     }
     return (
         <Tag {...props} className={className}>{props.children}</Tag>

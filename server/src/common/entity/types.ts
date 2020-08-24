@@ -272,3 +272,9 @@ export function storyStatusToString(status: number) {
             return ''
     }
 }
+
+
+
+export const defaultCharacterAvatar = '/characterAvatar/standard.png'
+export const defaultGuildAvatar = '/guildAvatar/standard.png'
+export const defaultStoryAvatar = '/storyAvatar/standard.png'

@@ -7,6 +7,7 @@ import {
     activeToString,
     Character,
     characterStatusToString,
+    defaultCharacterAvatar,
     sexToString
 } from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
@@ -20,6 +21,8 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
 import {Col, Row} from "react-bootstrap"
 import icon from "../../components/edit/icon.svg"
+import Helper from "../../utils/helper"
+import MyCropper from "../../components/myCropper/MyCropper"
 
 type S = {
     isLoaded: boolean
@@ -112,20 +115,13 @@ class CharacterCreate extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -180,6 +176,7 @@ class CharacterCreate extends React.Component<any, S> {
     }
 
     render() {
+        console.log(defaultCharacterAvatar)
         return (
             <div className="page-edit page-character-create">
                 {!this.state.isLoaded && <Spinner/>}
@@ -195,8 +192,9 @@ class CharacterCreate extends React.Component<any, S> {
                         <Col md={6}>
                             <Row>
                                 <Col>
-                                    <InputField label="Загрузите изображение персонажа" type="file"
-                                                id="avatar" onChange={this.handleImageChange}/>
+                                    <MyCropper label="Загрузите изображение персонажа" src={defaultCharacterAvatar}
+                                               ratio={190 / 260}
+                                               onChange={this.handleImageChange}/>
                                 </Col>
                             </Row>
                             <Row>

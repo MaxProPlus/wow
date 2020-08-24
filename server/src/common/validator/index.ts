@@ -90,6 +90,9 @@ class Validator {
             default:
                 err += 'Не поддерживаемый тип изображения. Поддерживаемые форматы: jpeg, png, webp.\n'
         }
+        if (file.size > 5*1024*1024) {
+            err += 'Слишком большой размер изображения'
+        }
         return err
     }
 

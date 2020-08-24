@@ -6,7 +6,12 @@ import {Redirect} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
+import {
+    defaultGuildAvatar,
+    Guild,
+    guildKitToString,
+    guildStatusToString
+} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -15,6 +20,8 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import GuildApi from "../../api/guildApi"
 import history from "../../utils/history"
 import icon from "../../components/edit/icon.svg"
+import Helper from "../../utils/helper"
+import MyCropper from "../../components/myCropper/MyCropper"
 
 
 type S = {
@@ -100,20 +107,13 @@ class GuildCreate extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -174,8 +174,8 @@ class GuildCreate extends React.Component<any, S> {
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
                             <Col md={6}>
-                                <InputField label="Загрузите изображение гильдии" type="file"
-                                            id="avatar" onChange={this.handleImageChange}/>
+                                <MyCropper label="Загрузите изображение гильдии" src={defaultGuildAvatar} ratio={260 / 190}
+                                           onChange={this.handleImageChange}/>
                             </Col>
                             <Col md={6}>
                                 <h2 className="page-edit__subtitle">Главное</h2>

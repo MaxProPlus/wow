@@ -15,6 +15,8 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import GuildApi from "../../api/guildApi"
 import history from "../../utils/history"
 import icon from "../../components/edit/icon.svg"
+import Helper from "../../utils/helper"
+import MyCropper from "../../components/myCropper/MyCropper"
 
 
 type S = {
@@ -23,6 +25,7 @@ type S = {
     isLoaded: boolean
     errorMessage: string
     avatar: any
+    urlAvatar: string
 
     // Главное
     title: string // Название гильдии
@@ -61,6 +64,7 @@ class GuildEdit extends React.Component<any, S> {
             isLoaded: true,
             errorMessage: '',
             avatar: '',
+            urlAvatar: '',
             title: '',
             gameTitle: '',
             ideology: '',
@@ -131,20 +135,13 @@ class GuildEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -205,8 +202,8 @@ class GuildEdit extends React.Component<any, S> {
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
                             <Col md={6}>
-                                <InputField label="Загрузите изображение гильдии" type="file"
-                                            id="avatar" onChange={this.handleImageChange}/>
+                                <MyCropper label="Загрузите изображение гильдии" src={this.state.urlAvatar} ratio={260 / 190}
+                                           onChange={this.handleImageChange}/>
                             </Col>
                             <Col md={6}>
                                 <h2 className="page-edit__subtitle">Главное</h2>
@@ -290,7 +287,7 @@ class GuildEdit extends React.Component<any, S> {
                                 комментарии" checked={this.state.comment}
                                                onChange={this.handleChangeChecked}/>
                                 <div className="from-group">
-                                    <Button>Создать</Button>
+                                    <Button>Сохранить</Button>
                                 </div>
                             </Col>
                         </Row>

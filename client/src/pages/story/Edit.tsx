@@ -15,6 +15,8 @@ import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import history from "../../utils/history"
 import icon from "../../components/edit/icon.svg"
 import StoryApi from "../../api/storyApi"
+import MyCropper from "../../components/myCropper/MyCropper"
+import Helper from "../../utils/helper"
 
 
 type S = {
@@ -23,6 +25,7 @@ type S = {
     isLoaded: boolean
     errorMessage: string
     avatar: any
+    urlAvatar: string
 
     // Главное
     title: string // Название сюжета
@@ -61,6 +64,7 @@ class StoryEdit extends React.Component<any, S> {
             isLoaded: true,
             errorMessage: '',
             avatar: '',
+            urlAvatar: '',
             title: '',
             dateStart: (new Date()).toISOString().substr(0, 10),
             period: '',
@@ -131,20 +135,13 @@ class StoryEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
-        if (!!err) {
-            this.setState({
-                errorMessage: err,
-                avatar: ''
-            })
-            e.target.value = ''
-            return
-        }
+        const file = Helper.dataURLtoFile(e)
         this.setState({
             errorMessage: '',
-            avatar: e.target.files[0]
+            avatar: file
         })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -204,8 +201,8 @@ class StoryEdit extends React.Component<any, S> {
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>
                             <Col md={6}>
-                                <InputField label="Загрузите изображение сюжета" type="file"
-                                            id="avatar" onChange={this.handleImageChange}/>
+                                <MyCropper label="Загрузите изображение сюжета" src={this.state.urlAvatar} ratio={260 / 190}
+                                           onChange={this.handleImageChange}/>
                             </Col>
                             <Col md={6}>
                                 <h2 className="page-edit__subtitle">Главное</h2>
@@ -286,7 +283,7 @@ class StoryEdit extends React.Component<any, S> {
                                 комментарии" checked={this.state.comment}
                                                onChange={this.handleChangeChecked}/>
                                 <div className="from-group">
-                                    <Button>Создать</Button>
+                                    <Button>Сохранить</Button>
                                 </div>
                             </Col>
                         </Row>

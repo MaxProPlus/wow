@@ -16,15 +16,15 @@
 /server/dist
 /server/logs
 /server/upload/avatar/*
-!/server/upload/avatar/standart.png
+!/server/upload/avatar/standard.png
 /server/upload/characterAvatar/*
 !/server/upload/characterAvatar/.gitkeep
-!/server/upload/characterAvatar/standart.png
+!/server/upload/characterAvatar/standard.png
 /server/upload/guildAvatar/*
 !/server/upload/guildAvatar/.gitkeep
-!/server/upload/guildAvatar/standart.png
+!/server/upload/guildAvatar/standard.png
 /server/upload/storyAvatar/*
 !/server/upload/storyAvatar/.gitkeep
-!/server/upload/storyAvatar/standart.png
+!/server/upload/storyAvatar/standard.png
 
 

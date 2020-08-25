@@ -24,7 +24,6 @@ type S = {
     idAccount: number
     isLoaded: boolean
     errorMessage: string
-    avatar: any
     urlAvatar: string
 
     // Главное
@@ -55,6 +54,7 @@ class StoryEdit extends React.Component<any, S> {
     static contextType = UserContext
     private storyApi = new StoryApi()
     private validator = new Validator()
+    private avatar:File|any
 
     constructor(props: any) {
         super(props)
@@ -63,7 +63,6 @@ class StoryEdit extends React.Component<any, S> {
             idAccount: 0,
             isLoaded: true,
             errorMessage: '',
-            avatar: '',
             urlAvatar: '',
             title: '',
             dateStart: (new Date()).toISOString().substr(0, 10),
@@ -135,11 +134,7 @@ class StoryEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const file = Helper.dataURLtoFile(e)
-        this.setState({
-            errorMessage: '',
-            avatar: file
-        })
+        this.avatar = Helper.dataURLtoFile(e)
     }
 
     handleSubmit = (e: any) => {
@@ -160,7 +155,7 @@ class StoryEdit extends React.Component<any, S> {
             return
         }
         let formData = new FormData()
-        formData.append('fileAvatar', this.state.avatar)
+        formData.append('fileAvatar', this.avatar)
         formData.append('title', story.title)
         formData.append('dateStart', story.dateStart)
         formData.append('period', story.period)

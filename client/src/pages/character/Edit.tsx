@@ -27,7 +27,7 @@ type S = {
     id: string
     isLoaded: boolean
     errorMessage: string
-    avatar: any
+    // avatar: any
     urlAvatar: string,
     title: string // Полное имя персонажа
     nickname: string // Игровое имя
@@ -61,6 +61,7 @@ class CharacterEdit extends React.Component<any, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
+    private avatar:File|any
 
     constructor(props: any) {
         super(props)
@@ -68,7 +69,7 @@ class CharacterEdit extends React.Component<any, S> {
             id: props.match.params.id,
             isLoaded: false,
             errorMessage: '',
-            avatar: '',
+            // avatar: '',
             urlAvatar: '',
             title: '',
             nickname: '',
@@ -148,11 +149,7 @@ class CharacterEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const file = Helper.dataURLtoFile(e)
-        this.setState({
-            errorMessage: '',
-            avatar: file
-        })
+        this.avatar = Helper.dataURLtoFile(e)
     }
 
     handleSubmit = (e: any) => {
@@ -164,7 +161,7 @@ class CharacterEdit extends React.Component<any, S> {
         })
         let character = this.state as unknown as Character
         let err = this.validator.validateCharacter(character)
-        err += this.validator.validateImg(this.state.avatar)
+        err += this.validator.validateImg(this.avatar)
         if (!!err) {
             this.setState({
                 errorMessage: err,
@@ -193,7 +190,7 @@ class CharacterEdit extends React.Component<any, S> {
         formData.append('closed', String(character.closed))
         formData.append('hidden', String(character.hidden))
         formData.append('comment', String(character.comment))
-        formData.append('fileAvatar', this.state.avatar)
+        formData.append('fileAvatar', this.avatar)
         formData.append('style', character.style)
         this.characterApi.update(this.state.id, formData).then(r => {
             history.push('/material/character/' + r)

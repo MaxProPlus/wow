@@ -27,7 +27,6 @@ import MyCropper from "../../components/myCropper/MyCropper"
 type S = {
     isLoaded: boolean
     errorMessage: string
-    avatar: any
 
     // Главное
     title: string // Название гильдии
@@ -57,13 +56,13 @@ class GuildCreate extends React.Component<any, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private validator = new Validator()
+    private avatar:File|any
 
     constructor(props: any) {
         super(props)
         this.state = {
             isLoaded: true,
             errorMessage: '',
-            avatar: '',
             title: '',
             gameTitle: '',
             ideology: '',
@@ -107,11 +106,7 @@ class GuildCreate extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const file = Helper.dataURLtoFile(e)
-        this.setState({
-            errorMessage: '',
-            avatar: file
-        })
+        this.avatar = Helper.dataURLtoFile(e)
     }
 
     handleSubmit = (e: any) => {
@@ -132,7 +127,7 @@ class GuildCreate extends React.Component<any, S> {
             return
         }
         let formData = new FormData()
-        formData.append('fileAvatar', this.state.avatar)
+        formData.append('fileAvatar', this.avatar)
         formData.append('title', guild.title)
         formData.append('gameTitle', guild.gameTitle)
         formData.append('ideology', guild.ideology)

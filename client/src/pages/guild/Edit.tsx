@@ -24,7 +24,6 @@ type S = {
     idAccount: number
     isLoaded: boolean
     errorMessage: string
-    avatar: any
     urlAvatar: string
 
     // Главное
@@ -55,6 +54,7 @@ class GuildEdit extends React.Component<any, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private validator = new Validator()
+    private avatar: any
 
     constructor(props: any) {
         super(props)
@@ -63,7 +63,6 @@ class GuildEdit extends React.Component<any, S> {
             idAccount: 0,
             isLoaded: true,
             errorMessage: '',
-            avatar: '',
             urlAvatar: '',
             title: '',
             gameTitle: '',
@@ -135,11 +134,7 @@ class GuildEdit extends React.Component<any, S> {
     }
 
     handleImageChange = (e: any) => {
-        const file = Helper.dataURLtoFile(e)
-        this.setState({
-            errorMessage: '',
-            avatar: file
-        })
+        this.avatar = Helper.dataURLtoFile(e)
     }
 
     handleSubmit = (e: any) => {
@@ -151,7 +146,7 @@ class GuildEdit extends React.Component<any, S> {
         })
         let guild = this.state as any as Guild
         let err = this.validator.validateGuild(guild)
-        // err += this.validator.validateImg(this.state.avatar)
+        // err += this.validator.validateImg(this.avatar)
         if (!!err) {
             this.setState({
                 errorMessage: err,
@@ -160,7 +155,7 @@ class GuildEdit extends React.Component<any, S> {
             return
         }
         let formData = new FormData()
-        formData.append('fileAvatar', this.state.avatar)
+        formData.append('fileAvatar', this.avatar)
         formData.append('title', guild.title)
         formData.append('gameTitle', guild.gameTitle)
         formData.append('ideology', guild.ideology)

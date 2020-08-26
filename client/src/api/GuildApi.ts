@@ -1,11 +1,11 @@
-import {CommentStory} from "../../../server/src/common/entity/types"
-import Api from "./basicApi"
+import {CommentGuild} from "../../../server/src/common/entity/types"
+import Api from "./BasicApi"
 
-class StoryApi extends Api {
+class GuildApi extends Api {
 
-    // Создать сюжет
+    // Создать гильдию
     create(c: FormData) {
-        const url = '/api/stories'
+        const url = '/api/guilds'
         return this.postForm(url, c).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -13,9 +13,9 @@ class StoryApi extends Api {
         })
     }
 
-    // Получить сюжет по id
+    // Получить гильдию по id
     getById(id: string) {
-        const url = '/api/stories/' + id
+        const url = '/api/guilds/' + id
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -23,9 +23,9 @@ class StoryApi extends Api {
         })
     }
 
-    // Получить все сюжеты
+    // Получить все гильдии
     getAll(limit: number, page: number) {
-        const url = `/api/stories?limit=${limit}&page=${page}`
+        const url = `/api/guilds?limit=${limit}&page=${page}`
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -33,9 +33,9 @@ class StoryApi extends Api {
         })
     }
 
-    // Редактирование сюжеты
+    // Редактирование гильдии
     update(id: string, c: FormData) {
-        const url = `/api/stories/${id}`
+        const url = `/api/guilds/${id}`
         return this.putForm(url, c).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -43,9 +43,19 @@ class StoryApi extends Api {
         })
     }
 
+    // Удаление гильдии
+    remove(id: string) {
+        const url = `/api/guilds/${id}`
+        return this.delete(url).then(r => {
+            if (r.status !== 'OK')
+                return Promise.reject(r.errorMessage)
+            return 1
+        })
+    }
+
     // Создать комментарий
-    addComment(comment: CommentStory) {
-        const url = '/api/stories/comments'
+    addComment(comment: CommentGuild) {
+        const url = '/api/guilds/comments'
         return this.post(url, comment).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -54,8 +64,8 @@ class StoryApi extends Api {
     }
 
     // Получить комментарии
-    getComments(idStory: string) {
-        const url = '/api/stories/' + idStory + '/comments'
+    getComments(idCharacter: string) {
+        const url = '/api/guilds/' + idCharacter + '/comments'
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -69,4 +79,4 @@ class StoryApi extends Api {
     }
 }
 
-export default StoryApi
+export default GuildApi

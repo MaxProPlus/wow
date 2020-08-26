@@ -64,6 +64,7 @@ class CharacterModel {
         if (oldCharacter.idAccount !== character.idAccount) {
             return Promise.reject('Нет прав')
         }
+        this.uploader.remove(oldCharacter.urlAvatar)
         return this.mapper.remove(character.id)
     }
 

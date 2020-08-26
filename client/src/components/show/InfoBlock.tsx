@@ -7,6 +7,9 @@ type P = {
 }
 
 const InfoBlock = ({title, value}: P) => {
+    if (!value) {
+        return null
+    }
     return (
         <div>
             <div className={styles.title}>{title}</div>

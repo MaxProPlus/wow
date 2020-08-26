@@ -1,6 +1,6 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import TicketApi from "../../api/ticketApi"
+import TicketApi from "../../api/TicketApi"
 import {CommentTicket, Ticket, TicketStatus, ticketStatusToString} from "../../../../server/src/common/entity/types"
 import history from "../../utils/history"
 import './TicketPage.scss'

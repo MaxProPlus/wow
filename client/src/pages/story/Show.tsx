@@ -3,7 +3,6 @@ import Spinner from "../../components/spinner/Spinner"
 import {CommentStory, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import Button from "../../components/button/Button"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
@@ -12,13 +11,18 @@ import InfoBlock from "../../components/show/InfoBlock"
 import Title from "../../components/show/Title"
 import Motto from "../../components/show/Motto"
 import icon from './img/icon.svg'
-import StoryApi from "../../api/storyApi"
+import StoryApi from "../../api/StoryApi"
 import dateIcon from './img/date.svg'
 import statusIcon from '../../img/status.svg'
-import styles from './Show.module.scss'
+import PageTitle from "../../components/pageTitle/PageTitle"
+import ControlButton from "../../components/show/ControlButton"
+import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
+import history from "../../utils/history"
+import Avatar from "../../components/show/Avatar"
 
 type S = {
     isLoaded: boolean
+    modalShow: boolean
     errorMessage: string
     id: string
     story: Story
@@ -33,6 +37,7 @@ class StoryPage extends React.Component<any, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
             story: new Story(),
@@ -86,52 +91,75 @@ class StoryPage extends React.Component<any, S> {
         return this.storyApi.addComment(comment)
     }
 
+    handleRemove = () => {
+        this.setState({
+            modalShow: false,
+            isLoaded: false
+        })
+        this.storyApi.remove(this.state.id).then(() => {
+            history.push('/material/story')
+        }, (err) => {
+            this.setState({
+                errorMessage: err,
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true,
+            })
+        })
+    }
+
+    hideRemoveWindow = () => {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+    showRemoveWindow = () => {
+        this.setState({
+            modalShow: true
+        })
+    }
+
     render() {
         if (!!this.state.errorMessage) {
             return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
         }
 
         return (
-            <div>
+            <div className="page-guild">
                 {!this.state.isLoaded && <Spinner/>}
-                <div className="page-guild">
-                    <div className="page-title">
-                        <h1>
-                            <img src={icon} alt=""/>
-                            Сюжеты
-                        </h1>
-                        <div className="d-flex justify-content-end">
-                            {this.context.user.id === this.state.story.idAccount &&
-                            <Button to={`/material/story/edit/${this.state.id}`}>Редактировать</Button>}
-                            {this.context.user.id === this.state.story.idAccount &&
-                            <Button>Удалить сюжет</Button>}
-                        </div>
-                    </div>
-                    <Row>
-                        <Col md={4}>
-                            <img className={styles.avatar} src={this.state.story.urlAvatar} alt=""/>
-                        </Col>
-                        <Col md={8}>
-                            <Title>{this.state.story.title}</Title>
-                            <Motto>{this.state.story.shortDescription}</Motto>
-                            <InfoBlockInline icon={dateIcon} title="Дата начала"
-                                             value={(new Date(this.state.story.dateStart)).toDateString()}/>
-                            <InfoBlockInline icon={statusIcon} title="Статус"
-                                             value={storyStatusToString(this.state.story.status)}/>
-                        </Col>
-                    </Row>
-                    <InfoBlock title="Сюжет" value={this.state.story.description}/>
-                    <InfoBlock title="Условия и правила" value={this.state.story.rule}/>
-                    <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
-                    <div className="comments">
-                        {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>
-                        )}
-                    </div>
-                    {(!this.state.story.comment && this.context.user.id !== -1) &&
-                    <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
+                <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
+                                    show={this.state.modalShow} title="Вы действительно хотите удалить сюжет?"/>
+                <PageTitle title="Сюжет" icon={icon}>
+                    <ControlButton show={this.context.user.id === this.state.story.idAccount} id={this.state.id}
+                                   type='story' nameRemove='сюжет'
+                                   showRemoveWindow={this.showRemoveWindow}/>
+                </PageTitle>
+                <Row>
+                    <Col md={4}>
+                        <Avatar src={this.state.story.urlAvatar}/>
+                    </Col>
+                    <Col md={8}>
+                        <Title>{this.state.story.title}</Title>
+                        <Motto>{this.state.story.shortDescription}</Motto>
+                        <InfoBlockInline icon={dateIcon} title="Дата начала"
+                                         value={(new Date(this.state.story.dateStart)).toDateString()}/>
+                        <InfoBlockInline icon={statusIcon} title="Статус"
+                                         value={storyStatusToString(this.state.story.status)}/>
+                    </Col>
+                </Row>
+                <InfoBlock title="Сюжет" value={this.state.story.description}/>
+                <InfoBlock title="Условия и правила" value={this.state.story.rule}/>
+                <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
+                <div className="comments">
+                    {this.state.comments.map((c) =>
+                        <Comment key={c.id} {...c}/>
+                    )}
                 </div>
+                {(!this.state.story.comment && this.context.user.id !== -1) &&
+                <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+
             </div>
         )
     }

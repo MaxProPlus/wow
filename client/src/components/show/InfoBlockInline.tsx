@@ -9,6 +9,9 @@ type P = {
 }
 
 const InfoBlockInline = ({icon, title, value}: P) => {
+    if (!value) {
+        return null
+    }
     return (
         <Row className={styles.block}>
             <Col xs={5}>

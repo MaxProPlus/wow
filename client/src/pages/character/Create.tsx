@@ -4,7 +4,7 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
-    activeToString,
+    characterActiveToString,
     Character,
     characterStatusToString,
     defaultCharacterAvatar,
@@ -20,9 +20,10 @@ import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
 import {Col, Row} from "react-bootstrap"
-import icon from "../../components/edit/icon.svg"
+import icon from "../../img/brush.svg"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 type S = {
     isLoaded: boolean
@@ -171,16 +172,12 @@ class CharacterCreate extends React.Component<any, S> {
     }
 
     render() {
-        console.log(defaultCharacterAvatar)
         return (
             <div className="page-edit page-character-create">
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="page-title">
-                    <h1>
-                        <img src={icon} alt=""/>Создание персонажа</h1>
-                </div>
+                <PageTitle className="mb-0" title="Создание персонажа" icon={icon}/>
                 <Form onSubmit={this.handleSubmit}>
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <Row>
@@ -282,7 +279,7 @@ class CharacterCreate extends React.Component<any, S> {
                                     <Select label="Активность" id="active" value={this.state.active}
                                             onChange={this.handleChangeSelect}>
                                         {[0, 1, 2, 3].map(v =>
-                                            (<option key={v} value={v}>{activeToString(v)}</option>)
+                                            (<option key={v} value={v}>{characterActiveToString(v)}</option>)
                                         )}
                                     </Select>
                                 </Col>

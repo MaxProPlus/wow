@@ -4,7 +4,7 @@ import '../css/common.scss'
 import './App.scss'
 import history from "utils/history"
 import Header from "components/header/Header"
-import UserApi from "api/userApi"
+import UserApi from "api/UserApi"
 import UserContext from "utils/userContext"
 import {Account} from "../../../server/src/common/entity/types"
 import HeaderTop from "../components/headerTop/HeaderTop"

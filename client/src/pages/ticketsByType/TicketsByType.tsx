@@ -2,7 +2,7 @@ import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import {Link, Redirect} from "react-router-dom"
 import history from "../../utils/history"
-import TicketApi from "../../api/ticketApi"
+import TicketApi from "../../api/TicketApi"
 import {Ticket, ticketStatusToString, TicketType} from "../../../../server/src/common/entity/types"
 import './TicketsByType.scss'
 import Button from "../../components/button/Button"

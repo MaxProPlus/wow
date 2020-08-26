@@ -1,0 +1,28 @@
+@import '../../css/variables';
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  background-color: rgba(255, 255, 255, .5);
+}
+
+.window {
+  position: absolute;
+  border: 2px solid $border-color;
+  background-color: ($border-color + #333);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+  padding: 15px;
+}
+
+.title {
+  margin: -15px -15px 15px;
+  padding: 0 15px;
+  border-bottom: 2px solid $border-color;
+  font-size: 1.2rem;
+}

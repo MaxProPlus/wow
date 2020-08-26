@@ -107,6 +107,20 @@ export class Character {
     comment = 0 // Запретить комментарии
     style = '' // CSS-стили
     coauthors = [] // Список соавторов
+    activeToString = ()=>{
+        switch (this.active) {
+            case 0:
+                return 'отыгрыш еще не начат'
+            case 1:
+                return 'в поиске отыгрыша'
+            case 2:
+                return 'персонаж отыгрывается'
+            case 3:
+                return 'отыгрыш завершен'
+            default:
+                return ''
+        }
+    }
 }
 
 export enum Sex {
@@ -157,7 +171,7 @@ export function characterStatusToString(status: number) {
     }
 }
 
-export function activeToString(active: number) {
+export function characterActiveToString(active: number) {
     switch (active) {
         case 0:
             return 'отыгрыш еще не начат'

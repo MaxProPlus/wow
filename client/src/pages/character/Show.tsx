@@ -1,7 +1,7 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import {
-    Character,
+    Character, characterActiveToString,
     characterStatusToString,
     CommentCharacter,
     sexToString
@@ -9,8 +9,6 @@ import {
 import UserContext from "../../utils/userContext"
 import CharacterApi from "../../api/CharacterApi"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import './Show.scss'
-import Button from "../../components/button/Button"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
@@ -31,9 +29,15 @@ import InfoBlock from "../../components/show/InfoBlock"
 import Title from "../../components/show/Title"
 import SubTitle from "../../components/show/SubTitle"
 import Motto from "../../components/show/Motto"
+import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
+import history from "../../utils/history"
+import PageTitle from "../../components/pageTitle/PageTitle"
+import ControlButton from "../../components/show/ControlButton"
+import Avatar from "../../components/show/Avatar"
 
 type S = {
     isLoaded: boolean
+    modalShow: boolean
     errorMessage: string
     id: string
     character: Character
@@ -48,6 +52,7 @@ class CharacterPage extends React.Component<any, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
             character: new Character(),
@@ -102,6 +107,37 @@ class CharacterPage extends React.Component<any, S> {
         return this.characterApi.addComment(comment)
     }
 
+    handleRemove = () => {
+        this.setState({
+            modalShow: false,
+            isLoaded: false
+        })
+        this.characterApi.remove(this.state.id).then(() => {
+            history.push('/material/character')
+        }, (err) => {
+            this.setState({
+                errorMessage: err,
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true,
+            })
+        })
+    }
+
+    hideRemoveWindow = () => {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+    showRemoveWindow = () => {
+        this.setState({
+            modalShow: true
+        })
+    }
+
+
     render() {
         if (!!this.state.errorMessage) {
             return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
@@ -110,22 +146,17 @@ class CharacterPage extends React.Component<any, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
+                <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
+                                    show={this.state.modalShow} title="Вы действительно хотите удалить персонажа?"/>
                 <div className="page-character">
-                    <div className="page-title">
-                        <h1>
-                            <img src={icon} alt=""/>
-                            Персонажи
-                        </h1>
-                        <div className="d-flex justify-content-end">
-                            {this.context.user.id === this.state.character.idAccount &&
-                            <Button to={`/material/character/edit/${this.state.id}`}>Редактировать</Button>}
-                            {this.context.user.id === this.state.character.idAccount &&
-                            <Button>Удалить персонажа</Button>}
-                        </div>
-                    </div>
+                    <PageTitle title="Персонаж" icon={icon}>
+                        <ControlButton show={this.context.user.id === this.state.character.idAccount} id={this.state.id}
+                                       type='character' nameRemove='персонажа'
+                                       showRemoveWindow={this.showRemoveWindow}/>
+                    </PageTitle>
                     <Row>
                         <Col md={4}>
-                            <img className="character-avatar" src={this.state.character.urlAvatar} alt=""/>
+                            <Avatar src={this.state.character.urlAvatar}/>
                         </Col>
                         <Col md={8}>
                             <Title>{this.state.character.title}</Title>
@@ -145,7 +176,7 @@ class CharacterPage extends React.Component<any, S> {
                                              value={this.state.character.languages}/>
                             <InfoBlockInline icon={statusIcon} title="Статус"
                                              value={characterStatusToString(this.state.character.status)}/>
-                            <InfoBlockInline icon={activeIcon} title="Активность" value={this.state.character.active}/>
+                            <InfoBlockInline icon={activeIcon} title="Активность" value={characterActiveToString(this.state.character.active)}/>
                         </Col>
                     </Row>
                     <InfoBlock title="Внешность и характер" value={this.state.character.description}/>

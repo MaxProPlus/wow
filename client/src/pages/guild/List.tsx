@@ -1,12 +1,13 @@
 import React, {Component} from "react"
 import {Link} from "react-router-dom"
 import {Guild} from "../../../../server/src/common/entity/types"
-import GuildApi from "../../api/guildApi"
+import GuildApi from "../../api/GuildApi"
 import Button from "../../components/button/Button"
 import {Col, Row} from "react-bootstrap"
 import styles from './List.module.scss'
 import icon from "./img/guild.svg"
 import Spinner from "../../components/spinner/Spinner"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 type S = {
     isLoaded: boolean,
@@ -65,13 +66,9 @@ class GuildList extends Component<any, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-                <div className={`page-title ${styles.list}`}>
-                    <h1>
-                        <img src={icon} alt=""/>Гильдии</h1>
-                    <div className="d-flex">
-                        <Button to="/material/guild/create">Создать гильдию</Button>
-                    </div>
-                </div>
+                <PageTitle title="Гильдии" icon={icon}>
+                    <Button to="/material/guild/create">Создать гильдию</Button>
+                </PageTitle>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

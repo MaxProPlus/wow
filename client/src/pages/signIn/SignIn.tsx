@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from "react-router-dom"
-import UserApi from "../../api/userApi"
+import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import AlertDanger from "../../components/alert-danger/AlertDanger"

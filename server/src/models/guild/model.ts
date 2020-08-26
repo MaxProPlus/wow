@@ -59,8 +59,13 @@ class GuildModel {
     }
 
     // Удалить гильдию
-    remove = (id: number) => {
-        return this.mapper.remove(id)
+    remove = async (g: Guild) => {
+        const oldGuild = await this.mapper.selectById(g.id)
+        if (oldGuild.idAccount !== g.idAccount) {
+            return Promise.reject('Нет прав')
+        }
+        this.uploader.remove(oldGuild.urlAvatar)
+        return this.mapper.remove(g.id)
     }
 
     // Создать комментарий

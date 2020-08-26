@@ -136,7 +136,7 @@ class Mapper {
 
     // Удалить гильдию
     remove = (id: number) => {
-        const sql = `UPDATE \`character\`
+        const sql = `UPDATE guild
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {

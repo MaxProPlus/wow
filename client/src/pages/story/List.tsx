@@ -5,8 +5,9 @@ import Button from "../../components/button/Button"
 import {Col, Row} from "react-bootstrap"
 import styles from './List.module.scss'
 import icon from "./img/icon.svg"
-import StoryApi from "../../api/storyApi"
+import StoryApi from "../../api/StoryApi"
 import Spinner from "../../components/spinner/Spinner"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 type S = {
     isLoaded: boolean,
@@ -65,13 +66,9 @@ class StoryList extends Component<any, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-                <div className={`page-title ${styles.list}`}>
-                    <h1>
-                        <img src={icon} alt=""/>Сюжеты</h1>
-                    <div className="d-flex">
-                        <Button to="/material/story/create">Создать сюжет</Button>
-                    </div>
-                </div>
+                <PageTitle title="Сюжеты" icon={icon}>
+                    <Button to="/material/story/create">Создать сюжет</Button>
+                </PageTitle>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

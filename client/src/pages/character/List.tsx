@@ -7,6 +7,7 @@ import Button from "../../components/button/Button"
 import Spinner from "../../components/spinner/Spinner"
 import icon from "./img/char.svg"
 import styles from "./List.module.scss"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 type S = {
     isLoaded: boolean,
@@ -66,13 +67,9 @@ class CharacterList extends Component<any, S> {
         return (
             <div className="character-list">
                 {!this.state.isLoaded && <Spinner/>}
-                <div className={`page-title ${styles.list}`}>
-                    <h1>
-                        <img src={icon} alt=""/>Персонажи</h1>
-                    <div className="d-flex">
-                        <Button to="/material/character/create">Создать персонажа</Button>
-                    </div>
-                </div>
+                <PageTitle title="Персонажи" icon={icon}>
+                    <Button to="/material/character/create">Создать персонажа</Button>
+                </PageTitle>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

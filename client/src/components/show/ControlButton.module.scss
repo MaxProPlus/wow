@@ -1,0 +1,26 @@
+.icon {
+  height: 1rem;
+  min-width: auto;
+}
+
+.trash {
+  background-color: #E54242;
+
+  &:focus, &:hover {
+    background-color: #E54242 - #111;
+  }
+}
+
+.text {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .icon {
+    margin-right: 7px;
+  }
+
+  .text {
+    display: inline;
+  }
+}

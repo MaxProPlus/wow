@@ -46,9 +46,8 @@ class Mapper {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             if (!r.length) {
-                return Promise.reject('Сюжет не найдена')
+                return Promise.reject('Сюжет не найден')
             }
-            console.log(r[0].dateStart)
             // @ts-ignore
             r[0].dateStart.setMinutes(r[0].dateStart.getTimezoneOffset() * -1)
             // @ts-ignore
@@ -127,7 +126,7 @@ class Mapper {
                        and is_remove = 0`
         return this.pool.query(sql, [urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Сюжет не найдена')
+                return Promise.reject('Сюжет не найден')
             }
             return Promise.resolve(story.id)
         }, (err: any) => {
@@ -143,7 +142,7 @@ class Mapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Сюжет не найдена')
+                return Promise.reject('Сюжет не найден')
             }
             return Promise.resolve(id)
         }, (err: any) => {

@@ -69,6 +69,24 @@ class Api {
         })
     }
 
+    // delete
+    delete(url: string) {
+        return fetch(url, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(r => {
+            if (!r.ok) {
+                return {
+                    status: "ERROR_SERVER",
+                    errorMessage: `${r.status} ${r.statusText}`
+                }
+            }
+            return r.json()
+        })
+    }
+
 }
 
 export default Api

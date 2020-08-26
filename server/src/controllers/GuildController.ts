@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {CommentGuild} from '../common/entity/types'
+import {Character, CommentGuild, Guild} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
@@ -155,6 +155,32 @@ class GuildController {
 
     // Удалить гильдию
     remove = async (req: Request, res: Response) => {
+        const c = new Guild()
+        c.id = parseInt(req.params.id)
+        if (isNaN(c.id)) {
+            return res.json({
+                status: 'INVALID_PARSE',
+                errorMessage: 'Ошибка парсинга id',
+            })
+        }
+        try {
+            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+        } catch (err) {
+            return res.json({
+                status: 'INVALID_AUTH',
+                errorMessage: 'Ошибка авторизации',
+            })
+        }
+        return this.guildModel.remove(c).then(r=>{
+            return res.json({
+                status: 'OK',
+            })
+        }, (err) => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: err,
+            })
+        })
     }
 
     // Создать комментарий

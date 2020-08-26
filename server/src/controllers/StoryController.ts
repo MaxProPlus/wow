@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {CommentStory} from '../common/entity/types'
+import {Character, CommentStory, Story} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
@@ -155,6 +155,32 @@ class StoryController {
 
     // Удалить сюжет
     remove = async (req: Request, res: Response) => {
+        const c = new Story()
+        c.id = parseInt(req.params.id)
+        if (isNaN(c.id)) {
+            return res.json({
+                status: 'INVALID_PARSE',
+                errorMessage: 'Ошибка парсинга id',
+            })
+        }
+        try {
+            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+        } catch (err) {
+            return res.json({
+                status: 'INVALID_AUTH',
+                errorMessage: 'Ошибка авторизации',
+            })
+        }
+        return this.storyModel.remove(c).then(r=>{
+            return res.json({
+                status: 'OK',
+            })
+        }, (err) => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: err,
+            })
+        })
     }
 
     // Создать комментарий

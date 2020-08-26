@@ -4,7 +4,7 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
-    activeToString,
+    characterActiveToString,
     Character,
     characterStatusToString,
     sexToString
@@ -18,10 +18,11 @@ import Textarea from "../../components/form/textarea/Textarea"
 import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
-import icon from "../../components/edit/icon.svg"
+import icon from "../../img/brush.svg"
 import {Col, Row} from "react-bootstrap"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 type S = {
     id: string
@@ -69,7 +70,6 @@ class CharacterEdit extends React.Component<any, S> {
             id: props.match.params.id,
             isLoaded: false,
             errorMessage: '',
-            // avatar: '',
             urlAvatar: '',
             title: '',
             nickname: '',
@@ -211,10 +211,7 @@ class CharacterEdit extends React.Component<any, S> {
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="page-title">
-                    <h1>
-                        <img src={icon} alt=""/>Редактирование персонажа</h1>
-                </div>
+                <PageTitle className="mb-0" title="Редактирование персонажа" icon={icon}/>
                 <Form onSubmit={this.handleSubmit}>
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <Row>
@@ -315,7 +312,7 @@ class CharacterEdit extends React.Component<any, S> {
                                     <Select label="Активность" id="active" value={this.state.active}
                                             onChange={this.handleChangeSelect}>
                                         {[0, 1, 2, 3].map(v =>
-                                            (<option key={v} value={v}>{activeToString(v)}</option>)
+                                            (<option key={v} value={v}>{characterActiveToString(v)}</option>)
                                         )}
                                     </Select>
                                 </Col>

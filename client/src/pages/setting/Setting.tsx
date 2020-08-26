@@ -1,5 +1,5 @@
 import React from "react"
-import UserApi from "../../api/userApi"
+import UserApi from "../../api/UserApi"
 import userContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import history from "../../utils/history"

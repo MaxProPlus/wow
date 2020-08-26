@@ -1,5 +1,5 @@
 import {Account, UserPassword} from "../../../server/src/common/entity/types"
-import Api from "./basicApi"
+import Api from "./BasicApi"
 
 class UserApi extends Api {
     updateGeneral(profile: Account) {

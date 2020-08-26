@@ -59,8 +59,13 @@ class StoryModel {
     }
 
     // Удалить сюжет
-    remove = (id: number) => {
-        return this.mapper.remove(id)
+    remove = async (story: Story) => {
+        const oldStory = await this.mapper.selectById(story.id)
+        if (oldStory.idAccount !== story.idAccount) {
+            return Promise.reject('Нет прав')
+        }
+        this.uploader.remove(oldStory.urlAvatar)
+        return this.mapper.remove(story.id)
     }
 
     // Создать комментарий

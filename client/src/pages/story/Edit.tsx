@@ -13,10 +13,11 @@ import Textarea from "../../components/form/textarea/Textarea"
 import Select from "../../components/form/select/Select"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import history from "../../utils/history"
-import icon from "../../components/edit/icon.svg"
-import StoryApi from "../../api/storyApi"
+import icon from "../../img/brush.svg"
+import StoryApi from "../../api/StoryApi"
 import MyCropper from "../../components/myCropper/MyCropper"
 import Helper from "../../utils/helper"
+import PageTitle from "../../components/pageTitle/PageTitle"
 
 
 type S = {
@@ -54,7 +55,7 @@ class StoryEdit extends React.Component<any, S> {
     static contextType = UserContext
     private storyApi = new StoryApi()
     private validator = new Validator()
-    private avatar:File|any
+    private avatar: File | any
 
     constructor(props: any) {
         super(props)
@@ -183,108 +184,103 @@ class StoryEdit extends React.Component<any, S> {
 
     render() {
         return (
-            <div>
+            <div className="page-edit guild-create">
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <div className="page-edit guild-create">
-                    <div className="page-title">
-                        <h1>
-                            <img src={icon} alt=""/>Редактирование сюжета</h1>
-                    </div>
-                    <Form onSubmit={this.handleSubmit}>
-                        <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                        <Row>
-                            <Col md={6}>
-                                <MyCropper label="Загрузите изображение сюжета" src={this.state.urlAvatar} ratio={260 / 190}
-                                           onChange={this.handleImageChange}/>
-                            </Col>
-                            <Col md={6}>
-                                <h2 className="page-edit__subtitle">Главное</h2>
-                                <InputField id="title" label="Заголовок сюжета" placeholder="Введите название сюжета"
-                                            type="text" value={this.state.title}
-                                            onChange={this.handleChange}/>
-                                <InputField id="dateStart" label="Дата начала" placeholder="Выберите дату начала сюжета"
-                                            type="date" value={this.state.dateStart}
-                                            onChange={this.handleChange}/>
-                                <InputField id="period" label="Планируемый период отыгрыша"
-                                            placeholder="Введите период отыгрыша (напр. апрель-май 2016г)"
-                                            type="text" value={this.state.period}
-                                            onChange={this.handleChange}/>
-                                <InputField id="shortDescription" label="Анонс"
-                                            placeholder="Введите анонс сюжета"
-                                            type="text" value={this.state.shortDescription}
-                                            onChange={this.handleChange}/>
+                <PageTitle className="mb-0" title="Редактирование сюжета" icon={icon}/>
+                <Form onSubmit={this.handleSubmit}>
+                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                    <Row>
+                        <Col md={6}>
+                            <MyCropper label="Загрузите изображение сюжета" src={this.state.urlAvatar} ratio={260 / 190}
+                                       onChange={this.handleImageChange}/>
+                        </Col>
+                        <Col md={6}>
+                            <h2 className="page-edit__subtitle">Главное</h2>
+                            <InputField id="title" label="Заголовок сюжета" placeholder="Введите название сюжета"
+                                        type="text" value={this.state.title}
+                                        onChange={this.handleChange}/>
+                            <InputField id="dateStart" label="Дата начала" placeholder="Выберите дату начала сюжета"
+                                        type="date" value={this.state.dateStart}
+                                        onChange={this.handleChange}/>
+                            <InputField id="period" label="Планируемый период отыгрыша"
+                                        placeholder="Введите период отыгрыша (напр. апрель-май 2016г)"
+                                        type="text" value={this.state.period}
+                                        onChange={this.handleChange}/>
+                            <InputField id="shortDescription" label="Анонс"
+                                        placeholder="Введите анонс сюжета"
+                                        type="text" value={this.state.shortDescription}
+                                        onChange={this.handleChange}/>
 
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md={6}>
-                                <h2 className="page-edit__subtitle">Основное</h2>
-                                <Textarea id="description" label="Описание сюжета"
-                                          placeholder="Опишите ваш сюжет..."
-                                          value={this.state.description}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="rule" label="Условия и правила"
-                                          placeholder="Введите важные детали или информацию в вашем сюжете..."
-                                          value={this.state.rule}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="more" label="Дополнительные сведения"
-                                          placeholder="Если есть то, что вы еще не написали, то это тут..."
-                                          value={this.state.more}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="articles" label="Список обсуждений/статей/логов"
-                                          placeholder="Напишите список тут..."
-                                          value={this.state.articles}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="members" label="Список персонажей-участников"
-                                          placeholder="Введите персонажей вашего сюжета..."
-                                          value={this.state.members}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="guilds" label="Список гильдий-участников"
-                                          placeholder="Введите гильдии, которые принимают участие в сюжете..."
-                                          value={this.state.guilds}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="events" label="Список событий"
-                                          placeholder="Введите события вашего сюжета..."
-                                          value={this.state.events}
-                                          onChange={this.handleChange}/>
-                            </Col>
-                            <Col md={6}>
-                                <h2 className="page-edit__subtitle">Прочее</h2>
-                                <Select id="status" label="Статус" placeholder="Выберите статус c.;tnf"
-                                        value={this.state.status}
-                                        onChange={this.handleChangeSelect}>
-                                    {[0, 1, 2, 3].map(v =>
-                                        (<option key={v} value={v}>{storyStatusToString(v)}</option>)
-                                    )}
-                                </Select>
-                                <Textarea id="style" label="CSS - стили(в разработке)"
-                                          placeholder="Сюда поместите код..."
-                                          value={this.state.style}
-                                          onChange={this.handleChange}/>
-                                <Textarea id="coauthors" label="Список соавторов"
-                                          placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
-                                          value={this.state.coauthors}
-                                          onChange={this.handleChange}/>
-                                <InputCheckBox id="closed" label="Закрыть(материал
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={6}>
+                            <h2 className="page-edit__subtitle">Основное</h2>
+                            <Textarea id="description" label="Описание сюжета"
+                                      placeholder="Опишите ваш сюжет..."
+                                      value={this.state.description}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="rule" label="Условия и правила"
+                                      placeholder="Введите важные детали или информацию в вашем сюжете..."
+                                      value={this.state.rule}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="more" label="Дополнительные сведения"
+                                      placeholder="Если есть то, что вы еще не написали, то это тут..."
+                                      value={this.state.more}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="articles" label="Список обсуждений/статей/логов"
+                                      placeholder="Напишите список тут..."
+                                      value={this.state.articles}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="members" label="Список персонажей-участников"
+                                      placeholder="Введите персонажей вашего сюжета..."
+                                      value={this.state.members}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="guilds" label="Список гильдий-участников"
+                                      placeholder="Введите гильдии, которые принимают участие в сюжете..."
+                                      value={this.state.guilds}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="events" label="Список событий"
+                                      placeholder="Введите события вашего сюжета..."
+                                      value={this.state.events}
+                                      onChange={this.handleChange}/>
+                        </Col>
+                        <Col md={6}>
+                            <h2 className="page-edit__subtitle">Прочее</h2>
+                            <Select id="status" label="Статус" placeholder="Выберите статус c.;tnf"
+                                    value={this.state.status}
+                                    onChange={this.handleChangeSelect}>
+                                {[0, 1, 2, 3].map(v =>
+                                    (<option key={v} value={v}>{storyStatusToString(v)}</option>)
+                                )}
+                            </Select>
+                            <Textarea id="style" label="CSS - стили(в разработке)"
+                                      placeholder="Сюда поместите код..."
+                                      value={this.state.style}
+                                      onChange={this.handleChange}/>
+                            <Textarea id="coauthors" label="Список соавторов"
+                                      placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
+                                      value={this.state.coauthors}
+                                      onChange={this.handleChange}/>
+                            <InputCheckBox id="closed" label="Закрыть(материал
                                 будет доступен только автору)" checked={this.state.closed}
-                                               onChange={this.handleChangeChecked}/>
-                                <InputCheckBox id="hidden" label="Скрыть
+                                           onChange={this.handleChangeChecked}/>
+                            <InputCheckBox id="hidden" label="Скрыть
                                 из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим
                                 материалам)" checked={this.state.hidden}
-                                               onChange={this.handleChangeChecked}/>
-                                <InputCheckBox id="comment" label="Запретить
+                                           onChange={this.handleChangeChecked}/>
+                            <InputCheckBox id="comment" label="Запретить
                                 комментарии" checked={this.state.comment}
-                                               onChange={this.handleChangeChecked}/>
-                                <div className="from-group">
-                                    <Button>Сохранить</Button>
-                                </div>
-                            </Col>
-                        </Row>
+                                           onChange={this.handleChangeChecked}/>
+                            <div className="from-group">
+                                <Button>Сохранить</Button>
+                            </div>
+                        </Col>
+                    </Row>
 
-                    </Form>
-                </div>
+                </Form>
             </div>
         )
     }

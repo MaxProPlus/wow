@@ -1,6 +1,7 @@
 import Hash from '../hash'
 import path from 'path'
 import fs from 'fs'
+import logger from '../logger'
 
 const hash = new Hash()
 
@@ -23,7 +24,11 @@ class Uploader {
 
     // Удалить файл
     remove = (url: string) => {
-        fs.unlinkSync(path.join(__dirname, '../../../upload/', url))
+        try {
+            fs.unlinkSync(path.join(__dirname, '../../../upload/', url))
+        } catch (e) {
+            logger.error(e)
+        }
     }
 }
 

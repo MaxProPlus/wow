@@ -1,6 +1,6 @@
 import React, {Component} from "react"
 import UserContext from "../../utils/userContext"
-import UserApi from "../../api/userApi"
+import UserApi from "../../api/UserApi"
 import history from "../../utils/history"
 import './Dropdown.scss'
 import Profile from "../profile/Profile"

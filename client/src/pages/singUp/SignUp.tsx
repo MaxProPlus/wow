@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Link} from "react-router-dom"
 import history from "../../utils/history"
-import UserApi from "../../api/userApi"
+import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Validator from "../../../../server/src/common/validator"

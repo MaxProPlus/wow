@@ -201,7 +201,6 @@ class Validator {
             // @ts-ignore
             g[el] = this.trim(g[el])
         }))
-        console.log(g.dateStart)
         if (!g.dateStart) {
             g.dateStart = (new Date()).toISOString().substr(0, 10)
         }

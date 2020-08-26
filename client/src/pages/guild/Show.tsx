@@ -3,12 +3,10 @@ import Spinner from "../../components/spinner/Spinner"
 import {CommentGuild, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import Button from "../../components/button/Button"
 import CommentForm from "../../components/commentFrom/CommentForm"
 import Comment from "../../components/comment/Comment"
 import {Col, Row} from "react-bootstrap"
-import GuildApi from "../../api/guildApi"
-import './Show.scss'
+import GuildApi from "../../api/GuildApi"
 import InfoBlockInline from "../../components/show/InfoBlockInline"
 import InfoBlock from "../../components/show/InfoBlock"
 import Title from "../../components/show/Title"
@@ -18,9 +16,15 @@ import icon from './img/guild.svg'
 import ideologyIcon from './img/ideology.svg'
 import kitIcon from './img/kit.svg'
 import statusIcon from '../../img/status.svg'
+import history from "../../utils/history"
+import PageTitle from "../../components/pageTitle/PageTitle"
+import ControlButton from "../../components/show/ControlButton"
+import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
+import Avatar from "../../components/show/Avatar"
 
 type S = {
     isLoaded: boolean
+    modalShow: boolean
     errorMessage: string
     id: string
     guild: Guild
@@ -35,6 +39,7 @@ class GuildPage extends React.Component<any, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
             guild: new Guild(),
@@ -88,55 +93,78 @@ class GuildPage extends React.Component<any, S> {
         return this.guildApi.addComment(comment)
     }
 
+    handleRemove = () => {
+        this.setState({
+            modalShow: false,
+            isLoaded: false
+        })
+        this.guildApi.remove(this.state.id).then(() => {
+            history.push('/material/guild')
+        }, (err) => {
+            this.setState({
+                errorMessage: err,
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true,
+            })
+        })
+    }
+
+    hideRemoveWindow = () => {
+        this.setState({
+            modalShow: false
+        })
+    }
+
+    showRemoveWindow = () => {
+        this.setState({
+            modalShow: true
+        })
+    }
+
     render() {
         if (!!this.state.errorMessage) {
             return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
         }
 
         return (
-            <div>
+            <div className="page-guild">
                 {!this.state.isLoaded && <Spinner/>}
-                <div className="page-guild">
-                    <div className="page-title">
-                        <h1>
-                            <img src={icon} alt=""/>
-                            Гильдии
-                        </h1>
-                        <div className="d-flex justify-content-end">
-                            {this.context.user.id === this.state.guild.idAccount &&
-                            <Button to={`/material/guild/edit/${this.state.id}`}>Редактировать</Button>}
-                            {this.context.user.id === this.state.guild.idAccount &&
-                            <Button>Удалить гильдию</Button>}
-                        </div>
-                    </div>
-                    <Row>
-                        <Col md={4}>
-                            <img className="guild-avatar" src={this.state.guild.urlAvatar} alt=""/>
-                        </Col>
-                        <Col md={8}>
-                            <Title>{this.state.guild.title}</Title>
-                            <SubTitle>{this.state.guild.gameTitle}</SubTitle>
-                            <Motto>{this.state.guild.shortDescription}</Motto>
-                            <InfoBlockInline icon={ideologyIcon} title="Мировоззрение"
-                                             value={this.state.guild.ideology}/>
-                            <InfoBlockInline icon={kitIcon} title="Набор"
-                                             value={guildKitToString(this.state.guild.kit)}/>
-                            <InfoBlockInline icon={statusIcon} title="Статус"
-                                             value={guildStatusToString(this.state.guild.status)}/>
-                        </Col>
-                    </Row>
-                    <InfoBlock title="Описание и история" value={this.state.guild.description}/>
-                    <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
-                    <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
-                    <div className="comments">
-                        {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>
-                        )}
-                    </div>
-                    {(!this.state.guild.comment && this.context.user.id !== -1) &&
-                    <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
+                <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
+                                    show={this.state.modalShow} title="Вы действительно хотите удалить гильдию?"/>
+                <PageTitle title="Гильдия" icon={icon}>
+                    <ControlButton show={this.context.user.id === this.state.guild.idAccount} id={this.state.id}
+                                   type='guild' nameRemove='гильдию'
+                                   showRemoveWindow={this.showRemoveWindow}/>
+                </PageTitle>
+                <Row>
+                    <Col md={4}>
+                        <Avatar src={this.state.guild.urlAvatar}/>
+                    </Col>
+                    <Col md={8}>
+                        <Title>{this.state.guild.title}</Title>
+                        <SubTitle>{this.state.guild.gameTitle}</SubTitle>
+                        <Motto>{this.state.guild.shortDescription}</Motto>
+                        <InfoBlockInline icon={ideologyIcon} title="Мировоззрение"
+                                         value={this.state.guild.ideology}/>
+                        <InfoBlockInline icon={kitIcon} title="Набор"
+                                         value={guildKitToString(this.state.guild.kit)}/>
+                        <InfoBlockInline icon={statusIcon} title="Статус"
+                                         value={guildStatusToString(this.state.guild.status)}/>
+                    </Col>
+                </Row>
+                <InfoBlock title="Описание и история" value={this.state.guild.description}/>
+                <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
+                <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
+                <div className="comments">
+                    {this.state.comments.map((c) =>
+                        <Comment key={c.id} {...c}/>
+                    )}
                 </div>
+                {(!this.state.guild.comment && this.context.user.id !== -1) &&
+                <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+
             </div>
         )
     }

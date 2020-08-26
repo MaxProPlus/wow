@@ -1,7 +1,7 @@
 import React from "react"
 import './Profile.scss'
 import UserContext from "../../utils/userContext"
-import UserApi from "../../api/userApi"
+import UserApi from "../../api/UserApi"
 import history from "../../utils/history"
 import Spinner from "../../components/spinner/Spinner"
 import Profile from "../../components/profile/Profile"

@@ -1,5 +1,5 @@
 import {CommentCharacter} from "../../../server/src/common/entity/types"
-import Api from "./basicApi"
+import Api from "./BasicApi"
 
 class CharacterApi extends Api {
 
@@ -43,6 +43,16 @@ class CharacterApi extends Api {
         })
     }
 
+    // Удаление персонажа
+    remove(id: string) {
+        const url = `/api/characters/${id}`
+        return this.delete(url).then(r => {
+            if (r.status !== 'OK')
+                return Promise.reject(r.errorMessage)
+            return 1
+        })
+    }
+
     // Создать комментарий к персонажу
     addComment(comment: CommentCharacter) {
         const url = '/api/characters/comments'
@@ -63,7 +73,7 @@ class CharacterApi extends Api {
         })
     }
 
-    removeCommnet(id: number) {
+    removeComment(id: number) {
 
     }
 }

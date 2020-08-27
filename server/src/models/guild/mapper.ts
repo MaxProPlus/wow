@@ -10,12 +10,12 @@ class Mapper {
 
     // Создать гильдию
     insert = (guild: Guild) => {
-        const {idAccount, urlAvatar, title, gameTitle,ideology, shortDescription, description, rule,more, status, kit, closed, hidden, comment, style} = guild
+        const {idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more, status, kit, closed, hidden, comment, style} = guild
         const sql = `INSERT INTO guild (id_account, url_avatar, title, game_title, ideology, short_description,
-                                        description, rule,more,
+                                        description, rule, more,
                                         status, kit, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule,more,
+        return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
             status, kit, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -88,6 +88,41 @@ class Mapper {
         })
     }
 
+    // Получить гильдии по запросу
+    selectByQuery = (query: string, limit: number, page: number) => {
+        query = '%' + query + '%'
+        const sql = `select id,
+                            id_account        as idAccount,
+                            url_avatar        as urlAvatar,
+                            title,
+                            game_title        as gameTitle,
+                            short_description as shortDescription,
+                            ideology,
+                            description,
+                            rule,
+                            more,
+                            status,
+                            kit,
+                            closed,
+                            hidden,
+                            comment,
+                            style
+                     from guild
+                     where (title LIKE ?
+                         or game_title like ?)
+                       and hidden = 0
+                       and closed = 0
+                       and is_remove = 0
+                     order by id desc
+                     limit ? offset ?`
+        return this.pool.query(sql, [query, query, limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить количество гильдий
     selectCount = (): Promise<number> => {
         const sql = `select count(id) as count
@@ -103,9 +138,27 @@ class Mapper {
         })
     }
 
+    // Получить количество гильдий по запросу
+    selectCountByQuery = (query: string): Promise<number> => {
+        query = '%' + query + '%'
+        const sql = `select count(id) as count
+                     from guild
+                     where (title LIKE ?
+                         or game_title like ?)
+                       and hidden = 0
+                       and closed = 0
+                       and is_remove = 0`
+        return this.pool.query(sql, [query, query]).then(([r]: any) => {
+            return Promise.resolve(r[0].count)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Редактировать гильдию
     update = (guild: Guild) => {
-        const {id, idAccount, urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more,status, kit, closed, hidden, comment, style} = guild
+        const {id, urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style} = guild
         const sql = `UPDATE guild
                      SET url_avatar        = ?,
                          title             = ?,
@@ -123,7 +176,7 @@ class Mapper {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule,more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
+        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Гильдия не найдена')
             }
@@ -166,10 +219,10 @@ class Mapper {
     selectCommentsByIdGuild = (id: number) => {
         const sql = `select c.id,
                             c.text,
-                            c.id_account   as idAccount,
-                            c.id_guild as idGuild,
-                            a.nickname     as authorNickname,
-                            a.url_avatar   as authorUrlAvatar
+                            c.id_account as idAccount,
+                            c.id_guild   as idGuild,
+                            a.nickname   as authorNickname,
+                            a.url_avatar as authorUrlAvatar
                      from guild_comment c
                               join account a on c.id_account = a.id
                      where c.id_guild = ?

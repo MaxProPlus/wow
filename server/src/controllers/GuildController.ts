@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Auth from '../services/auth'
-import {Character, CommentGuild, Guild} from '../common/entity/types'
+import {CommentGuild, Guild} from '../common/entity/types'
 import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
@@ -96,7 +96,21 @@ class GuildController {
     getAll = async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
-        return this.guildModel.getAll(limit, page).then((r: any) => {
+        const query = req.query.query as string
+        if (!query) {
+            return this.guildModel.getAll(limit, page).then((r: any) => {
+                return res.json({
+                    status: 'OK',
+                    results: r,
+                })
+            }, (err: string) => {
+                return res.json({
+                    status: 'ERROR',
+                    errorMessage: err,
+                })
+            })
+        }
+        return this.guildModel.getByQuery(query, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -171,7 +185,7 @@ class GuildController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.guildModel.remove(c).then(r=>{
+        return this.guildModel.remove(c).then(() => {
             return res.json({
                 status: 'OK',
             })

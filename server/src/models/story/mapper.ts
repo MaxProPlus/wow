@@ -90,6 +90,40 @@ class Mapper {
         })
     }
 
+    // Получить все сюжеты по запросу
+    selectByQuery = (query: string, limit: number, page: number) => {
+        query = '%' + query + '%'
+        const sql = `select id,
+                            id_account        as idAccount,
+                            url_avatar        as urlAvatar,
+                            title,
+                            date_start        as dateStart,
+                            period,
+                            short_description as shortDescription,
+                            description,
+                            rule,
+                            more,
+                            status,
+                            closed,
+                            hidden,
+                            comment,
+                            style
+                     from story
+                     where title like ?
+                       and hidden = 0
+                       and closed = 0
+                       and is_remove = 0
+                     order by id
+                         desc
+                     limit ? offset ?`
+        return this.pool.query(sql, [query, limit, limit * (page - 1)]).then(([r]: [Story[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить количество сюжетов
     selectCount = (): Promise<number> => {
         const sql = `select count(id) as count
@@ -98,6 +132,23 @@ class Mapper {
                        and closed = 0
                        and is_remove = 0`
         return this.pool.query(sql).then(([r]: any) => {
+            return Promise.resolve(r[0].count)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить количество сюжетов по запросу
+    selectCountByQuery = (query: string): Promise<number> => {
+        query = '%' + query + '%'
+        const sql = `select count(id) as count
+                     from story
+                     where title like ?
+                           and hidden = 0
+                       and closed = 0
+                       and is_remove = 0`
+        return this.pool.query(sql, [query]).then(([r]: any) => {
             return Promise.resolve(r[0].count)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

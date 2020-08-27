@@ -107,6 +107,48 @@ class Mapper {
         })
     }
 
+    // Получить персонажей по запросу
+    selectByQuery = (query: string, limit: number, page: number) => {
+        query = '%' + query + '%'
+        const sql = `select id,
+                            id_account        as idAccount,
+                            url_avatar        as urlAvatar,
+                            title,
+                            nickname,
+                            short_description as shortDescription,
+                            race,
+                            nation,
+                            territory,
+                            age,
+                            class             as className,
+                            occupation,
+                            religion,
+                            languages,
+                            description,
+                            history,
+                            more,
+                            sex,
+                            status,
+                            active,
+                            closed,
+                            hidden,
+                            comment,
+                            style
+                     from \`character\` c
+                     where (title LIKE ?
+                        or nickname like ?)
+                         and hidden = 0
+                         and closed = 0
+                         and is_remove = 0
+                     order by id desc
+                     limit ? offset ?`
+        return this.pool.query(sql, [query, query, limit, limit * (page - 1)]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
 
     // Получить количество персонажей
     selectCount = (): Promise<number> => {
@@ -116,6 +158,24 @@ class Mapper {
                        and closed = 0
                        and is_remove = 0`
         return this.pool.query(sql).then(([r]: any) => {
+            return Promise.resolve(r[0].count)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить количество персонажей по запросу
+    selectCountByQuery = (query: string): Promise<number> => {
+        query = '%' + query + '%'
+        const sql = `select count(id) as count
+                     from \`character\`
+                     where (title LIKE ?
+                        or nickname like ?)
+                         and hidden = 0
+                         and closed = 0
+                         and is_remove = 0`
+        return this.pool.query(sql, [query, query]).then(([r]: any) => {
             return Promise.resolve(r[0].count)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

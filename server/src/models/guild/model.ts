@@ -41,6 +41,18 @@ class GuildModel {
         }
     }
 
+    // Получить гильдии по запросу
+    getByQuery = async (query: string, limit: number, page: number) => {
+        const p = []
+        p.push(this.mapper.selectByQuery(query, limit, page))
+        p.push(this.mapper.selectCountByQuery(query))
+        const r = await Promise.all(p)
+        return {
+            data: r[0],
+            count: r[1],
+        }
+    }
+
     // Редактировать гильдию
     update = async (c: GuildUpload) => {
         const oldCharacter = await this.mapper.selectById(c.id)

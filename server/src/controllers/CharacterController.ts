@@ -96,7 +96,21 @@ class CharacterController {
     getAll = async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
-        return this.characterModel.getAll(limit, page).then((r: any) => {
+        const query = req.query.query as string
+        if (!query) {
+            return this.characterModel.getAll(limit, page).then((r: any) => {
+                return res.json({
+                    status: 'OK',
+                    results: r,
+                })
+            }, (err: string) => {
+                return res.json({
+                    status: 'ERROR',
+                    errorMessage: err,
+                })
+            })
+        }
+        return this.characterModel.getByQuery(query, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,
@@ -171,7 +185,7 @@ class CharacterController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.characterModel.remove(c).then(r=>{
+        return this.characterModel.remove(c).then(()=>{
             return res.json({
                 status: 'OK',
             })

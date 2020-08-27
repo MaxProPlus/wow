@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Character, CommentCharacter, CommentTicket, Ticket, TicketStatus} from '../../common/entity/types'
+import {Character, CommentCharacter} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -41,8 +41,20 @@ class CharacterModel {
         }
     }
 
+    // Получить персонажей по запросу
+    getByQuery = async (query: string, limit: number, page: number) => {
+        const p = []
+        p.push(this.mapper.selectByQuery(query, limit, page))
+        p.push(this.mapper.selectCountByQuery(query))
+        const r = await Promise.all(p)
+        return {
+            data: r[0],
+            count: r[1],
+        }
+    }
+
     // Редактировать персонажа
-    update =async (c: CharacterUpload) => {
+    update = async (c: CharacterUpload) => {
         const oldCharacter = await this.mapper.selectById(c.id)
         if (oldCharacter.idAccount !== c.idAccount) {
             return Promise.reject('Нет прав')

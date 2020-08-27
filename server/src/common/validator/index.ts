@@ -153,7 +153,7 @@ class Validator {
             err += 'Описание обязательно для заполнения.\n'
         }
         if (character.sex < 0 || character.sex > 2) {
-            err += ''
+            err += 'Ошибка с полом'
         }
         if (character.status < 0 || character.status > 3) {
             err += 'Ошибка со статусом'
@@ -192,6 +192,21 @@ class Validator {
         if (g.rule.length < 1) {
             err += 'Правила обязательны для заполнения.\n'
         }
+        if (g.status < 0 || g.status > 2) {
+            err += 'Ошибка со статусом'
+        }
+        if (g.kit < 0 || g.kit > 2) {
+            err += 'Ошибка с набором'
+        }
+        if (g.closed < 0 || g.closed > 1) {
+            err += 'Ошибка closed'
+        }
+        if (g.hidden < 0 || g.hidden > 1) {
+            err += 'Ошибка hidden'
+        }
+        if (g.comment < 0 || g.comment > 1) {
+            err += 'Ошибка comment'
+        }
         return err
     }
 
@@ -212,6 +227,18 @@ class Validator {
         }
         if (g.rule.length < 1) {
             err += 'Условия и правила обязательно для заполнения.\n'
+        }
+        if (g.status < 0 || g.status > 3) {
+            err += 'Ошибка со статусом'
+        }
+        if (g.closed < 0 || g.closed > 1) {
+            err += 'Ошибка closed'
+        }
+        if (g.hidden < 0 || g.hidden > 1) {
+            err += 'Ошибка hidden'
+        }
+        if (g.comment < 0 || g.comment > 1) {
+            err += 'Ошибка comment'
         }
         return err
     }

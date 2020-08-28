@@ -1,13 +1,15 @@
+$bg-color: #E54242;
+
 .icon {
   height: 1rem;
   min-width: auto;
 }
 
 .trash {
-  background-color: #E54242;
+  background-color: $bg-color;
 
   &:focus, &:hover {
-    background-color: #E54242 - #111;
+    background-color: darken($bg-color, 10%);
   }
 }
 

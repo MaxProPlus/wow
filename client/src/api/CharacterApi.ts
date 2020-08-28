@@ -24,8 +24,8 @@ class CharacterApi extends Api {
     }
 
     // Получить всех персонажей
-    getAll(limit: number, page: number) {
-        const url = `/api/characters?limit=${limit}&page=${page}`
+    getAll(query: string, limit: number, page: number) {
+        const url = `/api/characters?limit=${limit}&page=${page}&query=${query}`
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -74,7 +74,7 @@ class CharacterApi extends Api {
     }
 
     removeComment(id: number) {
-
+        console.log(id)
     }
 }
 

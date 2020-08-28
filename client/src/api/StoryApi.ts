@@ -24,8 +24,8 @@ class StoryApi extends Api {
     }
 
     // Получить все сюжеты
-    getAll(limit: number, page: number) {
-        const url = `/api/stories?limit=${limit}&page=${page}`
+    getAll(query: string, limit: number, page: number) {
+        const url = `/api/stories?limit=${limit}&page=${page}&query=${query}`
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -75,7 +75,7 @@ class StoryApi extends Api {
 
     // Удалить коментарий
     removeComment(id: number) {
-
+        console.log(id)
     }
 }
 

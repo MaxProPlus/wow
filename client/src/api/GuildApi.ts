@@ -24,8 +24,8 @@ class GuildApi extends Api {
     }
 
     // Получить все гильдии
-    getAll(limit: number, page: number) {
-        const url = `/api/guilds?limit=${limit}&page=${page}`
+    getAll(query: string, limit: number, page: number) {
+        const url = `/api/guilds?limit=${limit}&page=${page}&query=${query}`
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
@@ -75,7 +75,7 @@ class GuildApi extends Api {
 
     // Удалить коментарий
     removeComment(id: number) {
-
+        console.log(id)
     }
 }
 

@@ -1,0 +1,36 @@
+.formSearch {
+  position: relative;
+}
+
+.input {
+  border: none;
+  padding: 7px 32px 7px 15px;
+  width: 100%;
+}
+
+.search {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  min-width: auto;
+  cursor: pointer;
+}
+
+.icon {
+  height: 1rem;
+  min-width: auto;
+}
+
+.text {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .icon {
+    margin-right: 7px;
+  }
+
+  .text {
+    display: inline;
+  }
+}

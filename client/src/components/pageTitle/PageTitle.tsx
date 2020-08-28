@@ -20,7 +20,7 @@ const PageTitle = ({title, icon, children, className}: P) => {
         <div className={bodyClass}>
                 <h1>
                     <img src={icon} alt=""/>
-                    {title}
+                    <span>{title}</span>
                 </h1>
                 <div className="d-flex justify-content-end">
                     {children}

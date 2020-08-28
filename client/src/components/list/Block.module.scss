@@ -1,6 +1,6 @@
 @import '../../css/variables';
 
-.blockCharacter {
+.block {
   margin-bottom: 15px;
   text-align: center;
 
@@ -16,12 +16,12 @@
     min-height: 100%
   }
 
-  &:hover .blockCharacter__title {
+  &:hover .title {
     color: #5B87EF;
   }
 }
 
-.blockCharacter__title {
+.title {
   font-size: 1rem;
   position: absolute;
   bottom: 2rem;
@@ -29,7 +29,7 @@
   transition: color .3s ease;
 }
 
-.blockCharacter__gameTitle {
+.muteTitle {
   font-size: .625rem;
   color: #A0A2A6;
   position: absolute;
@@ -37,7 +37,7 @@
   left: 15px;
 }
 
-.block__background {
+.background {
   position: absolute;
   left: 0;
   right: 0;

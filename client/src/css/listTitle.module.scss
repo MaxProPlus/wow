@@ -1,0 +1,16 @@
+@import './variables';
+
+.header {
+  h1 > span {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) {
+  .header {
+    justify-content: space-between;
+    h1 > span {
+      display: inline;
+    }
+  }
+}

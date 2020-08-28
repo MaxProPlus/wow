@@ -1,18 +1,21 @@
-import React, {Component} from "react"
-import {Link} from "react-router-dom"
+import React, {ChangeEvent, Component} from "react"
 import {Guild} from "../../../../server/src/common/entity/types"
 import GuildApi from "../../api/GuildApi"
 import Button from "../../components/button/Button"
-import {Col, Row} from "react-bootstrap"
-import styles from './List.module.scss'
+import {Row} from "react-bootstrap"
+import styles from "../../css/listTitle.module.scss"
 import icon from "./img/guild.svg"
 import Spinner from "../../components/spinner/Spinner"
 import PageTitle from "../../components/pageTitle/PageTitle"
+import Search from "../../components/list/Search"
+import Block from "../../components/list/Block"
 
 type S = {
     isLoaded: boolean,
+    errorMessage: string
     count: number,
     list: Guild[],
+    query: string
 
 }
 
@@ -20,31 +23,43 @@ class GuildList extends Component<any, S> {
     private guildApi = new GuildApi()
     private page = 1
     private limit = 10
+    private query = ''
 
     constructor(props: any) {
         super(props)
         this.state = {
             isLoaded: false,
+            errorMessage: '',
             count: 0,
             list: [],
+            query: '',
         }
     }
 
     componentDidMount() {
-        this.updateData()
+        this.updateData(true)
     }
 
 
-    updateData = () => {
-        this.guildApi.getAll(this.limit, this.page).then(r => {
-            this.setState((prevState: S) => {
-                return {
-                    list: prevState.list.concat(r.data),
+    updateData = (reset: boolean) => {
+        this.guildApi.getAll(this.query, this.limit, this.page).then(r => {
+            if (reset) {
+                this.setState({
+                    list: r.data,
                     count: r.count,
-                }
-            })
+                })
+            } else {
+                this.setState((prevState: S) => {
+                    return {
+                        list: prevState.list.concat(r.data),
+                        count: r.count,
+                    }
+                })
+            }
         }, (err) => {
-            console.error(err)
+            this.setState({
+                errorMessage: err
+            })
         }).finally(() => {
             this.setState({
                 isLoaded: true,
@@ -57,7 +72,23 @@ class GuildList extends Component<any, S> {
             isLoaded: false,
         })
         this.page += 1
-        this.updateData()
+        this.updateData(false)
+    }
+
+    onChange = (e: ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            query: e.target.value
+        })
+    }
+
+    handleSubmit = (e: any) => {
+        e.preventDefault()
+        this.query = this.state.query
+        this.page = 1
+        this.setState({
+            isLoaded: false
+        })
+        this.updateData(true)
     }
 
     render() {
@@ -66,34 +97,23 @@ class GuildList extends Component<any, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-                <PageTitle title="Гильдии" icon={icon}>
-                    <Button to="/material/guild/create">Создать гильдию</Button>
+                <PageTitle className={styles.header} title="Гильдии" icon={icon}>
+                    <Search href="/material/guild/create" text="Создать гильдию" placeholder="Поиск гильдии"
+                            value={this.state.query} onChange={this.onChange} onSubmit={this.handleSubmit}/>
                 </PageTitle>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
-                            (<BlockGuild key={el.id} {...el}/>)
+                            (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.gameTitle}
+                                    urlAvatar={el.urlAvatar} href="/material/guild/" size={4}/>)
                         )}
                     </Row>
                     :
-                    'Нет гильдий'}
+                    'Гильдии не найдены'}
                 {more}
             </div>
         )
     }
-}
-
-const BlockGuild = (props: Guild) => {
-    return (
-        <Col className={styles.blockGuild} lg={4}>
-            <Link to={"/material/guild/" + props.id}>
-                <img src={props.urlAvatar} alt=""/>
-                <div className={styles.block__background}/>
-                <div className={styles.blockGuild__title}>{props.title}</div>
-                <div className={styles.blockGuild__gameTitle}>{props.gameTitle}</div>
-            </Link>
-        </Col>
-    )
 }
 
 export default GuildList

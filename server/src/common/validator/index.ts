@@ -153,22 +153,22 @@ class Validator {
             err += 'Описание обязательно для заполнения.\n'
         }
         if (character.sex < 0 || character.sex > 2) {
-            err += 'Ошибка с полом'
+            err += 'Ошибка с полом.\n'
         }
         if (character.status < 0 || character.status > 3) {
-            err += 'Ошибка со статусом'
+            err += 'Ошибка со статусом.\n'
         }
         if (character.active < 0 || character.active > 3) {
-            err += 'Ошибка с активностью'
+            err += 'Ошибка с активностью.\n'
         }
         if (character.closed < 0 || character.closed > 1) {
-            err += 'Ошибка closed'
+            err += 'Ошибка closed.\n'
         }
         if (character.hidden < 0 || character.hidden > 1) {
-            err += 'Ошибка hidden'
+            err += 'Ошибка hidden.\n'
         }
         if (character.comment < 0 || character.comment > 1) {
-            err += 'Ошибка comment'
+            err += 'Ошибка comment.\n'
         }
 
         return err
@@ -193,19 +193,19 @@ class Validator {
             err += 'Правила обязательны для заполнения.\n'
         }
         if (g.status < 0 || g.status > 2) {
-            err += 'Ошибка со статусом'
+            err += 'Ошибка со статусом.\n'
         }
         if (g.kit < 0 || g.kit > 2) {
-            err += 'Ошибка с набором'
+            err += 'Ошибка с набором.\n'
         }
         if (g.closed < 0 || g.closed > 1) {
-            err += 'Ошибка closed'
+            err += 'Ошибка closed.\n'
         }
         if (g.hidden < 0 || g.hidden > 1) {
-            err += 'Ошибка hidden'
+            err += 'Ошибка hidden.\n'
         }
         if (g.comment < 0 || g.comment > 1) {
-            err += 'Ошибка comment'
+            err += 'Ошибка comment.\n'
         }
         return err
     }
@@ -229,16 +229,16 @@ class Validator {
             err += 'Условия и правила обязательно для заполнения.\n'
         }
         if (g.status < 0 || g.status > 3) {
-            err += 'Ошибка со статусом'
+            err += 'Ошибка со статусом.\n'
         }
         if (g.closed < 0 || g.closed > 1) {
-            err += 'Ошибка closed'
+            err += 'Ошибка closed.\n'
         }
         if (g.hidden < 0 || g.hidden > 1) {
-            err += 'Ошибка hidden'
+            err += 'Ошибка hidden.\n'
         }
         if (g.comment < 0 || g.comment > 1) {
-            err += 'Ошибка comment'
+            err += 'Ошибка comment.\n'
         }
         return err
     }

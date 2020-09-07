@@ -55,10 +55,18 @@ export class MyCropper extends React.Component<P, S> {
     }
 
 
-    handleCrop = (e: any) => {
+    handleCrop = () => {
         if (typeof this.cropper !== "undefined") {
             this.props.onChange(this.cropper.getCroppedCanvas().toDataURL())
         }
+    }
+
+    handleInitialized = (instance: any) => {
+        this.cropper = instance
+    }
+
+    handleReady = () => {
+        this.cropper.zoom(-5)
     }
 
     render() {
@@ -80,9 +88,8 @@ export class MyCropper extends React.Component<P, S> {
                         crop={this.handleCrop}
                         dragMode={'move'}
                         checkOrientation={true} // https://github.com/fengyuanchen/cropperjs/issues/671
-                        onInitialized={(instance) => {
-                            this.cropper = instance
-                        }}
+                        onInitialized={this.handleInitialized}
+                        ready={this.handleReady}
                     />
                 </Col>
                 <Col className={styles.block__handle} xs={6}>

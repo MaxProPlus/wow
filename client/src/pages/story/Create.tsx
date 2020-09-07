@@ -6,7 +6,13 @@ import {Redirect} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {defaultStoryAvatar, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
+import {
+    Character,
+    defaultStoryAvatar,
+    Guild,
+    Story,
+    storyStatusToString
+} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -18,64 +24,31 @@ import StoryApi from "../../api/StoryApi"
 import MyCropper from "../../components/myCropper/MyCropper"
 import Helper from "../../utils/helper"
 import PageTitle from "../../components/pageTitle/PageTitle"
+import {CommonS, handleFormData} from "./Common"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
+import CharacterApi from "../../api/CharacterApi"
+import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
+import GuildApi from "../../api/GuildApi"
 
-
-type S = {
-    isLoaded: boolean
-    errorMessage: string
-
-    // Главное
-    title: string // Название сюжета
-    dateStart: string // Дата начала
-    period: string // Мировозрение
-    shortDescription: string // Анонс
-
-    // Основное
-    description: string // Описание и история
-    rule: string // Условия и правила
-    more: string // Дополнительные сведения
-    articles: string // Список обсуждений/статей/логов
-    members: string // Список участников
-    guilds: string // Список гильдий
-    events: string // Список событий
-
-    // Прочее
-    status: number // Статус. 0 - активна, 1 - скоро открытие, 2 - распущена
-    style: string // CSS-стили
-    coauthors: [] // Список соавторов
-    closed: number // Закрыть(материал будет доступен только автору)
-    hidden: number // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
-    comment: number // Запретить комментарии
-}
-
-class StoryCreate extends React.Component<any, S> {
+class StoryCreate extends React.Component<any, CommonS> {
     static contextType = UserContext
     private storyApi = new StoryApi()
+    private characterApi = new CharacterApi()
+    private guildApi = new GuildApi()
     private validator = new Validator()
     private avatar: File | any
 
     constructor(props: any) {
         super(props)
         this.state = {
+            ...new Story(),
             isLoaded: true,
             errorMessage: '',
-            title: '',
-            dateStart: (new Date()).toISOString().substr(0, 10),
-            period: '',
-            shortDescription: '',
-            description: '',
-            rule: '',
-            more: '',
-            articles: '',
-            members: '',
-            guilds: '',
-            events: '',
-            status: 0,
-            style: '',
-            coauthors: [],
-            closed: 0,
-            hidden: 0,
-            comment: 0,
+            articlesOptions: [],
+            membersOptions: [],
+            guildsOptions: [],
+            eventsOptions: [],
+            coauthorsOptions: [],
         }
     }
 
@@ -121,20 +94,7 @@ class StoryCreate extends React.Component<any, S> {
             })
             return
         }
-        let formData = new FormData()
-        formData.append('fileAvatar', this.avatar)
-        formData.append('title', story.title)
-        formData.append('dateStart', story.dateStart)
-        formData.append('period', story.period)
-        formData.append('shortDescription', story.shortDescription)
-        formData.append('description', story.description)
-        formData.append('rule', story.rule)
-        formData.append('more', story.more)
-        formData.append('status', String(story.status))
-        formData.append('style', story.style)
-        formData.append('closed', String(story.closed))
-        formData.append('hidden', String(story.hidden))
-        formData.append('comment', String(story.comment))
+        let formData = handleFormData(story, this.avatar)
         this.storyApi.create(formData).then(r => {
             history.push('/material/story/' + r)
         }, err => {
@@ -145,6 +105,76 @@ class StoryCreate extends React.Component<any, S> {
             this.setState({
                 isLoaded: true
             })
+        })
+    }
+
+    handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
+        if (e.value === '') {
+            this.setState({
+                [e.id + 'Options']: []
+            } as any)
+            return Promise.resolve()
+        }
+        switch (e.id) {
+            case 'members':
+                return this.characterApi.getAll(e.value, 3, 1).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        membersOptions: r.data.filter((el: Character) => {
+                            return this.state.members.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Character) => {
+                            return {
+                                label: el.title,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'guilds':
+                return this.guildApi.getAll(e.value, 3, 1).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        guildsOptions: r.data.filter((el: Guild) => {
+                            return this.state.guilds.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Guild) => {
+                            return {
+                                label: el.title,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'coauthors':
+                return Promise.resolve()
+            default:
+                return Promise.resolve()
+        }
+    }
+
+    handleAddMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: CommonS | any) => {
+            return {
+                [e.id]: [...state[e.id], {label: e.label, value: e.value}]
+            } as any
+        })
+    }
+
+    handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: CommonS | any) => {
+            const index = state[e.id].findIndex((el: any) => el.value === e.value)
+            return {
+                [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]
+            } as any
         })
     }
 
@@ -178,7 +208,6 @@ class StoryCreate extends React.Component<any, S> {
                                         placeholder="Введите анонс сюжета"
                                         type="text" value={this.state.shortDescription}
                                         onChange={this.handleChange}/>
-
                         </Col>
                     </Row>
                     <Row>
@@ -196,26 +225,34 @@ class StoryCreate extends React.Component<any, S> {
                                       placeholder="Если есть то, что вы еще не написали, то это тут..."
                                       value={this.state.more}
                                       onChange={this.handleChange}/>
-                            <Textarea id="articles" label="Список обсуждений/статей/логов"
-                                      placeholder="Напишите список тут..."
-                                      value={this.state.articles}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="members" label="Список персонажей-участников"
-                                      placeholder="Введите персонажей вашего сюжета..."
-                                      value={this.state.members}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="guilds" label="Список гильдий-участников"
-                                      placeholder="Введите гильдии, которые принимают участие в сюжете..."
-                                      value={this.state.guilds}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="events" label="Список событий"
-                                      placeholder="Введите события вашего сюжета..."
-                                      value={this.state.events}
-                                      onChange={this.handleChange}/>
+                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
+                                           placeholder="Напишите список тут..."
+                                           value={this.state.articles} options={this.state.articlesOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="members" label="Список персонажей-участников"
+                                           placeholder="Введите персонажей вашего сюжета..."
+                                           value={this.state.members} options={this.state.membersOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="guilds" label="Список гильдий-участников"
+                                           placeholder="Введите гильдии, которые принимают участие в сюжете..."
+                                           value={this.state.guilds} options={this.state.guildsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="events" label="Список событий"
+                                           placeholder="Введите события вашего сюжета..."
+                                           value={this.state.events} options={this.state.eventsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Прочее</h2>
-                            <Select id="status" label="Статус" placeholder="Выберите статус c.;tnf"
+                            <Select id="status" label="Статус" placeholder="Выберите статус"
                                     value={this.state.status}
                                     onChange={this.handleChangeSelect}>
                                 {[0, 1, 2, 3].map(v =>
@@ -226,10 +263,12 @@ class StoryCreate extends React.Component<any, S> {
                                       placeholder="Сюда поместите код..."
                                       value={this.state.style}
                                       onChange={this.handleChange}/>
-                            <Textarea id="coauthors" label="Список соавторов"
-                                      placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
-                                      value={this.state.coauthors}
-                                      onChange={this.handleChange}/>
+                            <MyMultiSelect id="coauthors" label="Список соавторов"
+                                           placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
+                                           value={this.state.coauthors} options={this.state.coauthorsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
                             <InputCheckBox id="closed" label="Закрыть(материал
                                 будет доступен только автору)" checked={this.state.closed}
                                            onChange={this.handleChangeChecked}/>
@@ -245,7 +284,6 @@ class StoryCreate extends React.Component<any, S> {
                             </div>
                         </Col>
                     </Row>
-
                 </Form>
             </div>
         )

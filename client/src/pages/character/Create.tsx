@@ -4,8 +4,8 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
-    characterActiveToString,
     Character,
+    characterActiveToString,
     characterStatusToString,
     defaultCharacterAvatar,
     sexToString
@@ -24,71 +24,24 @@ import icon from "../../img/brush.svg"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
+import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
+import {CommonS, handleFormData} from "./Common"
 
-type S = {
-    isLoaded: boolean
-    errorMessage: string
-    title: string // Полное имя персонажа
-    nickname: string // Игровое имя
-    shortDescription: string // Девиз персонажа
-    race: string // Раса
-    nation: string // Народность
-    territory: string // Места пребывания
-    age: number // Возраст
-    className: string // Класс
-    occupation: string // Род занятий
-    religion: string // Верования
-    languages: string // Знание языков
-    description: string // Внешность и характер
-    history: string // История персонажа
-    more: string // Дополнительные сведения
-    chars: [] // Список друзей
-
-    // Прочее
-    sex: number // Пол. 0 - не указан, 1 - женский, 2 - мужской
-    status: number // Статус. 0 - жив, 1 - мертв, 2 - пропал
-    active: number // Активность. 0 - отыгрыш еще не начат, 1 - в поиске отыгрыша, 2 - персонаж отыгрывается, 3-отыгрыш завершен
-    closed: number // Закрыть(материал будет доступен только автору)
-    hidden: number // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
-    comment: number // Запретить комментарии
-    style: string // CSS-стили
-    coauthors: [] // Список соавторов
-}
-
-class CharacterCreate extends React.Component<any, S> {
+class CharacterCreate extends React.Component<any, CommonS> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
-    private avatar:File|any
+    private avatar: File | any
 
     constructor(props: any) {
         super(props)
         this.state = {
+            ...new Character(),
             isLoaded: true,
             errorMessage: '',
-            title: '',
-            nickname: '',
-            shortDescription: '',
-            race: '',
-            nation: '',
-            territory: '',
-            age: 0,
-            className: '',
-            occupation: '',
-            religion: '',
-            languages: '',
-            description: '',
-            history: '',
-            more: '',
-            chars: [],
-            sex: 0,
-            status: 0,
-            active: 0,
-            closed: 0,
-            hidden: 0,
-            comment: 0,
-            style: '',
-            coauthors: []
+            friendsOptions: [],
+            coauthorsOptions: [],
         }
     }
 
@@ -118,6 +71,57 @@ class CharacterCreate extends React.Component<any, S> {
         this.avatar = Helper.dataURLtoFile(e)
     }
 
+    handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
+        if (e.value === '') {
+            this.setState({
+                [e.id + 'Options']: []
+            } as any)
+            return Promise.resolve()
+        }
+        switch (e.id) {
+            case 'friends':
+                return this.characterApi.getAll(e.value, 3, 1).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        friendsOptions: r.data.filter((el: Character) => {
+                            return this.state.friends.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Character) => {
+                            return {
+                                label: el.title,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'coauthors':
+                return Promise.resolve()
+            default:
+                return Promise.resolve()
+        }
+    }
+
+    handleAddMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: CommonS | any) => {
+            return {
+                [e.id]: [...state[e.id], {label: e.label, value: e.value}]
+            } as any
+        })
+    }
+
+    handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: CommonS | any) => {
+            const index = state[e.id].findIndex((el: any) => el.value === e.value)
+            return {
+                [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]
+            } as any
+        })
+    }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -125,7 +129,7 @@ class CharacterCreate extends React.Component<any, S> {
             errorMessage: '',
             isLoaded: false,
         })
-        let character = this.state as unknown as Character
+        let character = this.state as any as Character
         let err = this.validator.validateCharacter(character)
         // err += this.validator.validateImg(this.avatar)
         if (!!err) {
@@ -135,29 +139,8 @@ class CharacterCreate extends React.Component<any, S> {
             })
             return
         }
-        let formData = new FormData()
-        formData.append('title', character.title)
-        formData.append('nickname', character.nickname)
-        formData.append('shortDescription', character.shortDescription)
-        formData.append('race', character.race)
-        formData.append('nation', character.nation)
-        formData.append('territory', character.territory)
-        formData.append('age', String(character.age))
-        formData.append('className', character.className)
-        formData.append('occupation', character.occupation)
-        formData.append('religion', character.religion)
-        formData.append('languages', character.languages)
-        formData.append('description', character.description)
-        formData.append('history', character.history)
-        formData.append('more', character.more)
-        formData.append('sex', String(character.sex))
-        formData.append('status', String(character.status))
-        formData.append('active', String(character.active))
-        formData.append('closed', String(character.closed))
-        formData.append('hidden', String(character.hidden))
-        formData.append('comment', String(character.comment))
-        formData.append('fileAvatar', this.avatar)
-        formData.append('style', character.style)
+        let formData = handleFormData(character, this.avatar)
+
         this.characterApi.create(formData).then(r => {
             history.push('/material/character/' + r)
         }, err => {
@@ -207,6 +190,12 @@ class CharacterCreate extends React.Component<any, S> {
                                               value={this.state.more}
                                               onChange={this.handleChange}
                                               rows={3}/>
+                                    <MyMultiSelect id="friends" label="Список друзей / знакомых персонажей"
+                                                   placeholder="Введите всех друзей и знакомых данного персонажа..."
+                                                   value={this.state.friends} options={this.state.friendsOptions}
+                                                   onChange={this.handleChangeMultiSelect}
+                                                   onAdd={this.handleAddMultiSelect}
+                                                   onRemove={this.handleRemoveMultiSelect}/>
                                 </Col>
                             </Row>
                         </Col>
@@ -289,7 +278,12 @@ class CharacterCreate extends React.Component<any, S> {
                                     <Textarea label="CSS-стили(в разработке)" id="style" value={this.state.style}
                                               onChange={this.handleChange}
                                               rows={4}/>
-
+                                    <MyMultiSelect id="coauthors" label="Список соавторов"
+                                                   placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
+                                                   value={this.state.coauthors} options={this.state.coauthorsOptions}
+                                                   onChange={this.handleChangeMultiSelect}
+                                                   onAdd={this.handleAddMultiSelect}
+                                                   onRemove={this.handleRemoveMultiSelect}/>
                                 </Col>
                                 <Col className="un-board" md={6}>
                                     <InputCheckBox label="Закрыть(материал
@@ -305,12 +299,10 @@ class CharacterCreate extends React.Component<any, S> {
                                     <div className="from-group">
                                         <Button>Создать</Button>
                                     </div>
-
                                 </Col>
                             </Row>
                         </Col>
                     </Row>
-
                 </Form>
             </div>
         )

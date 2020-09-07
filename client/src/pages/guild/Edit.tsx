@@ -6,7 +6,7 @@ import {Redirect} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
+import {Character, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -18,70 +18,36 @@ import icon from "../../img/brush.svg"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
+import {CommonS, handleFormData} from "./Common"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
+import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
+import CharacterApi from "../../api/CharacterApi"
 
 
-type S = {
+type S = CommonS & {
     id: string
     idAccount: number
-    isLoaded: boolean
-    errorMessage: string
     urlAvatar: string
-
-    // Главное
-    title: string // Название гильдии
-    gameTitle: string // Название гильдии в игре
-    ideology: string // Мировозрение
-    shortDescription: string // Анонс
-
-    // Основное
-    description: string // Описание и история
-    rule: string // Условия и правила
-    more: string // Дополнительные сведения
-    articles: string // Список обсуждений/статей/логов
-    members: string // Список участников
-    events: string // Список событий
-
-    // Прочее
-    status: number // Статус. 0 - активна, 1 - скоро открытие, 2 - распущена
-    kit: number // Набор. 0 - открыт, 1 - закрыт, 2 - временно прекращен
-    style: string // CSS-стили
-    coauthors: [] // Список соавторов
-    closed: number // Закрыть(материал будет доступен только автору)
-    hidden: number // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
-    comment: number // Запретить комментарии
 }
 
 class GuildEdit extends React.Component<any, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
+    private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: any
 
     constructor(props: any) {
         super(props)
         this.state = {
+            ...new Guild(),
             id: props.match.params.id,
-            idAccount: 0,
             isLoaded: true,
             errorMessage: '',
-            urlAvatar: '',
-            title: '',
-            gameTitle: '',
-            ideology: '',
-            shortDescription: '',
-            description: '',
-            rule: '',
-            more: '',
-            articles: '',
-            members: '',
-            events: '',
-            status: 0,
-            kit: 0,
-            style: '',
-            coauthors: [],
-            closed: 0,
-            hidden: 0,
-            comment: 0,
+            articlesOptions: [],
+            membersOptions: [],
+            eventsOptions: [],
+            coauthorsOptions: [],
         }
     }
 
@@ -138,6 +104,57 @@ class GuildEdit extends React.Component<any, S> {
         this.avatar = Helper.dataURLtoFile(e)
     }
 
+    handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
+        if (e.value === '') {
+            this.setState({
+                [e.id + 'Options']: []
+            } as any)
+            return Promise.resolve()
+        }
+        switch (e.id) {
+            case 'members':
+                return this.characterApi.getAll(e.value, 3, 1).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        membersOptions: r.data.filter((el: Character) => {
+                            return this.state.members.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Character) => {
+                            return {
+                                label: el.title,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'coauthors':
+                return Promise.resolve()
+            default:
+                return Promise.resolve()
+        }
+    }
+
+    handleAddMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: S | any) => {
+            return {
+                [e.id]: [...state[e.id], {label: e.label, value: e.value}]
+            } as any
+        })
+    }
+
+    handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
+        this.setState((state: S | any) => {
+            const index = state[e.id].findIndex((el: any) => el.value === e.value)
+            return {
+                [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]
+            } as any
+        })
+    }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.props.scrollTop()
@@ -155,21 +172,8 @@ class GuildEdit extends React.Component<any, S> {
             })
             return
         }
-        let formData = new FormData()
-        formData.append('fileAvatar', this.avatar)
-        formData.append('title', guild.title)
-        formData.append('gameTitle', guild.gameTitle)
-        formData.append('ideology', guild.ideology)
-        formData.append('shortDescription', guild.shortDescription)
-        formData.append('description', guild.description)
-        formData.append('rule', guild.rule)
-        formData.append('more', guild.more)
-        formData.append('status', String(guild.status))
-        formData.append('kit', String(guild.kit))
-        formData.append('style', guild.style)
-        formData.append('closed', String(guild.closed))
-        formData.append('hidden', String(guild.hidden))
-        formData.append('comment', String(guild.comment))
+
+        let formData = handleFormData(guild, this.avatar)
         this.guildApi.update(this.state.id, formData).then(r => {
             history.push('/material/guild/' + r)
         }, err => {
@@ -215,7 +219,6 @@ class GuildEdit extends React.Component<any, S> {
                                         placeholder="Введите анонс гильдии"
                                         type="text" value={this.state.shortDescription}
                                         onChange={this.handleChange}/>
-
                         </Col>
                     </Row>
                     <Row>
@@ -233,18 +236,24 @@ class GuildEdit extends React.Component<any, S> {
                                       placeholder="Если есть то, что вы еще не написали, то это тут..."
                                       value={this.state.more}
                                       onChange={this.handleChange}/>
-                            <Textarea id="articles" label="Список обсуждений/статей/логов"
-                                      placeholder="Напишите список тут..."
-                                      value={this.state.articles}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="members" label="Список учасников"
-                                      placeholder="Введите персонажей вашей гильдии..."
-                                      value={this.state.members}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="events" label="Список событий"
-                                      placeholder="Введите события вашей гильдии..."
-                                      value={this.state.events}
-                                      onChange={this.handleChange}/>
+                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
+                                           placeholder="Напишите список тут..."
+                                           value={this.state.articles} options={this.state.articlesOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="members" label="Список учасников"
+                                           placeholder="Введите персонажей вашей гильдии..."
+                                           value={this.state.members} options={this.state.membersOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="events" label="Список событий"
+                                           placeholder="Введите события вашей гильдии..."
+                                           value={this.state.events} options={this.state.eventsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Прочее</h2>
@@ -265,10 +274,12 @@ class GuildEdit extends React.Component<any, S> {
                                       placeholder="Сюда поместите код..."
                                       value={this.state.style}
                                       onChange={this.handleChange}/>
-                            <Textarea id="coauthors" label="Список соавторов"
-                                      placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
-                                      value={this.state.coauthors}
-                                      onChange={this.handleChange}/>
+                            <MyMultiSelect id="coauthors" label="Список соавторов"
+                                           placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
+                                           value={this.state.coauthors} options={this.state.coauthorsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
                             <InputCheckBox id="closed" label="Закрыть(материал
                                 будет доступен только автору)" checked={this.state.closed}
                                            onChange={this.handleChangeChecked}/>
@@ -284,7 +295,6 @@ class GuildEdit extends React.Component<any, S> {
                             </div>
                         </Col>
                     </Row>
-
                 </Form>
             </div>
         )

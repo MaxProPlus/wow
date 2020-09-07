@@ -21,20 +21,13 @@
   background-color: rgba(33, 40, 59, 0.35);
   background-clip: padding-box;
   border: 1px solid $border-color;
-  //border-radius: .25rem;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 
   &::placeholder {
     color: $color2;
-    //opacity: 1;
   }
 
   &:focus {
-    //color: #495057;
-    //background-color: #fff;
-    //border-color: #4e6471;
-
-
     outline: 0;
   }
 }

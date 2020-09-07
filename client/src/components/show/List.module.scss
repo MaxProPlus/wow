@@ -1,0 +1,21 @@
+@import "../../css/variables";
+
+.title {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.block {
+  border: 1px solid $border-color;
+  background-color: transparentize($border-color, .65);
+  padding: 7px 7px 0;
+  margin-bottom: 15px;
+}
+
+.value {
+  display: block;
+  border: 1px solid $border-color;
+  background-color: transparentize($border-color, .65);
+  padding: 7px;
+  margin-bottom: 7px;
+}

@@ -63,21 +63,21 @@ class GuildModel {
 
     // Редактировать гильдию
     update = async (guild: GuildUpload) => {
-        const oldGuild = await this.mapper.selectById(guild.id)
-        if (oldGuild.idAccount !== guild.idAccount) {
+        const old = await this.mapper.selectById(guild.id)
+        if (old.idAccount !== guild.idAccount) {
             return Promise.reject('Нет прав')
         }
 
-        oldGuild.members = await this.mapper.selectMembersById(guild.id)
+        old.members = await this.mapper.selectMembersById(guild.id)
         // Перебор нового списка участников гильдии
         await Promise.all(guild.members.map(async (el: number) => {
             // Если не находим в старом списке, то добавляем
-            if (oldGuild.members.findIndex(o => el === o.id) === -1) {
+            if (old.members.findIndex(o => el === o.id) === -1) {
                 return await this.mapper.insertMember(guild.id, el)
             }
         }))
         // Перебор старого списка участников гильдии
-        await Promise.all(oldGuild.members.map(async (el: Character) => {
+        await Promise.all(old.members.map(async (el: Character) => {
             // Если не находим в новом списке, то удаляем
             if (guild.members.indexOf(el.id) === -1) {
                 return await this.mapper.removeMember(guild.id, el.id)
@@ -85,11 +85,11 @@ class GuildModel {
         }))
 
 
-        guild.urlAvatar = oldGuild.urlAvatar
+        guild.urlAvatar = old.urlAvatar
         // Обновить аватарку
         let infoAvatar
         if (!!guild.fileAvatar) {
-            this.uploader.remove(oldGuild.urlAvatar)
+            this.uploader.remove(old.urlAvatar)
             infoAvatar = this.uploader.getInfo(guild.fileAvatar, 'guildAvatar')
             guild.urlAvatar = infoAvatar.url
             guild.fileAvatar.mv(infoAvatar.path)

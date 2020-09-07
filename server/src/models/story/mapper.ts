@@ -1,4 +1,4 @@
-import {CommentStory, Story} from '../../common/entity/types'
+import {Character, CommentStory, Guild, Story} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -17,6 +17,30 @@ class Mapper {
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idAccount, urlAvatar, title, period, dateStart, shortDescription,
             description, rule, more, status, closed, hidden, comment, style]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить участника сюжета
+    insertMember = (id: number, idCharacter: number) => {
+        const sql = `INSERT INTO story_to_character (id_story, id_character)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idCharacter]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить гильдии сюжета
+    insertGuild = (id: number, idGuild: number) => {
+        const sql = `INSERT INTO story_to_guild (id_story, id_guild)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idGuild]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -53,6 +77,76 @@ class Mapper {
             // @ts-ignore
             r[0].dateStart = r[0].dateStart.toISOString().substr(0, 10)
             return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить участников сюжета
+    selectMembersById = (id: number): Promise<Character[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.nickname,
+                            link.short_description as shortDescription,
+                            link.race,
+                            link.nation,
+                            link.territory,
+                            link.age,
+                            link.class             as className,
+                            link.occupation,
+                            link.religion,
+                            link.languages,
+                            link.description,
+                            link.history,
+                            link.more,
+                            link.sex,
+                            link.status,
+                            link.active,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from \`character\` link
+                              join story_to_character gtc on link.id = gtc.id_character
+                              join story s on gtc.id_story = s.id
+                     where s.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить гильдии сюжета
+    selectGuildsById = (id: number): Promise<Guild[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.game_title        as gameTitle,
+                            link.short_description as shortDescription,
+                            link.ideology,
+                            link.description,
+                            link.rule,
+                            link.more,
+                            link.status,
+                            link.kit,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from guild link
+                              join story_to_guild stg on link.id = stg.id_guild
+                              join story s on stg.id_story = s.id
+                     where s.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
+            return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')
@@ -194,6 +288,40 @@ class Mapper {
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Сюжет не найден')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Удалить персонажа из сюжета
+    removeMember = (id: number, idLink: number) => {
+        const sql = `delete
+                     from story_to_character
+                     where id_story = ?
+                       and id_character = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Удалить гильдию из сюжета
+    removeGuild = (id: number, idLink: number) => {
+        const sql = `delete
+                     from story_to_guild
+                     where id_story = ?
+                       and id_guild = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
             }
             return Promise.resolve(id)
         }, (err: any) => {

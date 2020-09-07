@@ -35,7 +35,7 @@ import history from "../../utils/history"
 import PageTitle from "../../components/pageTitle/PageTitle"
 import ControlButton from "../../components/show/ControlButton"
 import Avatar from "../../components/show/Avatar"
-import Block from "../../components/list/Block"
+import Card from "../../components/show/Card"
 
 type S = {
     isLoaded: boolean
@@ -207,12 +207,7 @@ class CharacterPage extends React.Component<any, S> {
                     <InfoBlock title="Внешность и характер" value={this.state.character.description}/>
                     <InfoBlock title="История персонажа" value={this.state.character.history}/>
                     <InfoBlock title="Дополнительные сведения" value={this.state.character.more}/>
-                    <Row>
-                        {this.state.character.friends.map(el =>
-                            (<Block key={el.id} id={el.id} title='' muteTitle=''
-                                    urlAvatar={el.urlAvatar} href="/material/character/" size={2}/>)
-                        )}
-                    </Row>
+                    <Card title="Участники" href="/material/character/" list={this.state.character.friends}/>
 
                     <div className="comments">
                         {this.state.comments.map((c) =>

@@ -237,11 +237,9 @@ class Validator {
     }
 
     validateStory(g: Story) {
-        let err = '';
-        (['title', 'period', 'shortDescription'] as string[]).forEach(((el: string) => {
-            // @ts-ignore
-            g[el] = this.trim(g[el])
-        }))
+        let err = ''
+        this.trimObject(g, ['title', 'period', 'shortDescription'])
+        this.normalize(g, ['articles', 'members', 'guilds', 'events', 'coauthors'])
         if (!g.dateStart) {
             g.dateStart = (new Date()).toISOString().substr(0, 10)
         }

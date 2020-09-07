@@ -19,6 +19,8 @@ import ControlButton from "../../components/show/ControlButton"
 import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
 import history from "../../utils/history"
 import Avatar from "../../components/show/Avatar"
+import Card from "../../components/show/Card"
+import List from "../../components/show/List"
 
 type S = {
     isLoaded: boolean
@@ -152,6 +154,8 @@ class StoryPage extends React.Component<any, S> {
                 <InfoBlock title="Сюжет" value={this.state.story.description}/>
                 <InfoBlock title="Условия и правила" value={this.state.story.rule}/>
                 <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
+                <Card title="Участники" href="/material/character/" list={this.state.story.members}/>
+                <List title="Гильдии" href="/material/guild/" list={this.state.story.guilds}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
                         <Comment key={c.id} {...c}/>

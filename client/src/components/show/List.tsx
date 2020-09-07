@@ -9,7 +9,7 @@ type P = {
 }
 
 const List = ({title, href, list}: P) => {
-    if (!list) {
+    if (!list.length) {
         return null
     }
     return (

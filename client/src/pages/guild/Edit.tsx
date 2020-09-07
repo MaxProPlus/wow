@@ -66,6 +66,12 @@ class GuildEdit extends React.Component<any, S> {
     updateData = () => {
         this.guildApi.getById(this.state.id).then(r => {
             delete r.id
+            r[0].members = r[0].members.map((el: Character) => {
+                return {
+                    label: el.title,
+                    value: el.id
+                }
+            })
             this.setState(r[0])
         }, err => {
             this.setState({

@@ -17,16 +17,24 @@ class CharacterModel {
         c.urlAvatar = infoAvatar.url
 
         const id = await this.mapper.insert(c)
+        await Promise.all(c.friends.map(async (idLink) => {
+            await this.mapper.insertLink(id, idLink)
+        }))
         c.fileAvatar.mv(infoAvatar.path)
         return id
     }
 
     // Получить персонажа по id
-    getById = (id: number): Promise<[Character, CommentCharacter]> => {
-        const p = []
-        p.push(this.mapper.selectById(id))
-        p.push(this.getComments(id))
-        return Promise.all(p) as Promise<[Character, CommentCharacter]>
+    getById = (id: number): Promise<[Character, CommentCharacter[]]> => {
+        const p: [Promise<Character>, Promise<Character[]>, Promise<CommentCharacter[]>] = [
+            this.mapper.selectById(id),
+            this.mapper.selectByIdLink(id),
+            this.getComments(id),
+        ]
+        return Promise.all<Character, Character[], CommentCharacter[]>(p).then(([c, links, comments]) => {
+            c.friends = links
+            return [c, comments]
+        }) as Promise<[Character, CommentCharacter[]]>
     }
 
     // Получить всех персонажей
@@ -59,14 +67,33 @@ class CharacterModel {
         if (oldCharacter.idAccount !== c.idAccount) {
             return Promise.reject('Нет прав')
         }
+
+        oldCharacter.friends = await this.mapper.selectByIdLink(c.id)
+        // Перебор нового списка друзей персонажей
+        await Promise.all(c.friends.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (oldCharacter.friends.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertLink(c.id, el)
+            }
+        }))
+        // Перебор старого списка друзей персонажей
+        await Promise.all(oldCharacter.friends.map(async (el: Character) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.friends.indexOf(el.id) === -1) {
+                return await this.mapper.removeLink(c.id, el.id)
+            }
+        }))
+
         c.urlAvatar = oldCharacter.urlAvatar
         let infoAvatar
+        // Если загружена новая аватарка, то обновляем ее
         if (!!c.fileAvatar) {
             this.uploader.remove(oldCharacter.urlAvatar)
             infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
             c.urlAvatar = infoAvatar.url
             c.fileAvatar.mv(infoAvatar.path)
         }
+
         return this.mapper.update(c)
     }
 
@@ -90,7 +117,7 @@ class CharacterModel {
     }
 
     // Получить комментарии к персонажу
-    getComments = async (id: number) => {
+    getComments = async (id: number): Promise<CommentCharacter[]> => {
         const comments = await this.mapper.selectCommentsByIdCharacter(id)
         comments.forEach((c: CommentCharacter) => {
             if (!c.authorUrlAvatar) {

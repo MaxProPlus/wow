@@ -1,4 +1,4 @@
-import {CommentGuild, Guild} from '../../common/entity/types'
+import {Character, CommentGuild, Guild} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -17,6 +17,18 @@ class Mapper {
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
             status, kit, closed, hidden, comment, style]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Вставка в таблицу многие ко многим
+    insertMember = (id: number, idLink: number) => {
+        const sql = `INSERT INTO guild_to_character (id_guild, id_character)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -50,6 +62,45 @@ class Mapper {
                 return Promise.reject('Гильдия не найдена')
             }
             return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить участников гильдии
+    selectMembersById = (id: number): Promise<Character[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.nickname,
+                            link.short_description as shortDescription,
+                            link.race,
+                            link.nation,
+                            link.territory,
+                            link.age,
+                            link.class             as className,
+                            link.occupation,
+                            link.religion,
+                            link.languages,
+                            link.description,
+                            link.history,
+                            link.more,
+                            link.sex,
+                            link.status,
+                            link.active,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from \`character\` link
+                              join guild_to_character gtc on link.id = gtc.id_character
+                              join guild g on gtc.id_guild = g.id
+                     where g.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')
@@ -195,6 +246,23 @@ class Mapper {
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Гильдия не найдена')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Удалить участника из гильдии
+    removeMember = (id: number, idLink: number) => {
+        const sql = `delete
+                     from guild_to_character
+                     where id_guild = ?
+                       and id_character = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
             }
             return Promise.resolve(id)
         }, (err: any) => {

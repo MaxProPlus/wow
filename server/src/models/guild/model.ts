@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {CommentGuild, Guild} from '../../common/entity/types'
+import {Character, CommentGuild, Guild} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -17,16 +17,24 @@ class GuildModel {
         c.urlAvatar = infoAvatar.url
 
         const id = await this.mapper.insert(c)
+        await Promise.all(c.members.map(async (idLink) => {
+            await this.mapper.insertMember(id, idLink)
+        }))
         c.fileAvatar.mv(infoAvatar.path)
         return id
     }
 
     // Получить гильдию по id
-    getById = (id: number): Promise<[Guild, CommentGuild]> => {
-        const p = []
-        p.push(this.mapper.selectById(id))
-        p.push(this.getComments(id))
-        return Promise.all(p) as Promise<[Guild, CommentGuild]>
+    getById = (id: number): Promise<[Guild, CommentGuild[]]> => {
+        const p: [Promise<Guild>, Promise<Character[]>, Promise<CommentGuild[]>] = [
+            this.mapper.selectById(id),
+            this.mapper.selectMembersById(id),
+            this.getComments(id),
+        ]
+        return Promise.all<Guild, Character[], CommentGuild[]>(p).then(([g, members, comments]) => {
+            g.members = members
+            return [g, comments]
+        })
     }
 
     // Получить все гильдии
@@ -54,20 +62,39 @@ class GuildModel {
     }
 
     // Редактировать гильдию
-    update = async (c: GuildUpload) => {
-        const oldCharacter = await this.mapper.selectById(c.id)
-        if (oldCharacter.idAccount !== c.idAccount) {
+    update = async (guild: GuildUpload) => {
+        const oldGuild = await this.mapper.selectById(guild.id)
+        if (oldGuild.idAccount !== guild.idAccount) {
             return Promise.reject('Нет прав')
         }
-        c.urlAvatar = oldCharacter.urlAvatar
+
+        oldGuild.members = await this.mapper.selectMembersById(guild.id)
+        // Перебор нового списка участников гильдии
+        await Promise.all(guild.members.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (oldGuild.members.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertMember(guild.id, el)
+            }
+        }))
+        // Перебор старого списка участников гильдии
+        await Promise.all(oldGuild.members.map(async (el: Character) => {
+            // Если не находим в новом списке, то удаляем
+            if (guild.members.indexOf(el.id) === -1) {
+                return await this.mapper.removeMember(guild.id, el.id)
+            }
+        }))
+
+
+        guild.urlAvatar = oldGuild.urlAvatar
+        // Обновить аватарку
         let infoAvatar
-        if (!!c.fileAvatar) {
-            this.uploader.remove(oldCharacter.urlAvatar)
-            infoAvatar = this.uploader.getInfo(c.fileAvatar, 'guildAvatar')
-            c.urlAvatar = infoAvatar.url
-            c.fileAvatar.mv(infoAvatar.path)
+        if (!!guild.fileAvatar) {
+            this.uploader.remove(oldGuild.urlAvatar)
+            infoAvatar = this.uploader.getInfo(guild.fileAvatar, 'guildAvatar')
+            guild.urlAvatar = infoAvatar.url
+            guild.fileAvatar.mv(infoAvatar.path)
         }
-        return this.mapper.update(c)
+        return this.mapper.update(guild)
     }
 
     // Удалить гильдию

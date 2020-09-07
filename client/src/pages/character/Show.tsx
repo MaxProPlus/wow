@@ -1,7 +1,8 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import {
-    Character, characterActiveToString,
+    Character,
+    characterActiveToString,
     characterStatusToString,
     CommentCharacter,
     sexToString
@@ -34,6 +35,7 @@ import history from "../../utils/history"
 import PageTitle from "../../components/pageTitle/PageTitle"
 import ControlButton from "../../components/show/ControlButton"
 import Avatar from "../../components/show/Avatar"
+import Block from "../../components/list/Block"
 
 type S = {
     isLoaded: boolean
@@ -60,8 +62,30 @@ class CharacterPage extends React.Component<any, S> {
         }
     }
 
+    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+        if (nextProps.match.params.id !== prevState.id) {
+            if (isNaN(Number(nextProps.match.params.id))) {
+                history.push('/')
+            }
+            return {
+                id: nextProps.match.params.id
+            }
+        }
+
+        return null
+    }
+
     componentDidMount() {
         this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+        if (prevProps.match.params.id !== this.state.id) {
+            this.setState({
+                isLoaded: false,
+            })
+            this.updateData()
+        }
     }
 
     updateData = () => {
@@ -176,12 +200,20 @@ class CharacterPage extends React.Component<any, S> {
                                              value={this.state.character.languages}/>
                             <InfoBlockInline icon={statusIcon} title="Статус"
                                              value={characterStatusToString(this.state.character.status)}/>
-                            <InfoBlockInline icon={activeIcon} title="Активность" value={characterActiveToString(this.state.character.active)}/>
+                            <InfoBlockInline icon={activeIcon} title="Активность"
+                                             value={characterActiveToString(this.state.character.active)}/>
                         </Col>
                     </Row>
                     <InfoBlock title="Внешность и характер" value={this.state.character.description}/>
                     <InfoBlock title="История персонажа" value={this.state.character.history}/>
                     <InfoBlock title="Дополнительные сведения" value={this.state.character.more}/>
+                    <Row>
+                        {this.state.character.friends.map(el =>
+                            (<Block key={el.id} id={el.id} title='' muteTitle=''
+                                    urlAvatar={el.urlAvatar} href="/material/character/" size={2}/>)
+                        )}
+                    </Row>
+
                     <div className="comments">
                         {this.state.comments.map((c) =>
                             <Comment key={c.id} {...c}/>

@@ -21,6 +21,7 @@ import PageTitle from "../../components/pageTitle/PageTitle"
 import ControlButton from "../../components/show/ControlButton"
 import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
 import Avatar from "../../components/show/Avatar"
+import Block from "../../components/list/Block"
 
 type S = {
     isLoaded: boolean
@@ -47,8 +48,30 @@ class GuildPage extends React.Component<any, S> {
         }
     }
 
+    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+        if (nextProps.match.params.id !== prevState.id) {
+            if (isNaN(Number(nextProps.match.params.id))) {
+                history.push('/')
+            }
+            return {
+                id: nextProps.match.params.id
+            }
+        }
+
+        return null
+    }
+
     componentDidMount() {
         this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+        if (prevProps.match.params.id !== this.state.id) {
+            this.setState({
+                isLoaded: false,
+            })
+            this.updateData()
+        }
     }
 
     updateData = () => {
@@ -157,6 +180,12 @@ class GuildPage extends React.Component<any, S> {
                 <InfoBlock title="Описание и история" value={this.state.guild.description}/>
                 <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
                 <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
+                <Row>
+                    {this.state.guild.members.map(el =>
+                        (<Block key={el.id} id={el.id} title='' muteTitle=''
+                                urlAvatar={el.urlAvatar} href="/material/character/" size={2}/>)
+                    )}
+                </Row>
                 <div className="comments">
                     {this.state.comments.map((c) =>
                         <Comment key={c.id} {...c}/>

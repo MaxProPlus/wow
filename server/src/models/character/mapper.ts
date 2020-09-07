@@ -27,6 +27,18 @@ class Mapper {
         })
     }
 
+    // Вставка в таблицу многие ко многим
+    insertLink = (id: number, idLink: number) => {
+        const sql = `INSERT INTO character_to_character (id_character, id_character_link)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить персонажа по id
     selectById = (id: number): Promise<Character> => {
         const sql = `select id,
@@ -61,6 +73,45 @@ class Mapper {
                 return Promise.reject('Персонаж не найден')
             }
             return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить персонажа по id
+    selectByIdLink = (id: number): Promise<Character[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.nickname,
+                            link.short_description as shortDescription,
+                            link.race,
+                            link.nation,
+                            link.territory,
+                            link.age,
+                            link.class             as className,
+                            link.occupation,
+                            link.religion,
+                            link.languages,
+                            link.description,
+                            link.history,
+                            link.more,
+                            link.sex,
+                            link.status,
+                            link.active,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from \`character\` link
+                              join character_to_character ctc on link.id = ctc.id_character_link
+                              join \`character\` c on ctc.id_character = c.id
+                     where c.id = 10
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')
@@ -136,10 +187,10 @@ class Mapper {
                             style
                      from \`character\` c
                      where (title LIKE ?
-                        or nickname like ?)
-                         and hidden = 0
-                         and closed = 0
-                         and is_remove = 0
+                         or nickname like ?)
+                       and hidden = 0
+                       and closed = 0
+                       and is_remove = 0
                      order by id desc
                      limit ? offset ?`
         return this.pool.query(sql, [query, query, limit, limit * (page - 1)]).then(([r]: [Character[]]) => {
@@ -171,10 +222,10 @@ class Mapper {
         const sql = `select count(id) as count
                      from \`character\`
                      where (title LIKE ?
-                        or nickname like ?)
-                         and hidden = 0
-                         and closed = 0
-                         and is_remove = 0`
+                         or nickname like ?)
+                       and hidden = 0
+                       and closed = 0
+                       and is_remove = 0`
         return this.pool.query(sql, [query, query]).then(([r]: any) => {
             return Promise.resolve(r[0].count)
         }, (err: any) => {
@@ -239,6 +290,23 @@ class Mapper {
         })
     }
 
+    // Удалить персонажа из друзей
+    removeLink = (id: number, idLink: number) => {
+        const sql = `delete
+                     from character_to_character
+                     where id_character = ?
+                       and id_character_link = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Создать комментарий к персонажу
     insertComment = (comment: CommentCharacter): Promise<number> => {
         const sql = `INSERT INTO character_comment (text, id_account, id_character)
@@ -252,7 +320,7 @@ class Mapper {
     }
 
     // Получить комментарии к персонажу
-    selectCommentsByIdCharacter = (id: number) => {
+    selectCommentsByIdCharacter = (id: number): Promise<CommentCharacter[]> => {
         const sql = `select c.id,
                             c.text,
                             c.id_account   as idAccount,

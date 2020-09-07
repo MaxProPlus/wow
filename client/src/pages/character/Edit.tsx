@@ -66,6 +66,12 @@ class CharacterEdit extends React.Component<any, S> {
     updateData = () => {
         this.characterApi.getById(this.state.id).then(r => {
             delete r.id
+            r[0].friends = r[0].friends.map((el: Character) => {
+                return {
+                    label: el.title,
+                    value: el.id
+                }
+            })
             this.setState(r[0])
         }, err => {
             this.setState({
@@ -147,7 +153,7 @@ class CharacterEdit extends React.Component<any, S> {
     }
 
     handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
-        this.setState((state: S| any) => {
+        this.setState((state: S | any) => {
             const index = state[e.id].findIndex((el: any) => el.value === e.value)
             return {
                 [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]

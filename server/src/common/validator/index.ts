@@ -7,6 +7,33 @@ class Validator {
         return s.trim().replace(/\s{2,}/g, ' ')
     }
 
+    // Удалить лишние пробелы у обекта по ключам
+    trimObject = (obj: any, list: string[]) => {
+        list.forEach(((el: string) => {
+            obj[el] = this.trim(obj[el])
+        }))
+    }
+
+    // Нормализовать передаваемые данные id к массиву типа number
+    normalize(obj: any, list: string[]) {
+        list.forEach(((el: string) => {
+            switch (typeof obj[el]) {
+                case 'undefined':
+                    obj[el] = []
+                    break
+                case 'string':
+                    obj[el] = [+obj[el]]
+                    break
+                case 'object':
+                    if (typeof obj[el][0] === 'string') {
+                        obj[el] = obj[el].map((el: string) => +el)
+                    }
+                    break
+            }
+        }))
+
+    }
+
     // Валидация комментария
     validateComment(comment: Comment) {
         let ok = true
@@ -90,7 +117,7 @@ class Validator {
             default:
                 err += 'Не поддерживаемый тип изображения. Поддерживаемые форматы: jpeg, png, webp.\n'
         }
-        if (file.size > 5*1024*1024) {
+        if (file.size > 5 * 1024 * 1024) {
             err += 'Слишком большой размер изображения'
         }
         return err
@@ -113,12 +140,12 @@ class Validator {
     }
 
     // Валидация персонажа
-    validateCharacter = (character: Character) => {
-        let err = '';
-        (['title', 'nickname', 'race', 'nation', 'territory', 'className', 'occupation', 'religion', 'languages'] as string[]).forEach(((el: string) => {
-            // @ts-ignore
-            character[el] = this.trim(character[el])
-        }))
+    validateCharacter = (character: Character | any) => {
+        let err = ''
+        this.trimObject(character, ['title', 'nickname', 'race', 'nation', 'territory', 'className', 'occupation',
+            'religion', 'languages'])
+        this.normalize(character, ['friends', 'coauthors'])
+
         if (character.title.length < 3 || character.title.length > 35) {
             err += 'Длина полного имя персонажа должна быть от 3 до 35 символов.\n'
         }
@@ -174,12 +201,11 @@ class Validator {
         return err
     }
 
-    validateGuild(g: Guild) {
-        let err = '';
-        (['title', 'gameTitle', 'ideology', 'shortDescription'] as string[]).forEach(((el: string) => {
-            // @ts-ignore
-            g[el] = this.trim(g[el])
-        }))
+    validateGuild = (g: Guild) => {
+        let err = ''
+        this.trimObject(g, ['title', 'gameTitle', 'ideology', 'shortDescription'])
+        this.normalize(g, ['members', 'coauthors'])
+
         if (g.title.length < 3 || g.title.length > 35) {
             err += 'Длина имени гильдии должна быть от 3 до 35 символов.\n'
         }

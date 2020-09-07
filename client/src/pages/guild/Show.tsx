@@ -22,6 +22,7 @@ import ControlButton from "../../components/show/ControlButton"
 import ConfirmationWindow from "../../components/confirmationWindow/ConfirmationWindow"
 import Avatar from "../../components/show/Avatar"
 import Card from "../../components/show/Card"
+import List from "../../components/show/List"
 
 type S = {
     isLoaded: boolean
@@ -181,6 +182,7 @@ class GuildPage extends React.Component<any, S> {
                 <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
                 <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
                 <Card title="Участники" href="/material/character/" list={this.state.guild.members}/>
+                <List title="Сюжеты" href="/material/story/" list={this.state.guild.stores}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
                         <Comment key={c.id} {...c}/>

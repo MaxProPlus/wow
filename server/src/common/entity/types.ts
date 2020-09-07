@@ -107,6 +107,9 @@ export class Character {
     comment = 0 // Запретить комментарии
     style = '' // CSS-стили
     coauthors: any[] = [] // Список соавторов
+
+    guilds: Guild[] = [] // Связанные гильдии
+    stores: Story[] = [] // Связанные сюжеты
     activeToString = ()=>{
         switch (this.active) {
             case 0:
@@ -214,6 +217,7 @@ export class Guild {
     closed = 0 // Закрыть(материал будет доступен только автору)
     hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
     comment = 0 // Запретить комментарии
+    stores: Story[] = [] // Связанные сюжеты
 }
 
 export function guildStatusToString(active: number) {

@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Character, CommentCharacter} from '../../common/entity/types'
+import {Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -26,13 +26,17 @@ class CharacterModel {
 
     // Получить персонажа по id
     getById = (id: number): Promise<[Character, CommentCharacter[]]> => {
-        const p: [Promise<Character>, Promise<Character[]>, Promise<CommentCharacter[]>] = [
+        const p: [Promise<Character>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<CommentCharacter[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectByIdLink(id),
+            this.mapper.selectGuildsById(id),
+            this.mapper.selectStoresById(id),
             this.getComments(id),
         ]
-        return Promise.all<Character, Character[], CommentCharacter[]>(p).then(([c, links, comments]) => {
+        return Promise.all<Character, Character[], Guild[], Story[], CommentCharacter[]>(p).then(([c, links, guilds, stores, comments]) => {
             c.friends = links
+            c.guilds = guilds
+            c.stores = stores
             return [c, comments]
         }) as Promise<[Character, CommentCharacter[]]>
     }

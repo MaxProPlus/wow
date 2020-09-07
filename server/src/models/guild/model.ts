@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Character, CommentGuild, Guild} from '../../common/entity/types'
+import {Character, CommentGuild, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -26,13 +26,15 @@ class GuildModel {
 
     // Получить гильдию по id
     getById = (id: number): Promise<[Guild, CommentGuild[]]> => {
-        const p: [Promise<Guild>, Promise<Character[]>, Promise<CommentGuild[]>] = [
+        const p: [Promise<Guild>, Promise<Character[]>, Promise<Story[]>, Promise<CommentGuild[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
+            this.mapper.selectStoresById(id),
             this.getComments(id),
         ]
-        return Promise.all<Guild, Character[], CommentGuild[]>(p).then(([g, members, comments]) => {
+        return Promise.all<Guild, Character[], Story[], CommentGuild[]>(p).then(([g, members, stores, comments]) => {
             g.members = members
+            g.stores = stores
             return [g, comments]
         })
     }

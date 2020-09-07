@@ -1,4 +1,4 @@
-import {Character, CommentGuild, Guild} from '../../common/entity/types'
+import {Character, CommentGuild, Guild, Story} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -100,6 +100,36 @@ class Mapper {
                      where g.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить сюжеты гильдии
+    selectStoresById = (id: number): Promise<Story[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.date_start        as dateStart,
+                            link.period,
+                            link.short_description as shortDescription,
+                            link.description,
+                            link.rule,
+                            link.more,
+                            link.status,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from story link
+                              join story_to_guild stg on link.id = stg.id_story
+                              join guild c on stg.id_guild = c.id
+                     where c.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

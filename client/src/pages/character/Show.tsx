@@ -36,6 +36,7 @@ import PageTitle from "../../components/pageTitle/PageTitle"
 import ControlButton from "../../components/show/ControlButton"
 import Avatar from "../../components/show/Avatar"
 import Card from "../../components/show/Card"
+import List from "../../components/show/List"
 
 type S = {
     isLoaded: boolean
@@ -208,6 +209,8 @@ class CharacterPage extends React.Component<any, S> {
                     <InfoBlock title="История персонажа" value={this.state.character.history}/>
                     <InfoBlock title="Дополнительные сведения" value={this.state.character.more}/>
                     <Card title="Участники" href="/material/character/" list={this.state.character.friends}/>
+                    <List title="Гильдии" href="/material/guild/" list={this.state.character.guilds}/>
+                    <List title="Сюжеты" href="/material/story/" list={this.state.character.stores}/>
 
                     <div className="comments">
                         {this.state.comments.map((c) =>

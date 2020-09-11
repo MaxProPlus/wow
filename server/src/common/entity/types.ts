@@ -148,6 +148,8 @@ export enum CharacterActive {
 
 export function sexToString(sex: number): string {
     switch (sex) {
+        case -1:
+            return 'не выбрано'
         case 0:
             return 'не указан'
         case 1:
@@ -176,6 +178,8 @@ export function characterStatusToString(status: number) {
 
 export function characterActiveToString(active: number) {
     switch (active) {
+        case -1:
+            return 'не выбрано'
         case 0:
             return 'отыгрыш еще не начат'
         case 1:

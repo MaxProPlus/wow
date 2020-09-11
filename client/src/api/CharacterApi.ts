@@ -24,8 +24,15 @@ class CharacterApi extends Api {
     }
 
     // Получить всех персонажей
-    getAll(query: string, limit: number, page: number) {
-        const url = `/api/characters?limit=${limit}&page=${page}&query=${query}`
+    getAll(query: string, limit: number, page: number, data?: any) {
+        let url = `/api/characters?limit=${limit}&page=${page}&query=${query}`
+        console.log(data)
+        if (!!data) {
+            for (let key in data) {
+                url += `&${key}=${data[key]}`
+            }
+        }
+        console.log(url)
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)

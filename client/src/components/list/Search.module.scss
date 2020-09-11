@@ -4,8 +4,16 @@
 
 .input {
   border: none;
-  padding: 7px 32px 7px 15px;
+  padding: 7px 32px 7px 32px;
   width: 100%;
+}
+
+.filter {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  min-width: auto;
+  cursor: pointer;
 }
 
 .search {

@@ -7,6 +7,9 @@ export default (props: any) => {
     if (props.className) {
         className += ' ' + props.className
     }
+    if (!!props.block) {
+        className += ' ' + styles.btnBlock
+    }
     let Tag: any = (!!props.to) ? Link : 'button'
     if (!!props.as) {
         Tag = props.as

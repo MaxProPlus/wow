@@ -96,8 +96,26 @@ class CharacterController {
     getAll = async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
-        const query = req.query.query as string
-        if (!query) {
+        const data:any = {}
+        if (!!req.query.query) {
+            data.title = req.query.query
+        }
+        if (!!req.query.title) {
+            data.title = req.query.title
+        }
+        if (!!req.query.nickname) {
+            data.nickname = req.query.nickname
+        }
+        if (!!req.query.race) {
+            data.race = req.query.race
+        }
+        if (!!req.query.sex) {
+            data.sex = parseInt(req.query.sex as string)
+        }
+        if (!!req.query.active) {
+            data.active = parseInt(req.query.active as string)
+        }
+        if (!data) {
             return this.characterModel.getAll(limit, page).then((r: any) => {
                 return res.json({
                     status: 'OK',
@@ -110,7 +128,7 @@ class CharacterController {
                 })
             })
         }
-        return this.characterModel.getByQuery(query, limit, page).then((r: any) => {
+        return this.characterModel.getByQuery(data, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

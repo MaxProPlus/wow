@@ -54,10 +54,10 @@ class CharacterModel {
     }
 
     // Получить персонажей по запросу
-    getByQuery = async (query: string, limit: number, page: number) => {
+    getByQuery = async (data: any, limit: number, page: number) => {
         const p = []
-        p.push(this.mapper.selectByQuery(query, limit, page))
-        p.push(this.mapper.selectCountByQuery(query))
+        p.push(this.mapper.selectByQuery(data, limit, page))
+        p.push(this.mapper.selectCountByQuery(data))
         const r = await Promise.all(p)
         return {
             data: r[0],

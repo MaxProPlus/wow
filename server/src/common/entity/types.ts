@@ -41,6 +41,10 @@ export class CommentStory extends Comment {
     idStory = 0
 }
 
+export class CommentReport extends Comment {
+    idReport = 0
+}
+
 export class Ticket {
     id = 0
     title = ''
@@ -295,6 +299,29 @@ export function storyStatusToString(status: number) {
     }
 }
 
+export class Report {
+    id = 0
+    idAccount = 0
+    urlAvatar = ''
+
+    // Главное
+    title = '' // Заголовок отчета / лога
+    shortDescription = '' // Анонс
+
+    // Основное
+    description = '' // Описание отчета-лога
+    rule = '' // Важная информация
+    members: any[] = [] // Список персонажей-участниокв
+
+    // Прочее
+    closed = 0 // Закрыть(материал будет доступен только автору)
+    hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
+    comment = 0 // Запретить комментарии
+    style = '' // CSS-стили
+    coauthors: any[] = [] // Список соавторов
+}
+
 export const defaultCharacterAvatar = '/characterAvatar/standard.png'
 export const defaultGuildAvatar = '/guildAvatar/standard.png'
 export const defaultStoryAvatar = '/storyAvatar/standard.png'
+export const defaultReportAvatar = '/reportAvatar/standard.png'

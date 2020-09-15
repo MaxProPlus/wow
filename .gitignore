@@ -26,5 +26,8 @@
 /server/upload/storyAvatar/*
 !/server/upload/storyAvatar/.gitkeep
 !/server/upload/storyAvatar/standard.png
+/server/upload/reportAvatar/*
+!/server/upload/reportAvatar/.gitkeep
+!/server/upload/reportAvatar/standard.png
 
 

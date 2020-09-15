@@ -4,6 +4,7 @@ import TicketController from '../controllers/TicketController'
 import CharacterController from '../controllers/CharacterController'
 import GuildController from '../controllers/GuildController'
 import StoryController from '../controllers/StoryController'
+import ReportController from '../controllers/ReportController'
 
 const router = Router()
 
@@ -12,6 +13,7 @@ const ticketController = new TicketController()
 const characterController = new CharacterController()
 const guildController = new GuildController()
 const storyController = new StoryController()
+const reportController = new ReportController()
 
 router.post('/users/general', accountController.updateGeneral)
 router.post('/users/avatar', accountController.updateAvatar)
@@ -61,6 +63,16 @@ router.put('/stories/:id', storyController.update)
 router.delete('/stories/:id', storyController.remove)
 router.post('/stories/comments', storyController.createComment)
 router.get('/stories/:id/comments', storyController.getComments)
+// router.delete('/stories/:idCharacter/comments/:idComment', storyController.removeComment)
+
+// Отчеты
+router.post('/reports', reportController.create)
+router.get('/reports', reportController.getAll)
+router.get('/reports/:id', reportController.getById)
+router.put('/reports/:id', reportController.update)
+router.delete('/reports/:id', reportController.remove)
+router.post('/reports/comments', reportController.createComment)
+router.get('/reports/:id/comments', reportController.getComments)
 // router.delete('/stories/:idCharacter/comments/:idComment', storyController.removeComment)
 
 export default router

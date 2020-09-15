@@ -321,9 +321,9 @@ class StoryEdit extends React.Component<any, S> {
                             <InputCheckBox id="comment" label="Запретить
                                 комментарии" checked={this.state.comment}
                                            onChange={this.handleChangeChecked}/>
-                            <div className="from-group">
+                            <Form.Group>
                                 <Button>Сохранить</Button>
-                            </div>
+                            </Form.Group>
                         </Col>
                     </Row>
                 </Form>

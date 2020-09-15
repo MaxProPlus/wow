@@ -1,0 +1,24 @@
+@import '../../css/variables';
+
+.block {
+  margin-bottom: 15px;
+
+  img {
+    max-width: 100%;
+    //min-height: 100%
+  }
+
+  &:hover .title {
+    color: #5B87EF;
+  }
+}
+
+.title {
+  font-size: 1rem;
+  transition: color .3s ease;
+}
+
+.muteTitle {
+  font-size: .625rem;
+  color: #A0A2A6;
+}

@@ -336,9 +336,9 @@ class CharacterEdit extends React.Component<any, S> {
                                     <InputCheckBox label="Запретить
                                 комментарии" id="comment" checked={this.state.comment}
                                                    onChange={this.handleChangeChecked}/>
-                                    <div className="from-group">
+                                    <Form.Group>
                                         <Button>Сохранить</Button>
-                                    </div>
+                                    </Form.Group>
                                 </Col>
                             </Row>
                         </Col>

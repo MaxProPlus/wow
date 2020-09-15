@@ -123,9 +123,9 @@ class TicketCreate extends React.Component<any, S> {
                         <Textarea label="Текст заявки" id="text" value={this.state.text}
                                   onChange={this.handleChange}
                                   rows={10}/>
-                        <div className="from-group">
+                        <Form.Group>
                             <Button>Создать</Button>
-                        </div>
+                        </Form.Group>
                     </Form>
                 </div>
             </div>

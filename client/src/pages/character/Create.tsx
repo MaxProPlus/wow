@@ -296,9 +296,9 @@ class CharacterCreate extends React.Component<any, CommonS> {
                                     <InputCheckBox label="Запретить
                                 комментарии" id="comment" checked={this.state.comment}
                                                    onChange={this.handleChangeChecked}/>
-                                    <div className="from-group">
+                                    <Form.Group>
                                         <Button>Создать</Button>
-                                    </div>
+                                    </Form.Group>
                                 </Col>
                             </Row>
                         </Col>

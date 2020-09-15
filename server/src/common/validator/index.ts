@@ -1,4 +1,4 @@
-import {Account, Character, Comment, Guild, Story, Ticket, UserPassword} from '../entity/types'
+import {Account, Character, Comment, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -250,7 +250,7 @@ class Validator {
             err += 'Описание обязательно для заполнения.\n'
         }
         if (g.rule.length < 1) {
-            err += 'Условия и правила обязательно для заполнения.\n'
+            err += 'Условия и правила обязательны для заполнения.\n'
         }
         if (g.status < 0 || g.status > 3) {
             err += 'Ошибка со статусом.\n'
@@ -262,6 +262,35 @@ class Validator {
             err += 'Ошибка hidden.\n'
         }
         if (g.comment < 0 || g.comment > 1) {
+            err += 'Ошибка comment.\n'
+        }
+        return err
+    }
+
+    // Валидация отчета / лога
+    validateReport(report: Report) {
+        let err = ''
+        this.trimObject(report, ['title', 'shortDescription', 'description', 'rule'])
+        this.normalize(report, ['members', 'coauthors'])
+        if (report.title.length < 3 || report.title.length > 35) {
+            err += 'Длина имени отчета / лога должна быть от 3 до 35 символов.\n'
+        }
+        if (report.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
+        }
+        if (report.shortDescription.length < 1) {
+            err += 'Анонс обязателен для заполнения.\n'
+        }
+        if (report.rule.length < 1) {
+            err += 'Условия и правила обязательны для заполнения.\n'
+        }
+        if (report.closed < 0 || report.closed > 1) {
+            err += 'Ошибка closed.\n'
+        }
+        if (report.hidden < 0 || report.hidden > 1) {
+            err += 'Ошибка hidden.\n'
+        }
+        if (report.comment < 0 || report.comment > 1) {
             err += 'Ошибка comment.\n'
         }
         return err

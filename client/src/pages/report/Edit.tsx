@@ -1,52 +1,48 @@
 import React, {ChangeEvent} from "react"
-import Validator from "../../../../server/src/common/validator"
-import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
-import {Redirect} from "react-router-dom"
-import Form from "../../components/form/Form"
-import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Character, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
-import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
-import Textarea from "../../components/form/textarea/Textarea"
-import Select from "../../components/form/select/Select"
-import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
-import GuildApi from "../../api/GuildApi"
+import AlertDanger from "../../components/alert-danger/AlertDanger"
+import {Character, Report} from "../../../../server/src/common/entity/types"
+import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
+import UserContext from "../../utils/userContext"
+import {Redirect} from "react-router-dom"
+import Textarea from "../../components/form/textarea/Textarea"
+import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
+import Form from "../../components/form/Form"
 import icon from "../../img/brush.svg"
+import {Col, Row} from "react-bootstrap"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
-import {CommonS, handleFormData} from "./Common"
-import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
+import {CommonS, handleFormData} from "./Common"
+import ReportApi from "../../api/ReportApi"
 import CharacterApi from "../../api/CharacterApi"
-
 
 type S = CommonS & {
     id: string
+    urlAvatar: string,
     idAccount: number
-    urlAvatar: string
 }
 
-class GuildEdit extends React.Component<any, S> {
+class ReportEdit extends React.Component<any, S> {
     static contextType = UserContext
-    private guildApi = new GuildApi()
+    private reportApi = new ReportApi()
     private characterApi = new CharacterApi()
     private validator = new Validator()
-    private avatar: any
+    private avatar: File | any
 
     constructor(props: any) {
         super(props)
         this.state = {
-            ...new Guild(),
+            ...new Report(),
             id: props.match.params.id,
-            isLoaded: true,
+            isLoaded: false,
             errorMessage: '',
-            articlesOptions: [],
             membersOptions: [],
-            eventsOptions: [],
             coauthorsOptions: [],
         }
     }
@@ -64,9 +60,9 @@ class GuildEdit extends React.Component<any, S> {
     }
 
     updateData = () => {
-        this.guildApi.getById(this.state.id).then(r => {
+        this.reportApi.getById(this.state.id).then(r => {
             delete r.id
-            r[0].members = r[0].members.map((el: Character) => {
+            r[0].members = r[0].members.map((el: Report) => {
                 return {
                     label: el.title,
                     value: el.id
@@ -168,9 +164,9 @@ class GuildEdit extends React.Component<any, S> {
             errorMessage: '',
             isLoaded: false,
         })
-        let guild = this.state as any as Guild
-        let err = this.validator.validateGuild(guild)
-        // err += this.validator.validateImg(this.avatar)
+        let report = this.state as any as Report
+        let err = this.validator.validateReport(report)
+        err += this.validator.validateImg(this.avatar)
         if (!!err) {
             this.setState({
                 errorMessage: err,
@@ -178,10 +174,10 @@ class GuildEdit extends React.Component<any, S> {
             })
             return
         }
+        let formData = handleFormData(report, this.avatar)
 
-        let formData = handleFormData(guild, this.avatar)
-        this.guildApi.update(this.state.id, formData).then(r => {
-            history.push('/material/guild/' + r)
+        this.reportApi.update(this.state.id, formData).then(r => {
+            history.push('/material/report/' + r)
         }, err => {
             this.setState({
                 errorMessage: err
@@ -195,106 +191,71 @@ class GuildEdit extends React.Component<any, S> {
 
     render() {
         return (
-            <div className="page-edit guild-create">
+            <div className="page-edit">
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <PageTitle className="mb-0" title="Редактирование гильдии" icon={icon}/>
+                <PageTitle className="mb-0" title="Редактирование отчета / лога" icon={icon}/>
                 <Form onSubmit={this.handleSubmit}>
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <Row>
                         <Col md={6}>
-                            <MyCropper label="Загрузите изображение гильдии" src={this.state.urlAvatar}
+                            <MyCropper label="Загрузите изображение отчета / лога" src={this.state.urlAvatar}
                                        ratio={260 / 190}
                                        onChange={this.handleImageChange}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Главное</h2>
-                            <InputField id="title" label="Название гильдии" placeholder="Введите название гильдии"
-                                        type="text" value={this.state.title}
+                            <InputField id="title" label="Заголовок отчёта / лога"
+                                        placeholder="Введите название отчёта / лога" type="text"
+                                        value={this.state.title}
                                         onChange={this.handleChange}/>
-                            <InputField id="gameTitle" label="Название гильдии в игре"
-                                        placeholder="Введите название гильдии в игре"
-                                        type="text" value={this.state.gameTitle}
-                                        onChange={this.handleChange}/>
-                            <InputField id="ideology" label="Мировозрение"
-                                        placeholder="Введите мировозрение гильдии"
-                                        type="text" value={this.state.ideology}
-                                        onChange={this.handleChange}/>
-                            <InputField id="shortDescription" label="Анонс"
-                                        placeholder="Введите анонс гильдии"
-                                        type="text" value={this.state.shortDescription}
-                                        onChange={this.handleChange}/>
+                            <Textarea id="shortDescription" label="Анонс"
+                                      placeholder="Введите анонс отчёта / лога"
+                                      value={this.state.shortDescription}
+                                      onChange={this.handleChange}/>
                         </Col>
                     </Row>
                     <Row>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Основное</h2>
-                            <Textarea id="description" label="Описание и история гильдии"
-                                      placeholder="Опишите вашу гильдию и ее историю..."
+                            <Textarea id="description" label="Описание отчёта-лога"
+                                      placeholder="Опишите ваш отчёт / лог"
                                       value={this.state.description}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="rule" label="Условия и правила"
-                                      placeholder="Напишите условия и правила для вашей гильдии..."
+                                      onChange={this.handleChange}
+                                      rows={3}/>
+                            <Textarea id="rule" label="Важная информация"
+                                      placeholder="Введите важные детали или информацию в вашем отчёте / логе"
                                       value={this.state.rule}
-                                      onChange={this.handleChange}/>
-                            <Textarea id="more" label="Дополнительные сведения"
-                                      placeholder="Если есть то, что вы еще не написали, то это тут..."
-                                      value={this.state.more}
-                                      onChange={this.handleChange}/>
-                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
-                                           placeholder="Напишите список тут..."
-                                           value={this.state.articles} options={this.state.articlesOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
-                            <MyMultiSelect id="members" label="Список учасников"
-                                           placeholder="Введите персонажей вашей гильдии..."
+                                      onChange={this.handleChange}
+                                      rows={3}/>
+                            <MyMultiSelect id="members" label="Список персонажей-участников"
+                                           placeholder="Введите персонажей-участников..."
                                            value={this.state.members} options={this.state.membersOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
-                            <MyMultiSelect id="events" label="Список событий"
-                                           placeholder="Введите события вашей гильдии..."
-                                           value={this.state.events} options={this.state.eventsOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Прочее</h2>
-                            <Select id="status" label="Статус" placeholder="Выберите статус гильдии"
-                                    value={this.state.status}
-                                    onChange={this.handleChangeSelect}>
-                                {[0, 1, 2].map(v =>
-                                    (<option key={v} value={v}>{guildStatusToString(v)}</option>)
-                                )}
-                            </Select>
-                            <Select label="Набор в гильдию" id="kit" value={this.state.kit}
-                                    onChange={this.handleChangeSelect}>
-                                {[0, 1, 2].map(v =>
-                                    (<option key={v} value={v}>{guildKitToString(v)}</option>)
-                                )}
-                            </Select>
-                            <Textarea id="style" label="CSS - стили(в разработке)"
-                                      placeholder="Сюда поместите код..."
-                                      value={this.state.style}
-                                      onChange={this.handleChange}/>
+                            <Textarea label="CSS-стили(в разработке)" id="style" value={this.state.style}
+                                      onChange={this.handleChange}
+                                      rows={4}/>
                             <MyMultiSelect id="coauthors" label="Список соавторов"
                                            placeholder="Прикрепите соавторов материала (соавторы могут редактировать материал так же, как автор)."
                                            value={this.state.coauthors} options={this.state.coauthorsOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>
-                            <InputCheckBox id="closed" label="Закрыть(материал
-                                будет доступен только автору)" checked={this.state.closed}
+                            <InputCheckBox label="Закрыть(материал
+                                будет доступен только автору)" id="closed" checked={this.state.closed}
                                            onChange={this.handleChangeChecked}/>
-                            <InputCheckBox id="hidden" label="Скрыть
+                            <InputCheckBox label="Скрыть
                                 из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим
-                                материалам)" checked={this.state.hidden}
+                                материалам)" id="hidden" checked={this.state.hidden}
                                            onChange={this.handleChangeChecked}/>
-                            <InputCheckBox id="comment" label="Запретить
-                                комментарии" checked={this.state.comment}
+                            <InputCheckBox label="Запретить
+                                комментарии" id="comment" checked={this.state.comment}
                                            onChange={this.handleChangeChecked}/>
                             <Form.Group>
                                 <Button>Сохранить</Button>
@@ -307,4 +268,4 @@ class GuildEdit extends React.Component<any, S> {
     }
 }
 
-export default GuildEdit
+export default ReportEdit

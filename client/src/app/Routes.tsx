@@ -23,6 +23,10 @@ import StoryEdit from "../pages/story/Edit"
 import StoryPage from "../pages/story/Show"
 import AdminDashboard from "../pages/admin/dashboard/AdminDashboard"
 import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins"
+import ReportCreate from "../pages/report/Create"
+import ReportEdit from "../pages/report/Edit"
+import ReportList from "../pages/report/List"
+import ReportPage from "../pages/report/Show"
 
 type P = {
     scrollTop: () => void
@@ -69,6 +73,17 @@ const Routes = ({scrollTop}: P) => {
                    render={(props) => (
                        <StoryEdit {...props} scrollTop={scrollTop}/>)}/>
             <Route path="/material/story/:id" component={StoryPage}/>
+
+            <Route exact path="/material/report" component={ReportList}/>
+            <Route exact path="/material/report/create"
+                   render={(props) => (
+                       <ReportCreate {...props} scrollTop={scrollTop}/>)}/>
+            <Route path="/material/report/edit/:id"
+                   render={(props) => (
+                       <ReportEdit {...props} scrollTop={scrollTop}/>)}/>
+            <Route path="/material/report/:id" component={ReportPage}/>
+
+
 
             <Route exact path="/admin" component={AdminDashboard}/>
             <Route path="/admin/list" component={ListOfAdmins}/>

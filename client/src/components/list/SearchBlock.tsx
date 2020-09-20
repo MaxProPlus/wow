@@ -4,7 +4,7 @@ import styles from './SearchBlock.module.scss'
 type P = {
     children: any
     show: boolean
-    onSubmit: (e: FormEvent<HTMLFormElement>)=>void
+    onSubmit: (e: FormEvent<HTMLFormElement>) => void
 }
 
 const SearchBlock: FC<P> = ({children, show, onSubmit}) => {

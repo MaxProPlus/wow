@@ -10,8 +10,8 @@ type P = {
     text: string
     placeholder: string
     value: string
-    id?: string
-    toggle?: ()=>void
+    id: string
+    toggle: () => void
     onChange: (e: ChangeEvent<HTMLInputElement>) => void
     onSubmit: (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => void
 }

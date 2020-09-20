@@ -84,7 +84,6 @@ const Routes = ({scrollTop}: P) => {
             <Route path="/material/report/:id" component={ReportPage}/>
 
 
-
             <Route exact path="/admin" component={AdminDashboard}/>
             <Route path="/admin/list" component={ListOfAdmins}/>
             <Route path="/*">Страница не найдена или еще не создана ¯\_(ツ)_/¯</Route>

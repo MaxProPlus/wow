@@ -10,7 +10,6 @@ type P = {
 }
 
 const Card = ({title, href, list}: P) => {
-    console.log(list)
     if (!list.length) {
         return null
     }

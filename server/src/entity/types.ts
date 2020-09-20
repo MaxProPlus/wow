@@ -20,17 +20,17 @@ export class UserAuth {
 }
 
 export class CharacterUpload extends Character {
-    fileAvatar!:UploadedFile
+    fileAvatar!: UploadedFile
 }
 
 export class GuildUpload extends Guild {
-    fileAvatar!:UploadedFile
+    fileAvatar!: UploadedFile
 }
 
 export class StoryUpload extends Story {
-    fileAvatar!:UploadedFile
+    fileAvatar!: UploadedFile
 }
 
 export class ReportUpload extends Report {
-    fileAvatar!:UploadedFile
+    fileAvatar!: UploadedFile
 }

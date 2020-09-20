@@ -7,6 +7,7 @@
   padding: 0 7px;
   color: $color2;
 }
+
 .select__label {
   margin-bottom: .5rem;
   display: inline-block;
@@ -40,6 +41,7 @@
   background: none;
   //background-clip: padding-box;
   border: none;
+
   &:focus, &:active {
     outline: 0;
   }
@@ -51,6 +53,7 @@
   background-color: rgba(33, 40, 59, 0.35);
   margin-bottom: 4px;
   margin-right: 4px;
+
   img {
     display: inline;
     height: 13px;

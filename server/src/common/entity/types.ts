@@ -114,7 +114,7 @@ export class Character {
 
     guilds: Guild[] = [] // Связанные гильдии
     stores: Story[] = [] // Связанные сюжеты
-    activeToString = ()=>{
+    activeToString = () => {
         switch (this.active) {
             case 0:
                 return 'отыгрыш еще не начат'

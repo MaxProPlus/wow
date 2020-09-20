@@ -2,20 +2,24 @@ import React, {ChangeEvent, Component} from "react"
 import {Guild} from "../../../../server/src/common/entity/types"
 import GuildApi from "../../api/GuildApi"
 import Button from "../../components/button/Button"
-import {Row} from "react-bootstrap"
+import {Col, Row} from "react-bootstrap"
 import styles from "../../css/listTitle.module.scss"
 import icon from "./img/guild.svg"
 import Spinner from "../../components/spinner/Spinner"
 import PageTitle from "../../components/pageTitle/PageTitle"
 import Search from "../../components/list/Search"
 import Block from "../../components/list/Block"
+import SearchBlock from "../../components/list/SearchBlock"
+import Form from "../../components/form/Form"
+import InputField from "../../components/form/inputField/InputField"
 
 type S = {
     isLoaded: boolean,
+    filterShow: boolean,
     errorMessage: string
     count: number,
     list: Guild[],
-    query: string
+    title: string
 
 }
 
@@ -23,16 +27,17 @@ class GuildList extends Component<any, S> {
     private guildApi = new GuildApi()
     private page = 1
     private limit = 10
-    private query = ''
+    private data: any
 
     constructor(props: any) {
         super(props)
         this.state = {
             isLoaded: false,
+            filterShow: false,
             errorMessage: '',
             count: 0,
             list: [],
-            query: '',
+            title: '',
         }
     }
 
@@ -42,7 +47,7 @@ class GuildList extends Component<any, S> {
 
 
     updateData = (reset: boolean) => {
-        this.guildApi.getAll(this.query, this.limit, this.page).then(r => {
+        this.guildApi.getAll(this.limit, this.page, this.data).then(r => {
             if (reset) {
                 this.setState({
                     list: r.data,
@@ -75,15 +80,32 @@ class GuildList extends Component<any, S> {
         this.updateData(false)
     }
 
-    onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            query: e.target.value
+    toggle = () => {
+        this.setState((state) => {
+            return {
+                filterShow: !state.filterShow
+            }
         })
+    }
+
+    handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            errorMessage: '',
+            [e.target.id]: e.target.value
+        } as any)
     }
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.query = this.state.query
+        const data: any = {}
+        if (this.state.filterShow) {
+            if (!!this.state.title) {
+                data.title = this.state.title
+            }
+        } else {
+            data.title = this.state.title
+        }
+        this.data = data
         this.page = 1
         this.setState({
             isLoaded: false
@@ -98,9 +120,31 @@ class GuildList extends Component<any, S> {
             <div>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle className={styles.header} title="Гильдии" icon={icon}>
-                    <Search href="/material/guild/create" text="Создать гильдию" placeholder="Поиск гильдии"
-                            value={this.state.query} onChange={this.onChange} onSubmit={this.handleSubmit}/>
+                    <Search href="/material/guild/create" id="title" text="Создать гильдию" placeholder="Поиск гильдии"
+                            value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
+                            onSubmit={this.handleSubmit}/>
                 </PageTitle>
+                <SearchBlock show={this.state.filterShow} onSubmit={this.handleSubmit}>
+                    <Row>
+                        <Col md={6}>
+                            <Form.Group>
+                                <InputField id="title" label="Название гильдии" type="text"
+                                            placeholder="Введите название"
+                                            value={this.state.title}
+                                            onChange={this.handleChange}/>
+                            </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                            <Row className="h-100">
+                                <Col md={6}>
+                                </Col>
+                                <Col md={6} className="d-flex align-items-end">
+                                    <Button block="true" className="mb-3">Найти</Button>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                </SearchBlock>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

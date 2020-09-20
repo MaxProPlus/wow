@@ -1,5 +1,5 @@
 import Mapper from './mapper'
-import {Character, CommentGuild, CommentStory, Guild, Story} from '../../common/entity/types'
+import {Character, CommentStory, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, StoryUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -35,7 +35,7 @@ class StoryModel {
             this.mapper.selectGuildsById(id),
             this.getComments(id),
         ]
-        return Promise.all<Story, Character[], Guild[], CommentStory[]>(p).then(([s, c, g, comments])=>{
+        return Promise.all<Story, Character[], Guild[], CommentStory[]>(p).then(([s, c, g, comments]) => {
             s.members = c
             s.guilds = g
             return [s, comments]
@@ -55,7 +55,7 @@ class StoryModel {
     }
 
     // Получить сюжеты по запросу
-    getByQuery = async (query: string, limit: number, page: number) => {
+    getByQuery = async (query: any, limit: number, page: number) => {
         const p = []
         p.push(this.mapper.selectByQuery(query, limit, page))
         p.push(this.mapper.selectCountByQuery(query))

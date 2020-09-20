@@ -11,11 +11,11 @@ class RightModel {
         return this.mapper.selectRights(idAccount)
     }
 
-    ticketRead = (idAccount: number):Promise<boolean> =>{
+    ticketRead = (idAccount: number): Promise<boolean> => {
         return this.mapper.checkRight('TICKET_READ', idAccount)
     }
 
-    ticketUpdateStatus = (idAccount: number):Promise<boolean> =>{
+    ticketUpdateStatus = (idAccount: number): Promise<boolean> => {
         return this.mapper.checkRight('TICKET_UPDATE_STATUS', idAccount)
     }
 }

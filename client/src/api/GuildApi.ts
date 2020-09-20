@@ -24,8 +24,13 @@ class GuildApi extends Api {
     }
 
     // Получить все гильдии
-    getAll(query: string, limit: number, page: number) {
-        const url = `/api/guilds?limit=${limit}&page=${page}&query=${query}`
+    getAll(limit: number, page: number, data?: any) {
+        let url = `/api/guilds?limit=${limit}&page=${page}`
+        if (!!data) {
+            for (let key in data) {
+                url += `&${key}=${data[key]}`
+            }
+        }
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)

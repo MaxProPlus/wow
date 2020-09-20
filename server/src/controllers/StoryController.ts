@@ -96,8 +96,11 @@ class StoryController {
     getAll = async (req: Request, res: Response) => {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
-        const query = req.query.query as string
-        if (!query) {
+        const data: any = {}
+        if (!!req.query.title) {
+            data.title = req.query.title
+        }
+        if (!data) {
             return this.storyModel.getAll(limit, page).then((r: any) => {
                 return res.json({
                     status: 'OK',
@@ -110,7 +113,7 @@ class StoryController {
                 })
             })
         }
-        return this.storyModel.getByQuery(query, limit, page).then((r: any) => {
+        return this.storyModel.getByQuery(data, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

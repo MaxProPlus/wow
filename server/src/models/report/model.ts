@@ -1,6 +1,6 @@
 import Mapper from './mapper'
-import {Character, CommentGuild, CommentReport, CommentStory, Guild, Report, Story} from '../../common/entity/types'
-import {defaultAvatar, ReportUpload, StoryUpload} from '../../entity/types'
+import {Character, CommentReport, CommentStory, Report} from '../../common/entity/types'
+import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
 class ReportModel {
@@ -31,7 +31,7 @@ class ReportModel {
             this.mapper.selectMembersById(id),
             this.getComments(id),
         ]
-        return Promise.all<Report, Character[], CommentReport[]>(p).then(([s, c, comments])=>{
+        return Promise.all<Report, Character[], CommentReport[]>(p).then(([s, c, comments]) => {
             s.members = c
             return [s, comments]
         })

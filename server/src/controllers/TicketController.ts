@@ -111,7 +111,7 @@ class TicketController {
                 status: 'OK',
                 results: [ticket, comments],
             })
-        }, (err:any) => {
+        }, (err: any) => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: err,
@@ -152,12 +152,12 @@ class TicketController {
             })
 
         }
-        return this.ticketModel.changeStatus(idTicket, req.body.status).then((r:any) => {
+        return this.ticketModel.changeStatus(idTicket, req.body.status).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: [r]
             })
-        }, (err:any) => {
+        }, (err: any) => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: err,
@@ -179,7 +179,7 @@ class TicketController {
                 status: 'OK',
                 results: r,
             })
-        }, (err:any) => {
+        }, (err: any) => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: err,
@@ -218,7 +218,7 @@ class TicketController {
                 status: 'OK',
                 results: r,
             })
-        }, (err:any) => {
+        }, (err: any) => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: err,

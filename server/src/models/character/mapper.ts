@@ -222,33 +222,33 @@ class Mapper {
     // Получить персонажей по запросу
     selectByQuery = (data: any, limit: number, page: number) => {
         let sql = `select id,
-                            id_account        as idAccount,
-                            url_avatar        as urlAvatar,
-                            title,
-                            nickname,
-                            short_description as shortDescription,
-                            race,
-                            nation,
-                            territory,
-                            age,
-                            class             as className,
-                            occupation,
-                            religion,
-                            languages,
-                            description,
-                            history,
-                            more,
-                            sex,
-                            status,
-                            active,
-                            closed,
-                            hidden,
-                            comment,
-                            style
-                     from \`character\` c
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
+                          id_account        as idAccount,
+                          url_avatar        as urlAvatar,
+                          title,
+                          nickname,
+                          short_description as shortDescription,
+                          race,
+                          nation,
+                          territory,
+                          age,
+                          class             as className,
+                          occupation,
+                          religion,
+                          languages,
+                          description,
+                          history,
+                          more,
+                          sex,
+                          status,
+                          active,
+                          closed,
+                          hidden,
+                          comment,
+                          style
+                   from \`character\` c
+                   where hidden = 0
+                     and closed = 0
+                     and is_remove = 0`
         const where = []
         if (!!data) {
             // tslint:disable-next-line:forin
@@ -289,12 +289,12 @@ class Mapper {
     }
 
     // Получить количество персонажей по запросу
-    selectCountByQuery = ( data: any): Promise<number> => {
+    selectCountByQuery = (data: any): Promise<number> => {
         let sql = `select count(id) as count
-                     from \`character\`
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
+                   from \`character\`
+                   where hidden = 0
+                     and closed = 0
+                     and is_remove = 0`
         const where = []
         if (!!data) {
             // tslint:disable-next-line:forin

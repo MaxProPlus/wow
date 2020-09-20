@@ -84,7 +84,7 @@ class GuildCreate extends React.Component<any, CommonS> {
         }
         switch (e.id) {
             case 'members':
-                return this.characterApi.getAll(e.value, 3, 1).then(r => {
+                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         membersOptions: r.data.filter((el: Character) => {
@@ -118,7 +118,7 @@ class GuildCreate extends React.Component<any, CommonS> {
     }
 
     handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
-        this.setState((state: CommonS|any) => {
+        this.setState((state: CommonS | any) => {
             const index = state[e.id].findIndex((el: any) => el.value === e.value)
             return {
                 [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]

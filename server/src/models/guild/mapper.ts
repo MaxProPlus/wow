@@ -170,9 +170,8 @@ class Mapper {
     }
 
     // Получить гильдии по запросу
-    selectByQuery = (query: string, limit: number, page: number) => {
-        query = '%' + query + '%'
-        const sql = `select id,
+    selectByQuery = (data: any, limit: number, page: number) => {
+        let sql = `select id,
                             id_account        as idAccount,
                             url_avatar        as urlAvatar,
                             title,
@@ -189,14 +188,26 @@ class Mapper {
                             comment,
                             style
                      from guild
-                     where (title LIKE ?
-                         or game_title like ?)
-                       and hidden = 0
+                     where hidden = 0
                        and closed = 0
-                       and is_remove = 0
-                     order by id desc
-                     limit ? offset ?`
-        return this.pool.query(sql, [query, query, limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
+                       and is_remove = 0`
+        const where = []
+        if (!!data) {
+            // tslint:disable-next-line:forin
+            for (const key in data) {
+                if (typeof data[key] === 'string') {
+                    sql += ` and ${key} like ?`
+                    where.push(`%${data[key]}%`)
+                } else {
+                    sql += ` and ${key} = ?`
+                    where.push(data[key])
+                }
+            }
+        }
+        sql +=
+            ` order by id desc
+        limit ? offset ?`
+        return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -220,16 +231,26 @@ class Mapper {
     }
 
     // Получить количество гильдий по запросу
-    selectCountByQuery = (query: string): Promise<number> => {
-        query = '%' + query + '%'
-        const sql = `select count(id) as count
+    selectCountByQuery = (data: any): Promise<number> => {
+        let sql = `select count(id) as count
                      from guild
-                     where (title LIKE ?
-                         or game_title like ?)
-                       and hidden = 0
+                     where hidden = 0
                        and closed = 0
                        and is_remove = 0`
-        return this.pool.query(sql, [query, query]).then(([r]: any) => {
+        const where = []
+        if (!!data) {
+            // tslint:disable-next-line:forin
+            for (const key in data) {
+                if (typeof data[key] === 'string') {
+                    sql += ` and ${key} like ?`
+                    where.push(`%${data[key]}%`)
+                } else {
+                    sql += ` and ${key} = ?`
+                    where.push(data[key])
+                }
+            }
+        }
+        return this.pool.query(sql, where).then(([r]: any) => {
             return Promise.resolve(r[0].count)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

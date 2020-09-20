@@ -1,4 +1,4 @@
-import {CommentTicket, Ticket, TicketStatus, TicketType, Account} from '../../common/entity/types'
+import {Account, CommentTicket, Ticket, TicketStatus, TicketType} from '../../common/entity/types'
 import logger from '../../services/logger'
 
 class Mapper {
@@ -131,7 +131,7 @@ class Mapper {
         const sql = `select t.id, t.title, t.id_ticket_type as idTicketType, t.text, t.status, t.date_init as dateInit, t.id_account as idAccount, t.id_account_moder as idAccountModer 
             from ticket t 
             where t.id_ticket_type = ? limit ? offset ?`
-        return this.pool.query(sql, [id, limit, limit*(page-1)]).then(([r]: [Ticket[]]) => {
+        return this.pool.query(sql, [id, limit, limit * (page - 1)]).then(([r]: [Ticket[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -141,7 +141,7 @@ class Mapper {
 
     updateStatus = (idTicket: number, status: TicketStatus) => {
         const sql = `UPDATE ticket SET status=? where id = ?`
-        return this.pool.query(sql, [status, idTicket]).then((r:any) => {
+        return this.pool.query(sql, [status, idTicket]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Тикет не найден')
             }

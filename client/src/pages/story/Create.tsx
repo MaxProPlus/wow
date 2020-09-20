@@ -117,7 +117,7 @@ class StoryCreate extends React.Component<any, CommonS> {
         }
         switch (e.id) {
             case 'members':
-                return this.characterApi.getAll(e.value, 3, 1).then(r => {
+                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         membersOptions: r.data.filter((el: Character) => {
@@ -136,7 +136,7 @@ class StoryCreate extends React.Component<any, CommonS> {
                     })
                 })
             case 'guilds':
-                return this.guildApi.getAll(e.value, 3, 1).then(r => {
+                return this.guildApi.getAll(3, 1, {title: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         guildsOptions: r.data.filter((el: Guild) => {

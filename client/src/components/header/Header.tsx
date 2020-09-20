@@ -126,9 +126,6 @@ class Header extends Component<P, S> {
                                 className={`header-item sub-item${this.state.path.includes('/report') ? ' item-active' : ''}`}
                                 to="/material/report">Отчеты</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/guid') ? ' item-active' : ''}`}
-                                to="/material/guid">Гайды</Link>
-                            <Link
                                 className={`header-item sub-item${this.state.path.includes('/forum') ? ' item-active' : ''}`}
                                 to="/material/forum">Форум</Link>
                         </div>

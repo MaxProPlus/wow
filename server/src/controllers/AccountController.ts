@@ -99,7 +99,7 @@ class AccountController {
                 status: 'OK',
                 results: [r]
             })
-        }, (err:any) => {
+        }, (err: any) => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: err,

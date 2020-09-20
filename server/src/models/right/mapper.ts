@@ -14,7 +14,7 @@ class Mapper {
                               join ar_account_role aar on arp.id_role = aar.id_role
                      where aar.id_account = ?`
         return this.pool.query(sql, [idAccount]).then((r: any) => {
-            return Promise.resolve(r[0].map((el:any)=>el.name))
+            return Promise.resolve(r[0].map((el: any) => el.name))
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')

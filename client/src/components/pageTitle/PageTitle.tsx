@@ -14,17 +14,15 @@ const PageTitle = ({title, icon, children, className}: P) => {
         bodyClass += ' ' + className
     }
 
-
-
     return (
         <div className={bodyClass}>
-                <h1>
-                    <img src={icon} alt=""/>
-                    <span>{title}</span>
-                </h1>
-                <div className="d-flex justify-content-end">
-                    {children}
-                </div>
+            <h1>
+                <img src={icon} alt=""/>
+                <span>{title}</span>
+            </h1>
+            <div className="d-flex justify-content-end">
+                {children}
+            </div>
         </div>
     )
 }

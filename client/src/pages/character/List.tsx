@@ -33,7 +33,7 @@ class CharacterList extends Component<any, S> {
     private characterApi = new CharacterApi()
     private page = 1
     private limit = 10
-    private query = ''
+    private data: any
 
     constructor(props: any) {
         super(props)
@@ -56,25 +56,7 @@ class CharacterList extends Component<any, S> {
     }
 
     updateData = (reset: boolean) => {
-        const data: any = {}
-        if (this.state.filterShow) {
-            if (!!this.state.title) {
-                data.title = this.state.title
-            }
-            if (!!this.state.nickname) {
-                data.nickname = this.state.nickname
-            }
-            if (!!this.state.race) {
-                data.race = this.state.race
-            }
-            if (this.state.sex !== -1) {
-                data.sex = this.state.sex
-            }
-            if (this.state.active !== -1) {
-                data.active = this.state.active
-            }
-        }
-        this.characterApi.getAll(this.query, this.limit, this.page, data).then(r => {
+        this.characterApi.getAll(this.limit, this.page, this.data).then(r => {
             if (reset) {
                 this.setState({
                     list: r.data,
@@ -131,7 +113,27 @@ class CharacterList extends Component<any, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.query = this.state.title
+        const data: any = {}
+        if (this.state.filterShow) {
+            if (!!this.state.title) {
+                data.title = this.state.title
+            }
+            if (!!this.state.nickname) {
+                data.nickname = this.state.nickname
+            }
+            if (!!this.state.race) {
+                data.race = this.state.race
+            }
+            if (this.state.sex !== -1) {
+                data.sex = this.state.sex
+            }
+            if (this.state.active !== -1) {
+                data.active = this.state.active
+            }
+        } else {
+            data.title = this.state.title
+        }
+        this.data = data
         this.page = 1
         this.setState({
             isLoaded: false
@@ -195,7 +197,7 @@ class CharacterList extends Component<any, S> {
                                     </Select>
                                 </Col>
                                 <Col md={6} className="d-flex align-items-end">
-                                    <Button block className="mb-3">Найти</Button>
+                                    <Button block="true" className="mb-3">Найти</Button>
                                 </Col>
                             </Row>
                         </Col>

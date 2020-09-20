@@ -195,7 +195,7 @@ class CharacterEdit extends React.Component<any, S> {
 
     render() {
         return (
-            <div className="page-edit character-create">
+            <div className="page-edit">
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}

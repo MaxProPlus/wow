@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Character, defaultReportAvatar, Report} from "../../../../server/src/common/entity/types"
+import {Forum} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -11,45 +11,70 @@ import {Redirect} from "react-router-dom"
 import Textarea from "../../components/form/textarea/Textarea"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
-import {Col, Row} from "react-bootstrap"
 import icon from "../../img/brush.svg"
+import {Col, Row} from "react-bootstrap"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
-import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "../../components/myMultiSelect/types"
 import {CommonS, handleFormData} from "./Common"
-import ReportApi from "../../api/ReportApi"
-import CharacterApi from "../../api/CharacterApi"
+import ForumApi from "../../api/ForumApi"
 
-class ReportCreate extends React.Component<any, CommonS> {
+type S = CommonS & {
+    id: string
+    urlAvatar: string,
+    idAccount: number
+}
+
+class ForumEdit extends React.Component<any, S> {
     static contextType = UserContext
-    private reportApi = new ReportApi()
-    private characterApi = new CharacterApi()
+    private forumApi = new ForumApi()
     private validator = new Validator()
     private avatar: File | any
 
     constructor(props: any) {
         super(props)
         this.state = {
-            ...new Report(),
-            isLoaded: true,
+            ...new Forum(),
+            id: props.match.params.id,
+            isLoaded: false,
             errorMessage: '',
-            membersOptions: [],
             coauthorsOptions: [],
         }
+    }
+
+    componentDidMount() {
+        this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+            this.setState({
+                errorMessage: 'Нет прав'
+            })
+        }
+    }
+
+    updateData = () => {
+        this.forumApi.getById(this.state.id).then(r => {
+            delete r.id
+            this.setState(r[0])
+        }, err => {
+            this.setState({
+                errorMessage: err
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true
+            })
+        })
     }
 
     handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({
             errorMessage: '',
             [e.target.id]: e.target.value
-        } as any)
-    }
-
-    handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-        this.setState({
-            [e.target.id]: Number(e.target.value)
         } as any)
     }
 
@@ -74,25 +99,6 @@ class ReportCreate extends React.Component<any, CommonS> {
             return Promise.resolve()
         }
         switch (e.id) {
-            case 'members':
-                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
-                    this.setState({
-                        // Отсечь элементы, которые уже были выбранны
-                        membersOptions: r.data.filter((el: Character) => {
-                            return this.state.members.findIndex((e: Option) => e.value === el.id
-                            ) === -1
-                        }).map((el: Character) => {
-                            return {
-                                label: el.title,
-                                value: el.id
-                            }
-                        })
-                    })
-                }, err => {
-                    this.setState({
-                        errorMessage: err,
-                    })
-                })
             case 'coauthors':
                 return Promise.resolve()
             default:
@@ -101,7 +107,7 @@ class ReportCreate extends React.Component<any, CommonS> {
     }
 
     handleAddMultiSelect = (e: MyMultiSelectListEvent) => {
-        this.setState((state: CommonS | any) => {
+        this.setState((state: S | any) => {
             return {
                 [e.id]: [...state[e.id], {label: e.label, value: e.value}]
             } as any
@@ -109,7 +115,7 @@ class ReportCreate extends React.Component<any, CommonS> {
     }
 
     handleRemoveMultiSelect = (e: MyMultiSelectListEvent) => {
-        this.setState((state: CommonS | any) => {
+        this.setState((state: S | any) => {
             const index = state[e.id].findIndex((el: any) => el.value === e.value)
             return {
                 [e.id]: [...state[e.id].slice(0, index), ...state[e.id].slice(index + 1)]
@@ -124,9 +130,9 @@ class ReportCreate extends React.Component<any, CommonS> {
             errorMessage: '',
             isLoaded: false,
         })
-        let report = this.state as any as Report
-        let err = this.validator.validateReport(report)
-        // err += this.validator.validateImg(this.avatar)
+        let forum = this.state as unknown as Forum
+        let err = this.validator.validateForum(forum)
+        err += this.validator.validateImg(this.avatar)
         if (!!err) {
             this.setState({
                 errorMessage: err,
@@ -134,10 +140,10 @@ class ReportCreate extends React.Component<any, CommonS> {
             })
             return
         }
-        let formData = handleFormData(report, this.avatar)
+        let formData = handleFormData(forum, this.avatar)
 
-        this.reportApi.create(formData).then(r => {
-            history.push('/material/report/' + r)
+        this.forumApi.update(this.state.id, formData).then(r => {
+            history.push('/material/forum/' + r)
         }, err => {
             this.setState({
                 errorMessage: err
@@ -155,23 +161,23 @@ class ReportCreate extends React.Component<any, CommonS> {
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
-                <PageTitle className="mb-0" title="Создание отчета / лога" icon={icon}/>
+                <PageTitle className="mb-0" title="Редактирование форума" icon={icon}/>
                 <Form onSubmit={this.handleSubmit}>
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <Row>
                         <Col md={6}>
-                            <MyCropper label="Загрузите изображение отчета / лога" src={defaultReportAvatar}
+                            <MyCropper label="Загрузите изображение форума" src={this.state.urlAvatar}
                                        ratio={260 / 190}
                                        onChange={this.handleImageChange}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Главное</h2>
-                            <InputField id="title" label="Заголовок отчёта / лога"
-                                        placeholder="Введите название отчёта / лога" type="text"
+                            <InputField id="title" label="Заголовок форума" placeholder="Введите название форумв"
+                                        type="text"
                                         value={this.state.title}
                                         onChange={this.handleChange}/>
                             <Textarea id="shortDescription" label="Анонс"
-                                      placeholder="Введите анонс отчёта / лога"
+                                      placeholder="Введите анонс форума"
                                       value={this.state.shortDescription}
                                       onChange={this.handleChange}/>
                         </Col>
@@ -179,22 +185,16 @@ class ReportCreate extends React.Component<any, CommonS> {
                     <Row>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Основное</h2>
-                            <Textarea id="description" label="Описание отчёта-лога"
-                                      placeholder="Опишите ваш отчёт / лог"
+                            <Textarea id="description" label="Описание форума"
+                                      placeholder="Опишите вашу тему обсуждения..."
                                       value={this.state.description}
                                       onChange={this.handleChange}
                                       rows={3}/>
                             <Textarea id="rule" label="Важная информация"
-                                      placeholder="Введите важные детали или информацию в вашем отчёте / логе"
+                                      placeholder="Введите важные детали или информацию в вашем форуме"
                                       value={this.state.rule}
                                       onChange={this.handleChange}
                                       rows={3}/>
-                            <MyMultiSelect id="members" label="Список персонажей-участников"
-                                           placeholder="Введите персонажей-участников..."
-                                           value={this.state.members} options={this.state.membersOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
                         </Col>
                         <Col md={6}>
                             <h2 className="page-edit__subtitle">Прочее</h2>
@@ -218,7 +218,7 @@ class ReportCreate extends React.Component<any, CommonS> {
                                 комментарии" id="comment" checked={this.state.comment}
                                            onChange={this.handleChangeChecked}/>
                             <Form.Group>
-                                <Button>Создать</Button>
+                                <Button>Сохранить</Button>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -228,4 +228,4 @@ class ReportCreate extends React.Component<any, CommonS> {
     }
 }
 
-export default ReportCreate
+export default ForumEdit

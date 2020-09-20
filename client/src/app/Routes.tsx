@@ -27,6 +27,9 @@ import ReportCreate from "../pages/report/Create"
 import ReportEdit from "../pages/report/Edit"
 import ReportList from "../pages/report/List"
 import ReportPage from "../pages/report/Show"
+import ForumCreate from "../pages/forum/Create"
+import ForumEdit from "../pages/forum/Edit"
+import ForumList from "../pages/forum/List"
 
 type P = {
     scrollTop: () => void
@@ -82,6 +85,15 @@ const Routes = ({scrollTop}: P) => {
                    render={(props) => (
                        <ReportEdit {...props} scrollTop={scrollTop}/>)}/>
             <Route path="/material/report/:id" component={ReportPage}/>
+
+            <Route exact path="/material/forum" component={ForumList}/>
+            <Route exact path="/material/forum/create"
+                   render={(props) => (
+                       <ForumCreate {...props} scrollTop={scrollTop}/>)}/>
+            <Route path="/material/forum/edit/:id"
+                   render={(props) => (
+                       <ForumEdit {...props} scrollTop={scrollTop}/>)}/>
+            {/*<Route path="/material/forum/:id" component={ForumPage}/>*/}
 
 
             <Route exact path="/admin" component={AdminDashboard}/>

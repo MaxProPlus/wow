@@ -29,5 +29,8 @@
 /server/upload/reportAvatar/*
 !/server/upload/reportAvatar/.gitkeep
 !/server/upload/reportAvatar/standard.png
+/server/upload/forumAvatar/*
+!/server/upload/forumAvatar/.gitkeep
+!/server/upload/forumAvatar/standard.png
 
 

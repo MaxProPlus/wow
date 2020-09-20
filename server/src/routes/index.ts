@@ -5,6 +5,7 @@ import CharacterController from '../controllers/CharacterController'
 import GuildController from '../controllers/GuildController'
 import StoryController from '../controllers/StoryController'
 import ReportController from '../controllers/ReportController'
+import ForumController from '../controllers/ForumController'
 
 const router = Router()
 
@@ -14,6 +15,7 @@ const characterController = new CharacterController()
 const guildController = new GuildController()
 const storyController = new StoryController()
 const reportController = new ReportController()
+const forumController = new ForumController()
 
 router.post('/users/general', accountController.updateGeneral)
 router.post('/users/avatar', accountController.updateAvatar)
@@ -73,6 +75,16 @@ router.put('/reports/:id', reportController.update)
 router.delete('/reports/:id', reportController.remove)
 router.post('/reports/comments', reportController.createComment)
 router.get('/reports/:id/comments', reportController.getComments)
-// router.delete('/stories/:idCharacter/comments/:idComment', storyController.removeComment)
+// router.delete('/reports/:idCharacter/comments/:idComment', reportController.removeComment)
+
+// форумы
+router.post('/forums', forumController.create)
+router.get('/forums', forumController.getAll)
+router.get('/forums/:id', forumController.getById)
+router.put('/forums/:id', forumController.update)
+router.delete('/forums/:id', forumController.remove)
+router.post('/forums/comments', forumController.createComment)
+router.get('/forums/:id/comments', forumController.getComments)
+// router.delete('/forums/:idCharacter/comments/:idComment', forumController.removeComment)
 
 export default router

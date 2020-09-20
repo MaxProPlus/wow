@@ -1,9 +1,9 @@
-import {Account, Character, Comment, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
+import {Account, Character, Comment, Forum, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
     // Удалить лишние пробелы
-    trim(s: string) {
+    trim = (s: string) => {
         return s.trim().replace(/\s{2,}/g, ' ')
     }
 
@@ -291,6 +291,35 @@ class Validator {
             err += 'Ошибка hidden.\n'
         }
         if (report.comment < 0 || report.comment > 1) {
+            err += 'Ошибка comment.\n'
+        }
+        return err
+    }
+
+    // Валидация форума
+    validateForum(forum: Forum) {
+        let err = ''
+        this.trimObject(forum, ['title', 'shortDescription', 'description', 'rule'])
+        this.normalize(forum, ['coauthors'])
+        if (forum.title.length < 3 || forum.title.length > 35) {
+            err += 'Длина имени форума должна быть от 3 до 35 символов.\n'
+        }
+        if (forum.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
+        }
+        if (forum.shortDescription.length < 1) {
+            err += 'Анонс обязателен для заполнения.\n'
+        }
+        if (forum.rule.length < 1) {
+            err += 'Важная информация обязательна для заполнения.\n'
+        }
+        if (forum.closed < 0 || forum.closed > 1) {
+            err += 'Ошибка closed.\n'
+        }
+        if (forum.hidden < 0 || forum.hidden > 1) {
+            err += 'Ошибка hidden.\n'
+        }
+        if (forum.comment < 0 || forum.comment > 1) {
             err += 'Ошибка comment.\n'
         }
         return err

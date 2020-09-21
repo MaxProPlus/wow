@@ -10,13 +10,16 @@ type propsTypes = CommentType & {
 
 export default function Comment(props: propsTypes) {
     return (
-        <div className="d-flex justify-content-between comment-item">
-            <Link to={'/profile/' + props.idAccount}><AvatarImg url={props.authorUrlAvatar}/></Link>
-            <div className="comment-block">
-                <div className="comment-author"><Link to={'/profile/' + props.idAccount}>{props.authorNickname}</Link>
+        <div className="comment-item">
+            <div className="d-flex justify-content-between">
+                <Link to={'/profile/' + props.idAccount}><AvatarImg url={props.authorUrlAvatar}/></Link>
+                <div className="flex-grow-1">
+                    <div className="comment-author__nickname"><Link to={'/profile/' + props.idAccount}>{props.authorNickname}</Link>
+                    </div>
+                    {/*<div>{props.date}</div>*/}
                 </div>
-                <div className="comment-text">{props.text}</div>
             </div>
+            <div className="comment__text">{props.text}</div>
         </div>
     )
 }

@@ -1,27 +1,33 @@
+@import "../../css/variables";
+
 .comment-item {
   margin-top: 1rem;
   margin-bottom: .8rem;
-
-  > .comment-block {
-    flex-grow: 1;
-    word-break: break-all;
-  }
 
   .avatar_img {
     flex-shrink: 0;
     margin-right: .5rem;
   }
 
-  .comment-author {
+  .comment-author__nickname {
     font-size: .8rem;
     font-weight: bold;
     line-height: 1.5;
   }
 
-  > .comment-remove {
+  .comment-remove {
     cursor: pointer;
     width: .5rem;
     height: .5rem;
     min-width: auto;
   }
+
+  .comment__text {
+    word-break: break-all;
+    margin-top: 7px;
+    padding: 7px;
+    border: 1px solid $border-color;
+    background-color: transparentize($border-color, .65);
+  }
+
 }

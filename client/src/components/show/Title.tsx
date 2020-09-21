@@ -3,11 +3,12 @@ import styles from './Title.module.scss'
 
 type P = {
     children: any
+    className?: string
 }
 
 const Title = (props: P) => {
     return (
-        <div className={styles.title}>{props.children}</div>
+        <div className={`${styles.title} ${props.className}`}>{props.children}</div>
     )
 }
 

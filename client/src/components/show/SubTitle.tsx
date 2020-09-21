@@ -3,11 +3,12 @@ import styles from './SubTitle.module.scss'
 
 type P = {
     children: any
+    className?: string
 }
 
 const SubTitle = (props: P) => {
     return (
-        <div className={styles.title}>{props.children}</div>
+        <div className={`${styles.title} ${props.className}`}>{props.children}</div>
     )
 }
 

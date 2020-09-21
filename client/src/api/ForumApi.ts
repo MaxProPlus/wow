@@ -1,4 +1,4 @@
-import {CommentReport} from "../../../server/src/common/entity/types"
+import {CommentForum} from "../../../server/src/common/entity/types"
 import Api from "./BasicApi"
 
 class ForumApi extends Api {
@@ -59,7 +59,7 @@ class ForumApi extends Api {
     }
 
     // Создать комментарий к формуму
-    addComment(comment: CommentReport) {
+    addComment(comment: CommentForum) {
         const url = '/api/forums/comments'
         return this.post(url, comment).then(r => {
             if (r.status !== 'OK')
@@ -69,8 +69,8 @@ class ForumApi extends Api {
     }
 
     // Получить комментарии к формуму
-    getComments(idReport: string) {
-        const url = '/api/forums/' + idReport + '/comments'
+    getComments(idForum: string) {
+        const url = '/api/forums/' + idForum + '/comments'
         return this.get(url).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)

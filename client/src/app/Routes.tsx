@@ -30,6 +30,7 @@ import ReportPage from "../pages/report/Show"
 import ForumCreate from "../pages/forum/Create"
 import ForumEdit from "../pages/forum/Edit"
 import ForumList from "../pages/forum/List"
+import ForumPage from "../pages/forum/Show"
 
 type P = {
     scrollTop: () => void
@@ -93,7 +94,7 @@ const Routes = ({scrollTop}: P) => {
             <Route path="/material/forum/edit/:id"
                    render={(props) => (
                        <ForumEdit {...props} scrollTop={scrollTop}/>)}/>
-            {/*<Route path="/material/forum/:id" component={ForumPage}/>*/}
+            <Route path="/material/forum/:id" component={ForumPage}/>
 
 
             <Route exact path="/admin" component={AdminDashboard}/>

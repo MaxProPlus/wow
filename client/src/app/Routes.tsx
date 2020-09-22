@@ -5,10 +5,8 @@ import SignIn from "../pages/signIn/SignIn"
 import SignUp from "../pages/singUp/SignUp"
 import Profile from "../pages/profile/Profile"
 import Setting from "../pages/setting/Setting"
-import TypesOfTicket from "../pages/typesOfTicket/TypesOfTicket"
-import TicketsByType from "../pages/ticketsByType/TicketsByType"
 import TicketCreate from "../pages/ticketCreate/TicketCreate"
-import TicketPage from "../pages/ticket/TicketPage"
+import TicketPage from "../pages/ticketPage/TicketPage"
 import CharacterList from "../pages/character/List"
 import CharacterCreate from "../pages/character/Create"
 import CharacterEdit from "../pages/character/Edit"
@@ -31,6 +29,8 @@ import ForumCreate from "../pages/forum/Create"
 import ForumEdit from "../pages/forum/Edit"
 import ForumList from "../pages/forum/List"
 import ForumPage from "../pages/forum/Show"
+import TicketTypeList from "../pages/ticket/TypeList"
+import TicketList from "../pages/ticket/List"
 
 type P = {
     scrollTop: () => void
@@ -43,13 +43,6 @@ const Routes = ({scrollTop}: P) => {
             <Route path="/signup" component={SignUp}/>
             <Route path="/profile/:id" component={Profile}/>
             <Route path="/setting" component={Setting}/>
-            <Route exact path="/help/ticket/type"
-                   component={TypesOfTicket}/>{/*категории тикетов*/}
-            <Route path="/help/ticket/type/:id"
-                   component={TicketsByType}/> {/*тикеты конкретной категории*/}
-            <Route exact path="/help/ticket/create"
-                   component={TicketCreate}/>{/*создание тикета*/}
-            <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
             <Route exact path="/material/character" component={CharacterList}/>
             <Route exact path="/material/character/create"
@@ -95,6 +88,14 @@ const Routes = ({scrollTop}: P) => {
                    render={(props) => (
                        <ForumEdit {...props} scrollTop={scrollTop}/>)}/>
             <Route path="/material/forum/:id" component={ForumPage}/>
+
+            <Route exact path="/help/ticket/type"
+                   component={TicketTypeList}/>{/*категории тикетов*/}
+            <Route path="/help/ticket/type/:id"
+                   component={TicketList}/> {/*тикеты конкретной категории*/}
+            <Route exact path="/help/ticket/create"
+                   component={TicketCreate}/>{/*создание тикета*/}
+            <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
 
             <Route exact path="/admin" component={AdminDashboard}/>

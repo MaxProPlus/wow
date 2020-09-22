@@ -9,7 +9,7 @@ import {Account} from "../../../server/src/common/entity/types"
 import HeaderTop from "./headerTop/HeaderTop"
 import Routes from "./Routes"
 import Cookie from "../utils/cookie"
-import HeaderLeft from "./headerLeft/Header"
+import HeaderLeft from "./headerLeft/HeaderLeft"
 
 interface IState {
     isLoaded: boolean

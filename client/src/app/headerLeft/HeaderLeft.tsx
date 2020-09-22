@@ -1,6 +1,6 @@
 import React, {Component, forwardRef} from 'react'
 import {Link} from "react-router-dom"
-import './Header.scss'
+import './HeaderLeft.scss'
 import logo from './logo.png'
 import history from "../../utils/history"
 import Accordion from "../../components/accordion/Accordion"
@@ -138,8 +138,17 @@ class HeaderLeft extends Component<P, S> {
                     <Accordion isActive={this.state.showHelp}>
                         <div onClick={this.props.hideMenu} className="header-sub">
                             <Link
+                                className={`header-item sub-item${this.state.path.includes('/guid') ? ' item-active' : ''}`}
+                                to="/help/guid">Гайды</Link>
+                            <Link
                                 className={`header-item sub-item${this.state.path.includes('/ticket') ? ' item-active' : ''}`}
                                 to="/help/ticket/type">Тикеты</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/transmog') ? ' item-active' : ''}`}
+                                to="/help/transmog">Трансмогрификация</Link>
+                            <Link
+                                className={`header-item sub-item${this.state.path.includes('/feedback') ? ' item-active' : ''}`}
+                                to="/help/feedback">Обратная связь</Link>
                         </div>
                     </Accordion>
 

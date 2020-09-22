@@ -3,13 +3,13 @@ import {Router} from "react-router-dom"
 import '../css/common.scss'
 import './App.scss'
 import history from "utils/history"
-import Header from "components/header/Header"
 import UserApi from "api/UserApi"
 import UserContext from "utils/userContext"
 import {Account} from "../../../server/src/common/entity/types"
-import HeaderTop from "../components/headerTop/HeaderTop"
+import HeaderTop from "./headerTop/HeaderTop"
 import Routes from "./Routes"
 import Cookie from "../utils/cookie"
+import HeaderLeft from "./headerLeft/Header"
 
 interface IState {
     isLoaded: boolean
@@ -104,7 +104,7 @@ class App extends React.Component<{}, IState> {
             <Router history={history}>
                 <UserContext.Provider value={{user: this.state.user, updateLogin: this.updateLogin}}>
                     <div className="app">
-                        <Header ref={this.setWrapperRef} showMenu={this.state.showMenu} hideMenu={this.hideMenu}/>
+                        <HeaderLeft ref={this.setWrapperRef} showMenu={this.state.showMenu} hideMenu={this.hideMenu}/>
                         <div ref={this.setContainerRef} className="my-container">
                             <HeaderTop onClickMenu={this.handleToggleMenu}/>
                             <div className="container-inner">

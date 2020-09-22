@@ -2,8 +2,8 @@ import React, {Component, forwardRef} from 'react'
 import {Link} from "react-router-dom"
 import './Header.scss'
 import logo from './logo.png'
-import Accordion from "../accordion/Accordion"
 import history from "../../utils/history"
+import Accordion from "../../components/accordion/Accordion"
 
 type P = {
     showMenu: boolean
@@ -18,7 +18,7 @@ type S = {
     path: string
 }
 
-class Header extends Component<P, S> {
+class HeaderLeft extends Component<P, S> {
     private removeListen: any
 
     constructor(props: any) {
@@ -149,4 +149,4 @@ class Header extends Component<P, S> {
     }
 }
 
-export default forwardRef((props: any, ref: any) => <Header innerRef={ref} {...props}/>)
+export default forwardRef((props: any, ref: any) => <HeaderLeft innerRef={ref} {...props}/>)

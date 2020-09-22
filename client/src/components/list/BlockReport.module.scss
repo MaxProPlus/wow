@@ -1,21 +1,33 @@
 @import '../../css/variables';
 
 .block {
-  margin-bottom: 15px;
-
-  img {
-    max-width: 100%;
-    //min-height: 100%
-  }
+  margin: 0 15px 15px;
+  background-color: transparentize($border-color, .65);
+  border: 1px solid $border-color;
 
   &:hover .title {
     color: #5B87EF;
+  }
+
+  >div:first-child {
+    padding-left: 0;
+  }
+
+  >div:last-child {
+    padding-right: 0;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
   }
 }
 
 .title {
   font-size: 1rem;
   transition: color .3s ease;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 .muteTitle {

@@ -38,27 +38,16 @@ class ReportModel {
     }
 
     // Получить все отчеты
-    getAll = async (limit: number, page: number) => {
+    getAll = (limit: number, page: number, data?: any) => {
         const p = []
-        p.push(this.mapper.selectAll(limit, page))
-        p.push(this.mapper.selectCount())
-        const r = await Promise.all(p)
-        return {
-            data: r[0],
-            count: r[1],
-        }
-    }
-
-    // Получить отчеты по запросу
-    getByQuery = async (data: any, limit: number, page: number) => {
-        const p = []
-        p.push(this.mapper.selectByQuery(data, limit, page))
-        p.push(this.mapper.selectCountByQuery(data))
-        const r = await Promise.all(p)
-        return {
-            data: r[0],
-            count: r[1],
-        }
+        p.push(this.mapper.selectAll(limit, page, data))
+        p.push(this.mapper.selectCount(data))
+        return Promise.all(p).then((r)=>{
+            return {
+                data: r[0],
+                count: r[1],
+            }
+        })
     }
 
     // Редактировать отчет

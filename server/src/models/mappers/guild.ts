@@ -138,39 +138,7 @@ class GuildMapper extends BasicMaterialMapper {
     }
 
     // Получить все гильдии
-    selectAll = (limit: number, page: number) => {
-        const sql = `select id,
-                            id_account        as idAccount,
-                            url_avatar        as urlAvatar,
-                            title,
-                            game_title        as gameTitle,
-                            short_description as shortDescription,
-                            ideology,
-                            description,
-                            rule,
-                            more,
-                            status,
-                            kit,
-                            closed,
-                            hidden,
-                            comment,
-                            style
-                     from guild
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0
-                     order by id desc
-                     limit ? offset ?`
-        return this.pool.query(sql, [limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
-            logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
-        })
-    }
-
-    // Получить гильдии по запросу
-    selectByQuery = (data: any, limit: number, page: number) => {
+    selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
                           id_account        as idAccount,
                           url_avatar        as urlAvatar,
@@ -215,23 +183,8 @@ class GuildMapper extends BasicMaterialMapper {
         })
     }
 
-    // Получить количество гильдий
-    selectCount = (): Promise<number> => {
-        const sql = `select count(id) as count
-                     from guild
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
-        return this.pool.query(sql).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
-            logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
-        })
-    }
-
     // Получить количество гильдий по запросу
-    selectCountByQuery = (data: any): Promise<number> => {
+    selectCount = (data?: any): Promise<number> => {
         let sql = `select count(id) as count
                    from guild
                    where hidden = 0

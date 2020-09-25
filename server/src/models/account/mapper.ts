@@ -165,7 +165,8 @@ class Mapper extends BasicMapper {
         })
     }
 
-    selectAll = (data: any, limit: number, page: number) => {
+    // Выборка всех пользователей
+    selectAll = (limit: number, page: number, data?: any) => {
         let sql = `SELECT id, nickname
                      FROM account`
         const where = []

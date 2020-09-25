@@ -100,20 +100,7 @@ class ReportController {
         if (!!req.query.title) {
             data.title = req.query.title
         }
-        if (!data) {
-            return this.reportModel.getAll(limit, page).then((r: any) => {
-                return res.json({
-                    status: 'OK',
-                    results: r,
-                })
-            }, (err: string) => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: err,
-                })
-            })
-        }
-        return this.reportModel.getByQuery(data, limit, page).then((r: any) => {
+        return this.reportModel.getAll(limit, page, data).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

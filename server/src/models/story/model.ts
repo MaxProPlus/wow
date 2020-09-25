@@ -51,33 +51,22 @@ class StoryModel {
     }
 
     // Получить все сюжеты
-    getAll = async (limit: number, page: number) => {
+    getAll = (limit: number, page: number, data?: any) => {
         const p = []
-        p.push(this.mapper.selectAll(limit, page))
-        p.push(this.mapper.selectCount())
-        const r = await Promise.all(p)
-        return {
-            data: r[0],
-            count: r[1],
-        }
-    }
-
-    // Получить сюжеты по запросу
-    getByQuery = async (query: any, limit: number, page: number) => {
-        const p = []
-        p.push(this.mapper.selectByQuery(query, limit, page))
-        p.push(this.mapper.selectCountByQuery(query))
-        const r = await Promise.all(p)
-        return {
-            data: r[0],
-            count: r[1],
-        }
+        p.push(this.mapper.selectAll(limit, page, data))
+        p.push(this.mapper.selectCount(data))
+        return Promise.all(p).then((r)=>{
+            return {
+                data: r[0],
+                count: r[1],
+            }
+        })
     }
 
     // Редактировать сюжет
     update = async (c: StoryUpload) => {
         const old = (await this.getById(c.id))[0]
-        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el:Account)=>el.id === c.idAccount))=== -1) {
+        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
 
@@ -142,7 +131,7 @@ class StoryModel {
     remove = async (story: Story) => {
         const oldStory = await this.mapper.selectById(story.id)
         oldStory.coauthors = await this.mapper.selectCoauthorById(story.id)
-        if (oldStory.idAccount !== story.idAccount && (oldStory.coauthors.findIndex((el:Account)=>el.id === story.idAccount))=== -1) {
+        if (oldStory.idAccount !== story.idAccount && (oldStory.coauthors.findIndex((el: Account) => el.id === story.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(oldStory.urlAvatar)

@@ -139,7 +139,7 @@ class AccountController {
         if (!!req.query.nickname) {
             data.nickname = req.query.nickname
         }
-        return this.userModel.getAll(data, limit, page).then((r: any) => {
+        return this.userModel.getAll(limit, page, data).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r

@@ -2,7 +2,7 @@ import {Character, CommentReport, Report} from '../../common/entity/types'
 import logger from '../../services/logger'
 import BasicMaterialMapper from './material'
 
-class ReportMapper extends BasicMaterialMapper{
+class ReportMapper extends BasicMaterialMapper {
 
     constructor(pool: any) {
         super(pool, 'report')
@@ -102,50 +102,22 @@ class ReportMapper extends BasicMaterialMapper{
     }
 
     // Получить все отчеты / логи
-    selectAll = (limit: number, page: number) => {
-        const sql = `select id,
-                            id_account        as idAccount,
-                            url_avatar        as urlAvatar,
-                            title,
-                            short_description as shortDescription,
-                            description,
-                            rule,
-                            closed,
-                            hidden,
-                            comment,
-                            style
-                     from report
-                     where id = ?
-                       and hidden = 0
-                       and closed = 0
-                       and is_remove = 0
-                     order by id desc
-                     limit ? offset ?`
-        return this.pool.query(sql, [limit, limit * (page - 1)]).then(([r]: [Report[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
-            logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
-        })
-    }
-
-    // Получить все отчеты по запросу
-    selectByQuery = (data: any, limit: number, page: number) => {
+    selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
-                            id_account        as idAccount,
-                            url_avatar        as urlAvatar,
-                            title,
-                            short_description as shortDescription,
-                            description,
-                            rule,
-                            closed,
-                            hidden,
-                            comment,
-                            style
-                     from report
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
+                          id_account        as idAccount,
+                          url_avatar        as urlAvatar,
+                          title,
+                          short_description as shortDescription,
+                          description,
+                          rule,
+                          closed,
+                          hidden,
+                          comment,
+                          style
+                   from report
+                   where hidden = 0
+                     and closed = 0
+                     and is_remove = 0`
 
         const where = []
         if (!!data) {
@@ -172,27 +144,12 @@ class ReportMapper extends BasicMaterialMapper{
     }
 
     // Получить количество отчетов
-    selectCount = (): Promise<number> => {
-        const sql = `select count(id) as count
-                     from report
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
-        return this.pool.query(sql).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
-            logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
-        })
-    }
-
-    // Получить количество отчетов по запросу
-    selectCountByQuery = (data: any): Promise<number> => {
+    selectCount = (data?: any): Promise<number> => {
         let sql = `select count(id) as count
-                     from report
-                     where hidden = 0
-                       and closed = 0
-                       and is_remove = 0`
+                   from report
+                   where hidden = 0
+                     and closed = 0
+                     and is_remove = 0`
         const where = []
         if (!!data) {
             // tslint:disable-next-line:forin
@@ -206,7 +163,7 @@ class ReportMapper extends BasicMaterialMapper{
                 }
             }
         }
-        return this.pool.query(sql, [...where]).then(([r]: any) => {
+        return this.pool.query(sql, where).then(([r]: any) => {
             return Promise.resolve(r[0].count)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)

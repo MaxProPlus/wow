@@ -100,20 +100,7 @@ class StoryController {
         if (!!req.query.title) {
             data.title = req.query.title
         }
-        if (!data) {
-            return this.storyModel.getAll(limit, page).then((r: any) => {
-                return res.json({
-                    status: 'OK',
-                    results: r,
-                })
-            }, (err: string) => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: err,
-                })
-            })
-        }
-        return this.storyModel.getByQuery(data, limit, page).then((r: any) => {
+        return this.storyModel.getAll(limit, page, data).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

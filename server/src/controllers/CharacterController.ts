@@ -112,20 +112,7 @@ class CharacterController {
         if (!!req.query.active) {
             data.active = parseInt(req.query.active as string)
         }
-        if (!data) {
-            return this.characterModel.getAll(limit, page).then((r: any) => {
-                return res.json({
-                    status: 'OK',
-                    results: r,
-                })
-            }, (err: string) => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: err,
-                })
-            })
-        }
-        return this.characterModel.getByQuery(data, limit, page).then((r: any) => {
+        return this.characterModel.getAll(limit, page, data).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

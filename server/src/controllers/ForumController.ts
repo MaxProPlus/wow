@@ -100,20 +100,7 @@ class ForumController {
         if (!!req.query.title) {
             data.title = req.query.title
         }
-        if (!data) {
-            return this.forumModel.getAll(limit, page).then((r: any) => {
-                return res.json({
-                    status: 'OK',
-                    results: r,
-                })
-            }, (err: string) => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: err,
-                })
-            })
-        }
-        return this.forumModel.getByQuery(data, limit, page).then((r: any) => {
+        return this.forumModel.getAll(limit, page, data).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: r,

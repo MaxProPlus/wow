@@ -1,13 +1,9 @@
 import {Account, UserPassword} from '../../common/entity/types'
 import {Token} from '../../entity/types'
 import logger from '../../services/logger'
+import BasicMapper from '../mappers/mapper'
 
-class Mapper {
-    private pool: any
-
-    constructor(pool: any) {
-        this.pool = pool
-    }
+class Mapper extends BasicMapper {
 
     // Регистрация
     signup = (account: Account) => {
@@ -163,6 +159,74 @@ class Mapper {
                 return Promise.reject('Не найден пользователь')
             }
             return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    selectAll = (data: any, limit: number, page: number) => {
+        let sql = `SELECT id, nickname
+                     FROM account`
+        const where = []
+        if (!!data) {
+            if (Object.keys(data).length !== 0) {
+                sql += ' where'
+            }
+            let i = 0
+            // tslint:disable-next-line:forin
+            for (const key in data) {
+                if (i++ !== 0) {
+                    sql += ` and`
+                }
+                if (typeof data[key] === 'string') {
+                    sql += ` ${key} like ?`
+                    where.push(`%${data[key]}%`)
+                } else {
+                    sql += ` ${key} = ?`
+                    where.push(data[key])
+                }
+            }
+        }
+        sql += ` order by id desc
+        limit ? offset ?`
+        return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: any) => {
+            if (!r.length) {
+                return Promise.reject('Не найдены пользователи')
+            }
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить количество пользователей
+    selectCount = (data: any): Promise<number> => {
+        let sql = `SELECT count(id) as count
+                   FROM account`
+        const where = []
+        if (!!data) {
+            if (Object.keys(data).length !== 0) {
+                sql += ' where'
+            }
+            let i = 0
+            // tslint:disable-next-line:forin
+            for (const key in data) {
+                if (i++ !== 0) {
+                    sql += ` and`
+                }
+                if (typeof data[key] === 'string') {
+                    sql += ` ${key} like ?`
+                    where.push(`%${data[key]}%`)
+                } else {
+                    sql += ` ${key} = ?`
+                    where.push(data[key])
+                }
+            }
+        }
+        return this.pool.query(sql, where).then(([r]: any) => {
+            return Promise.resolve(r[0].count)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')

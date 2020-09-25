@@ -1,4 +1,4 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/report'
 import {Character, CommentReport, CommentStory, Report} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'

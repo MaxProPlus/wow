@@ -1,4 +1,4 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/forum'
 import {CommentForum, CommentStory, Forum} from '../../common/entity/types'
 import {defaultAvatar, ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'

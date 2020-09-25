@@ -91,6 +91,20 @@ class UserApi extends Api {
             return r.results[0]
         })
     }
+
+    getAll(limit: number, page: number, data?: any) {
+        let url = `/api/users?limit=${limit}&page=${page}`
+        if (!!data) {
+            for (let key in data) {
+                url += `&${key}=${data[key]}`
+            }
+        }
+        return this.get(url).then(r => {
+            if (r.status !== 'OK')
+                return Promise.reject(r.errorMessage)
+            return r.results
+        })
+    }
 }
 
 export default UserApi

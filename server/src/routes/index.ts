@@ -27,6 +27,7 @@ router.get('/users/logout', accountController.logout)
 router.get('/users/context', accountController.getContext)
 router.get('/users/general', accountController.getGeneral)
 router.get('/users/:id', accountController.getUser)
+router.get('/users', accountController.getAll)
 
 // Тикеты
 router.post('/tickets', ticketController.create)

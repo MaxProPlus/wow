@@ -1,11 +1,11 @@
 import {Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
 import logger from '../../services/logger'
+import BasicMaterialMapper from './material'
 
-class Mapper {
-    private pool: any
+class CharacterMapper extends BasicMaterialMapper {
 
     constructor(pool: any) {
-        this.pool = pool
+        super(pool, 'character')
     }
 
     // Создать персонажа
@@ -438,4 +438,4 @@ class Mapper {
     }
 }
 
-export default Mapper
+export default CharacterMapper

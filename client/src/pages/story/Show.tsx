@@ -1,6 +1,6 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {CommentStory, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
+import {Account, CommentStory, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import CommentForm from "../../components/commentFrom/CommentForm"
@@ -24,6 +24,7 @@ import List from "../../components/show/List"
 
 type S = {
     isLoaded: boolean
+    isAdmin: boolean
     modalShow: boolean
     errorMessage: string
     id: string
@@ -39,6 +40,7 @@ class StoryPage extends React.Component<any, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            isAdmin: false,
             modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
@@ -49,6 +51,20 @@ class StoryPage extends React.Component<any, S> {
 
     componentDidMount() {
         this.updateData()
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && this.context.user.id > 0) {
+            const isAdmin = ((this.state.story.coauthors.findIndex((el:Account)=>{
+                return el.id === this.context.user.id
+            }) === -1) ? this.context.user.id === this.state.story.idAccount : true)
+            if (isAdmin) {
+                this.setState({
+                    isAdmin
+                })
+            }
+        }
     }
 
     updateData = () => {
@@ -134,7 +150,7 @@ class StoryPage extends React.Component<any, S> {
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить сюжет?"/>
                 <PageTitle title="Сюжет" icon={icon}>
-                    <ControlButton show={this.context.user.id === this.state.story.idAccount} id={this.state.id}
+                    <ControlButton show={this.state.isAdmin} id={this.state.id}
                                    type='story' nameRemove='сюжет'
                                    showRemoveWindow={this.showRemoveWindow}/>
                 </PageTitle>

@@ -1,4 +1,4 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/guild'
 import {Character, CommentGuild, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'

@@ -89,6 +89,17 @@ class AccountModel {
         return this.mapper.selectUserGeneralById(idProfile)
     }
 
+    getAll = async (data: any, limit: number, page: number) => {
+        const p = []
+        p.push(this.mapper.selectAll(data, limit, page))
+        p.push(this.mapper.selectCount(data))
+        const r = await Promise.all(p)
+        return {
+            data: r[0],
+            count: r[1],
+        }
+    }
+
     // Редактирование основной информации
     updateGeneral = async (account: Account) => {
         await this.mapper.updateGeneral(account)

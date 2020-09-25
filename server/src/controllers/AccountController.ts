@@ -131,6 +131,27 @@ class AccountController {
         })
     }
 
+    // Получить всех пользователей
+    getAll = (req: Request, res: Response) => {
+        const limit = parseInt(req.query.limit as string) || 10
+        const page = parseInt(req.query.page as string) || 1
+        const data: any = {}
+        if (!!req.query.nickname) {
+            data.nickname = req.query.nickname
+        }
+        return this.userModel.getAll(data, limit, page).then((r: any) => {
+            return res.json({
+                status: 'OK',
+                results: r
+            })
+        }, (err: any) => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: err,
+            })
+        })
+    }
+
     // Редактирование основной информации
     updateGeneral = async (req: Request, res: Response) => {
         const user: Account = req.body
@@ -173,7 +194,7 @@ class AccountController {
             })
         }
         try {
-            const {id, username} = await this.auth.checkAuthWithPassword(req.cookies.token, user.password)
+            const {id} = await this.auth.checkAuthWithPassword(req.cookies.token, user.password)
             user.id = id
         } catch (e) {
             return res.json({

@@ -1,5 +1,5 @@
-import Mapper from './mapper'
-import {Character, CommentStory, Guild, Story} from '../../common/entity/types'
+import Mapper from '../mappers/story'
+import {Account, Character, CommentStory, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, StoryUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -18,10 +18,16 @@ class StoryModel {
 
         const id = await this.mapper.insert(c)
         await Promise.all(c.members.map(async (idLink) => {
-            await this.mapper.insertMember(id, idLink)
+            return this.mapper.insertMember(id, idLink)
         }))
         await Promise.all(c.guilds.map(async (idLink) => {
-            await this.mapper.insertGuild(id, idLink)
+            return this.mapper.insertGuild(id, idLink)
+        }))
+        await Promise.all(c.coauthors.map(async (idLink) => {
+            return this.mapper.insertGuild(id, idLink)
+        }))
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            return this.mapper.insertCoauthor(id, el)
         }))
         c.fileAvatar.mv(infoAvatar.path)
         return id
@@ -29,15 +35,17 @@ class StoryModel {
 
     // Получить сюжет по id
     getById = (id: number): Promise<[Story, CommentStory[]]> => {
-        const p: [Promise<Story>, Promise<Character[]>, Promise<Guild[]>, Promise<CommentStory[]>] = [
+        const p: [Promise<Story>, Promise<Character[]>, Promise<Guild[]>, Promise<Account[]>, Promise<CommentStory[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
             this.mapper.selectGuildsById(id),
+            this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Story, Character[], Guild[], CommentStory[]>(p).then(([s, c, g, comments]) => {
+        return Promise.all<Story, Character[], Guild[], Account[], CommentStory[]>(p).then(([s, c, g, a, comments]) => {
             s.members = c
             s.guilds = g
+            s.coauthors = a
             return [s, comments]
         })
     }
@@ -68,12 +76,11 @@ class StoryModel {
 
     // Редактировать сюжет
     update = async (c: StoryUpload) => {
-        const old = await this.mapper.selectById(c.id)
-        if (old.idAccount !== c.idAccount) {
+        const old = (await this.getById(c.id))[0]
+        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el:Account)=>el.id === c.idAccount))=== -1) {
             return Promise.reject('Нет прав')
         }
 
-        old.members = await this.mapper.selectMembersById(c.id)
         // Перебор нового списка участников сюжета
         await Promise.all(c.members.map(async (el: number) => {
             // Если не находим в старом списке, то добавляем
@@ -89,7 +96,6 @@ class StoryModel {
             }
         }))
 
-        old.guilds = await this.mapper.selectGuildsById(c.id)
         // Перебор нового списка гильдии сюжета
         await Promise.all(c.guilds.map(async (el: number) => {
             // Если не находим в старом списке, то добавляем
@@ -102,6 +108,21 @@ class StoryModel {
             // Если не находим в новом списке, то удаляем
             if (c.guilds.indexOf(el.id) === -1) {
                 return await this.mapper.removeGuild(c.id, el.id)
+            }
+        }))
+
+        // Перебор нового списка соавторов
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (old.coauthors.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertCoauthor(c.id, el)
+            }
+        }))
+        // Перебор старого списка соавторов
+        await Promise.all(old.coauthors.map(async (el: Account) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.coauthors.indexOf(el.id) === -1) {
+                return await this.mapper.removeCoauthor(c.id, el.id)
             }
         }))
 
@@ -120,7 +141,8 @@ class StoryModel {
     // Удалить сюжет
     remove = async (story: Story) => {
         const oldStory = await this.mapper.selectById(story.id)
-        if (oldStory.idAccount !== story.idAccount) {
+        oldStory.coauthors = await this.mapper.selectCoauthorById(story.id)
+        if (oldStory.idAccount !== story.idAccount && (oldStory.coauthors.findIndex((el:Account)=>el.id === story.idAccount))=== -1) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(oldStory.urlAvatar)

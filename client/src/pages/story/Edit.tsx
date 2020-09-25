@@ -6,7 +6,7 @@ import {Redirect} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Character, Guild, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
+import {Account, Character, Guild, Story, storyStatusToString} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -23,11 +23,14 @@ import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import CharacterApi from "../../api/CharacterApi"
 import GuildApi from "../../api/GuildApi"
+import UserApi from "../../api/UserApi"
 
 type S = CommonS & {
     id: string
     urlAvatar: string
     idAccount: number
+    globalErrorMessage: string
+    isAdmin: boolean
 }
 
 class StoryEdit extends React.Component<any, S> {
@@ -35,6 +38,7 @@ class StoryEdit extends React.Component<any, S> {
     private storyApi = new StoryApi()
     private characterApi = new CharacterApi()
     private guildApi = new GuildApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -45,7 +49,9 @@ class StoryEdit extends React.Component<any, S> {
             id: props.match.params.id,
             idAccount: 0,
             isLoaded: true,
+            isAdmin: false,
             errorMessage: '',
+            globalErrorMessage: '',
             articlesOptions: [],
             membersOptions: [],
             guildsOptions: [],
@@ -59,25 +65,40 @@ class StoryEdit extends React.Component<any, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
-        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
+            && this.context.user.id > 0 // Если контекст загружен
+            && this.state.idAccount !== 0) { // Если сюжет загружен
+
+            // Проверяем есть ли id пользователя в массиве соавторов
+            // Если есть, то он имеет право на редактирование
+            // Если нет, то сравниваем id пользователя и id создателя материала
+            const isAdmin = ((this.state.coauthors.findIndex((el:Option)=>el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
             this.setState({
-                errorMessage: 'Нет прав'
+                isAdmin,
+                globalErrorMessage: isAdmin?'': 'Нет прав'
             })
         }
     }
 
     updateData = () => {
         this.storyApi.getById(this.state.id).then(r => {
-            delete r.id
+            delete r[0].id
             r[0].members = r[0].members.map((el: Character) => {
                 return {
                     label: el.title,
                     value: el.id
                 }
             })
-            r[0].guilds = r[0].guilds.map((el: Character) => {
+            r[0].guilds = r[0].guilds.map((el: Guild) => {
                 return {
                     label: el.title,
+                    value: el.id
+                }
+            })
+            r[0].coauthors = r[0].coauthors.map((el: Account) => {
+                return {
+                    label: el.nickname,
                     value: el.id
                 }
             })
@@ -166,7 +187,24 @@ class StoryEdit extends React.Component<any, S> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Guild) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -221,8 +259,11 @@ class StoryEdit extends React.Component<any, S> {
     }
 
     render() {
+        if (!!this.state.globalErrorMessage) {
+            return (<AlertDanger>{this.state.globalErrorMessage}</AlertDanger>)
+        }
         return (
-            <div className="page-edit guild-create">
+            <div className="page-edit">
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
                 <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}

@@ -307,12 +307,6 @@ class Validator {
         if (forum.description.length < 1) {
             err += 'Описание обязательно для заполнения.\n'
         }
-        if (forum.shortDescription.length < 1) {
-            err += 'Анонс обязателен для заполнения.\n'
-        }
-        if (forum.rule.length < 1) {
-            err += 'Важная информация обязательна для заполнения.\n'
-        }
         if (forum.closed < 0 || forum.closed > 1) {
             err += 'Ошибка closed.\n'
         }

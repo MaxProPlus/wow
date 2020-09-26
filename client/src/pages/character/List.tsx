@@ -14,6 +14,9 @@ import SearchBlock from "../../components/list/SearchBlock"
 import Form from "../../components/form/Form"
 import InputField from "../../components/form/inputField/InputField"
 import Select from "../../components/form/select/Select"
+import {RouteComponentProps} from "react-router-dom"
+
+type P = RouteComponentProps
 
 type S = {
     isLoaded: boolean,
@@ -28,14 +31,13 @@ type S = {
     filterShow: boolean
 }
 
-
-class CharacterList extends Component<any, S> {
+class CharacterList extends Component<P, S> {
     private characterApi = new CharacterApi()
     private page = 1
     private limit = 10
     private data: any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,

@@ -13,6 +13,9 @@ import Form from "../../components/form/Form"
 import InputField from "../../components/form/inputField/InputField"
 import BlockReport from "../../components/list/BlockReport"
 import ForumApi from "../../api/ForumApi"
+import {RouteComponentProps} from "react-router-dom"
+
+type P = RouteComponentProps
 
 type S = {
     isLoaded: boolean,
@@ -23,13 +26,12 @@ type S = {
     filterShow: boolean
 }
 
-
-class ForumList extends Component<any, S> {
+class ForumList extends Component<P, S> {
     private forumApi = new ForumApi()
     private page = 1
     private limit = 10
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -116,7 +118,6 @@ class ForumList extends Component<any, S> {
         this.updateData(true)
     }
 
-
     render() {
         if (!!this.state.errorMessage) {
             return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
@@ -140,42 +141,11 @@ class ForumList extends Component<any, S> {
                                             placeholder="Введите название обсуждения"
                                             value={this.state.title}
                                             onChange={this.handleChange}/>
-                                {/*<Row>*/}
-                                {/*    <Col md={6}>*/}
-                                {/*        <InputField id="race" label="Раса" type="text"*/}
-                                {/*                    placeholder="Введите расу персонажа"*/}
-                                {/*                    value={this.state.race}*/}
-                                {/*                    onChange={this.handleChange}/>*/}
-                                {/*    </Col>*/}
-                                {/*    <Col md={6}>*/}
-                                {/*        <Select label="Пол" id="sex" value={this.state.sex}*/}
-                                {/*                onChange={this.handleChangeSelect}>*/}
-                                {/*            {[-1, 0, 1, 2].map(v =>*/}
-                                {/*                (<option key={v} value={v}>{sexToString(v)}</option>)*/}
-                                {/*            )}*/}
-                                {/*        </Select>*/}
-                                {/*    </Col>*/}
-                                {/*</Row>*/}
                             </Form.Group>
                         </Col>
-                        {/*<Col md={6}>*/}
-                        {/*    <InputField label="Игровое имя" type="text" placeholder="Введите игровое имя персонажа"*/}
-                        {/*                value={this.state.nickname}*/}
-                        {/*                id="nickname" onChange={this.handleChange}/>*/}
-                        {/*    <Row>*/}
-                        {/*        <Col md={6}>*/}
-                        {/*            <Select label="Активность" id="active" value={this.state.active}*/}
-                        {/*                    onChange={this.handleChangeSelect}>*/}
-                        {/*                {[-1, 0, 1, 2, 3].map(v =>*/}
-                        {/*                    (<option key={v} value={v}>{characterActiveToString(v)}</option>)*/}
-                        {/*                )}*/}
-                        {/*            </Select>*/}
-                        {/*        </Col>*/}
                         <Col md={6} className="d-flex align-items-end">
                             <Button block className="mb-3">Найти</Button>
                         </Col>
-                        {/*    </Row>*/}
-                        {/*</Col>*/}
                     </Row>
                 </SearchBlock>
                 {this.state.list.length > 0 ?

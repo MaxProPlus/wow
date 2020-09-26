@@ -2,7 +2,7 @@ import React, {ChangeEvent} from "react"
 import Validator from "../../../../server/src/common/validator"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
@@ -28,15 +28,18 @@ import {CommonS, handleFormData} from "./Common"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import CharacterApi from "../../api/CharacterApi"
+import {RouteProps} from "../../types/RouteProps"
 
-class GuildCreate extends React.Component<any, CommonS> {
+type P = RouteComponentProps & RouteProps
+
+class GuildCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Guild(),
@@ -128,7 +131,6 @@ class GuildCreate extends React.Component<any, CommonS> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -147,6 +149,7 @@ class GuildCreate extends React.Component<any, CommonS> {
         this.guildApi.create(formData).then(r => {
             history.push('/material/guild/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

@@ -1,5 +1,5 @@
 import Mapper from '../mappers/guild'
-import {Character, CommentGuild, Guild, Story} from '../../common/entity/types'
+import {Account, Character, CommentGuild, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -55,7 +55,8 @@ class GuildModel {
     // Редактировать гильдию
     update = async (guild: GuildUpload) => {
         const old = await this.mapper.selectById(guild.id)
-        if (old.idAccount !== guild.idAccount) {
+        old.coauthors = await this.mapper.selectCoauthorById(guild.id)
+        if (old.idAccount !== guild.idAccount && (old.coauthors.findIndex((el: Account) => el.id === guild.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
 

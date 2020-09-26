@@ -12,6 +12,10 @@ import history from "../../utils/history"
 import penIcon from "../../img/pen.svg"
 import urlTicket from "./img/urlTicket.svg"
 import ButtonIcon from "../../components/list/ButtonIcon"
+import {RouteComponentProps} from "react-router-dom"
+import {MatchId} from "../../types/RouteProps"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     id: string,
@@ -21,13 +25,12 @@ type S = {
     list: Ticket[],
 }
 
-
-class TicketList extends Component<any, S> {
+class TicketList extends Component<P, S> {
     private ticketApi = new TicketApi()
     private page = 1
     private limit = 10
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             id: props.match.params.id,
@@ -38,7 +41,7 @@ class TicketList extends Component<any, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -51,7 +54,7 @@ class TicketList extends Component<any, S> {
         return null
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,

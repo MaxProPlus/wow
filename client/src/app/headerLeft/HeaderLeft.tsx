@@ -1,6 +1,6 @@
 import React, {Component, forwardRef} from 'react'
 import {Link} from "react-router-dom"
-import './HeaderLeft.scss'
+import styles from './HeaderLeft.module.scss'
 import logo from './logo.png'
 import history from "../../utils/history"
 import Accordion from "../../components/accordion/Accordion"
@@ -43,7 +43,6 @@ class HeaderLeft extends Component<P, S> {
         this.removeListen()
     }
 
-
     toggleStart = () => {
         this.setState((state: S) => {
             return {
@@ -52,7 +51,6 @@ class HeaderLeft extends Component<P, S> {
                 showHelp: false,
             }
         })
-
     }
 
     toggleMaterial = () => {
@@ -63,7 +61,6 @@ class HeaderLeft extends Component<P, S> {
                 showHelp: false,
             }
         })
-
     }
 
     toggleHelp = () => {
@@ -74,84 +71,82 @@ class HeaderLeft extends Component<P, S> {
                 showMaterial: false,
             }
         })
-
     }
 
     render() {
         return (
             <header ref={this.props.innerRef}
-                    className={this.props.showMenu ? "fc header show" : "fc header"}>
-                <div className="header-inner">
-                    <Link onClick={this.props.hideMenu} className="fc logo" to="/"><img src={logo}
-                                                                                        alt="Equilibrium"/></Link>
-                    <div className={`header-item${this.state.path.includes('/start') ? ' item-active' : ''}`}
+                    className={this.props.showMenu ? `${styles.header} ${styles.show}` : styles.header}>
+                <div className={styles.inner}>
+                    <Link onClick={this.props.hideMenu} className={styles.logo} to="/"><img src={logo}
+                                                                                            alt="Equilibrium"/></Link>
+                    <div className={`${styles.item}${this.state.path.includes('/start') ? ` ${styles.active}` : ''}`}
                          onClick={this.toggleStart}>
                         Начать игру
                     </div>
-                    <Accordion isActive={this.state.showStart}>
-                        <div onClick={this.props.hideMenu} className="header-sub">
+                    <Accordion className={styles.accordion} isActive={this.state.showStart}>
+                        <div onClick={this.props.hideMenu} className={styles.subHeader}>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/reg') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/reg') ? ` ${styles.active}` : ''}`}
                                 to="/reg">Регистрация</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/rule') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/rule') ? ` ${styles.active}` : ''}`}
                                 to="/rule">Правила</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/how') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/how') ? ` ${styles.active}` : ''}`}
                                 to="/how">Как играть?</Link>
                         </div>
                     </Accordion>
 
                     <Link onClick={this.props.hideMenu}
-                          className={`header-item${this.state.path.includes('/news') ? ' item-active' : ''}`}
+                          className={`${styles.item}${this.state.path.includes('/news') ? ` ${styles.active}` : ''}`}
                           to="/news">Новости</Link>
 
                     <div
-                        className={`header-item${this.state.path.includes('/material') ? ' item-active' : ''}`}
+                        className={`${styles.item}${this.state.path.includes('/material') ? ` ${styles.active}` : ''}`}
                         onClick={this.toggleMaterial}>
                         Материалы
                     </div>
-                    <Accordion isActive={this.state.showMaterial}>
-                        <div onClick={this.props.hideMenu} className="header-sub">
+                    <Accordion className={styles.accordion} isActive={this.state.showMaterial}>
+                        <div onClick={this.props.hideMenu} className={styles.subHeader}>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/character') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/character') ? ` ${styles.active}` : ''}`}
                                 to="/material/character">Персонажи</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/guild') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/guild') ? ` ${styles.active}` : ''}`}
                                 to="/material/guild">Гильдии</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/story') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/story') ? ` ${styles.active}` : ''}`}
                                 to="/material/story">Сюжет</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/report') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/report') ? ` ${styles.active}` : ''}`}
                                 to="/material/report">Отчеты</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/forum') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/forum') ? ` ${styles.active}` : ''}`}
                                 to="/material/forum">Форум</Link>
                         </div>
                     </Accordion>
 
-                    <div className={`header-item${this.state.path.includes('/help') ? ' item-active' : ''}`}
+                    <div className={`${styles.item}${this.state.path.includes('/help') ? ` ${styles.active}` : ''}`}
                          onClick={this.toggleHelp}>
                         Помощь
                     </div>
-                    <Accordion isActive={this.state.showHelp}>
-                        <div onClick={this.props.hideMenu} className="header-sub">
+                    <Accordion className={styles.accordion} isActive={this.state.showHelp}>
+                        <div onClick={this.props.hideMenu} className={styles.subHeader}>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/guid') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/guid') ? ` ${styles.active}` : ''}`}
                                 to="/help/guid">Гайды</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/ticket') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/ticket') ? ` ${styles.active}` : ''}`}
                                 to="/help/ticket/type">Тикеты</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/transmog') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/transmog') ? ` ${styles.active}` : ''}`}
                                 to="/help/transmog">Трансмогрификация</Link>
                             <Link
-                                className={`header-item sub-item${this.state.path.includes('/feedback') ? ' item-active' : ''}`}
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/feedback') ? ` ${styles.active}` : ''}`}
                                 to="/help/feedback">Обратная связь</Link>
                         </div>
                     </Accordion>
-
                 </div>
             </header>
         )

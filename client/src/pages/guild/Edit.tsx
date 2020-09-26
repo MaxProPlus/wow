@@ -2,7 +2,7 @@ import React, {ChangeEvent} from "react"
 import Validator from "../../../../server/src/common/validator"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
@@ -22,7 +22,9 @@ import {CommonS, handleFormData} from "./Common"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import CharacterApi from "../../api/CharacterApi"
+import {MatchId, RouteProps} from "../../types/RouteProps"
 
+type P = RouteComponentProps<MatchId> & RouteProps
 
 type S = CommonS & {
     id: string
@@ -30,14 +32,14 @@ type S = CommonS & {
     urlAvatar: string
 }
 
-class GuildEdit extends React.Component<any, S> {
+class GuildEdit extends React.Component<P, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Guild(),
@@ -55,7 +57,7 @@ class GuildEdit extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
         if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
             this.setState({
                 errorMessage: 'Нет прав'
@@ -163,7 +165,6 @@ class GuildEdit extends React.Component<any, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -172,6 +173,7 @@ class GuildEdit extends React.Component<any, S> {
         let err = this.validator.validateGuild(guild)
         // err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -183,6 +185,7 @@ class GuildEdit extends React.Component<any, S> {
         this.guildApi.update(this.state.id, formData).then(r => {
             history.push('/material/guild/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

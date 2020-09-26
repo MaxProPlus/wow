@@ -2,7 +2,7 @@ import React, {ChangeEvent} from "react"
 import Validator from "../../../../server/src/common/validator"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
@@ -29,8 +29,11 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import CharacterApi from "../../api/CharacterApi"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import GuildApi from "../../api/GuildApi"
+import {RouteProps} from "../../types/RouteProps"
 
-class StoryCreate extends React.Component<any, CommonS> {
+type P = RouteComponentProps & RouteProps
+
+class StoryCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private storyApi = new StoryApi()
     private characterApi = new CharacterApi()
@@ -38,7 +41,7 @@ class StoryCreate extends React.Component<any, CommonS> {
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Story(),
@@ -79,7 +82,6 @@ class StoryCreate extends React.Component<any, CommonS> {
     }
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -88,6 +90,7 @@ class StoryCreate extends React.Component<any, CommonS> {
         let err = this.validator.validateStory(story)
         // err += this.validator.validateImg(this.state.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -98,6 +101,7 @@ class StoryCreate extends React.Component<any, CommonS> {
         this.storyApi.create(formData).then(r => {
             history.push('/material/story/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

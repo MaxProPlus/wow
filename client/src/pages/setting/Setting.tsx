@@ -7,10 +7,12 @@ import Validator from "../../../../server/src/common/validator"
 import {Account, UserPassword} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import Button from "../../components/button/Button"
 import './Setting.scss'
+
+type P = RouteComponentProps
 
 type S = {
     email: string,
@@ -28,12 +30,12 @@ type S = {
     isLoaded: boolean,
 }
 
-class Setting extends React.Component<any, S> {
+class Setting extends React.Component<P, S> {
     static contextType = userContext
     userApi = new UserApi()
     validator = new Validator()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             email: '',
@@ -248,7 +250,6 @@ class Setting extends React.Component<any, S> {
                         <Form.Group>
                             <Button>Сохранить</Button>
                         </Form.Group>
-
                     </Form>
                 </div>
             </div>

@@ -8,8 +8,11 @@ import CommentForm from "../../components/commentFrom/CommentForm"
 import CommentC from "../../components/comment/Comment"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Select from "../../components/form/select/Select"
+import {MatchId} from "../../types/RouteProps"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     status: number,
@@ -20,12 +23,12 @@ type S = {
     comments: CommentTicket[]
 }
 
-class TicketPage extends React.Component<any, S> {
+class TicketPage extends React.Component<P, S> {
 
     static contextType = UserContext
     private ticketApi = new TicketApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             status: 0,
@@ -37,7 +40,7 @@ class TicketPage extends React.Component<any, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -50,7 +53,7 @@ class TicketPage extends React.Component<any, S> {
         return null
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.updateData()
         }
@@ -99,7 +102,6 @@ class TicketPage extends React.Component<any, S> {
                 isLoaded: true,
             })
         })
-
     }
 
     handleSendComment = (comment: CommentTicket) => {

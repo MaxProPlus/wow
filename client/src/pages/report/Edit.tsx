@@ -7,7 +7,7 @@ import {Character, Report} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Textarea from "../../components/form/textarea/Textarea"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
@@ -21,6 +21,9 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import {CommonS, handleFormData} from "./Common"
 import ReportApi from "../../api/ReportApi"
 import CharacterApi from "../../api/CharacterApi"
+import {MatchId, RouteProps} from "../../types/RouteProps"
+
+type P = RouteProps & RouteComponentProps<MatchId>
 
 type S = CommonS & {
     id: string
@@ -28,14 +31,14 @@ type S = CommonS & {
     idAccount: number
 }
 
-class ReportEdit extends React.Component<any, S> {
+class ReportEdit extends React.Component<P, S> {
     static contextType = UserContext
     private reportApi = new ReportApi()
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Report(),
@@ -51,7 +54,7 @@ class ReportEdit extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
         if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
             this.setState({
                 errorMessage: 'Нет прав'
@@ -159,7 +162,6 @@ class ReportEdit extends React.Component<any, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -168,6 +170,7 @@ class ReportEdit extends React.Component<any, S> {
         let err = this.validator.validateReport(report)
         err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -179,6 +182,7 @@ class ReportEdit extends React.Component<any, S> {
         this.reportApi.update(this.state.id, formData).then(r => {
             history.push('/material/report/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

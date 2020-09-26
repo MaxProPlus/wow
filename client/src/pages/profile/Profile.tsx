@@ -6,17 +6,21 @@ import history from "../../utils/history"
 import Spinner from "../../components/spinner/Spinner"
 import Profile from "../../components/profile/Profile"
 import {Account} from "../../../../server/src/common/entity/types"
+import {RouteComponentProps} from "react-router-dom"
+import {MatchId} from "../../types/RouteProps"
 
-type stateTypes = {
+type P = RouteComponentProps<MatchId>
+
+type S = {
     isLoaded: boolean
     user: Account
 }
 
-class ProfilePage extends React.Component<any, stateTypes> {
+class ProfilePage extends React.Component<P, S> {
     static contextType = UserContext
     private userApi = new UserApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -24,7 +28,7 @@ class ProfilePage extends React.Component<any, stateTypes> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: stateTypes) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (Number(nextProps.match.params.id) !== prevState.user.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -35,7 +39,6 @@ class ProfilePage extends React.Component<any, stateTypes> {
                 }
             }
         }
-
         return null
     }
 
@@ -58,7 +61,7 @@ class ProfilePage extends React.Component<any, stateTypes> {
         })
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<stateTypes>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (Number(prevProps.match.params.id) !== this.state.user.id) {
             this.setState({
                 isLoaded: false,

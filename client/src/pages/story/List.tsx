@@ -13,6 +13,9 @@ import Block from "../../components/list/Block"
 import SearchBlock from "../../components/list/SearchBlock"
 import Form from "../../components/form/Form"
 import InputField from "../../components/form/inputField/InputField"
+import {RouteComponentProps} from "react-router-dom"
+
+type P = RouteComponentProps
 
 type S = {
     isLoaded: boolean,
@@ -23,13 +26,13 @@ type S = {
     title: string,
 }
 
-class StoryList extends Component<any, S> {
+class StoryList extends Component<P, S> {
     private storyApi = new StoryApi()
     private page = 1
     private limit = 10
     private data: any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,

@@ -7,7 +7,7 @@ import {Forum} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Textarea from "../../components/form/textarea/Textarea"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
@@ -20,6 +20,9 @@ import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "../../components/myMultiSelect/types"
 import {CommonS, handleFormData} from "./Common"
 import ForumApi from "../../api/ForumApi"
+import {MatchId, RouteProps} from "../../types/RouteProps"
+
+type P = RouteProps & RouteComponentProps<MatchId>
 
 type S = CommonS & {
     id: string
@@ -27,13 +30,13 @@ type S = CommonS & {
     idAccount: number
 }
 
-class ForumEdit extends React.Component<any, S> {
+class ForumEdit extends React.Component<P, S> {
     static contextType = UserContext
     private forumApi = new ForumApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Forum(),
@@ -48,7 +51,7 @@ class ForumEdit extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
         if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
             this.setState({
                 errorMessage: 'Нет прав'
@@ -125,7 +128,6 @@ class ForumEdit extends React.Component<any, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -134,6 +136,7 @@ class ForumEdit extends React.Component<any, S> {
         let err = this.validator.validateForum(forum)
         err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -145,6 +148,7 @@ class ForumEdit extends React.Component<any, S> {
         this.forumApi.update(this.state.id, formData).then(r => {
             history.push('/material/forum/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

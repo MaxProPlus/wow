@@ -1,11 +1,15 @@
 @import '../../css/variables';
 
+.blockAccordion {
+  margin: -30px auto 30px;
+}
+
 .block {
   padding: 15px 15px 0;
   background-color: transparentize($border-color, .65);
   border: 1px solid $border-color;
   border-top: none;
-  margin: -30px auto 30px;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {

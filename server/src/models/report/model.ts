@@ -1,5 +1,5 @@
 import Mapper from '../mappers/report'
-import {Character, CommentReport, CommentStory, Report} from '../../common/entity/types'
+import {Account, Character, CommentReport, CommentStory, Report} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -53,7 +53,8 @@ class ReportModel {
     // Редактировать отчет
     update = async (c: ReportUpload) => {
         const old = await this.mapper.selectById(c.id)
-        if (old.idAccount !== c.idAccount) {
+        old.coauthors = await this.mapper.selectCoauthorById(c.id)
+        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
 

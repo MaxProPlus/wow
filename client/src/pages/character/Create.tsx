@@ -13,7 +13,7 @@ import {
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import CharacterApi from "../../api/CharacterApi"
 import Textarea from "../../components/form/textarea/Textarea"
 import Select from "../../components/form/select/Select"
@@ -27,14 +27,17 @@ import PageTitle from "../../components/pageTitle/PageTitle"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {CommonS, handleFormData} from "./Common"
+import {RouteProps} from "../../types/RouteProps"
 
-class CharacterCreate extends React.Component<any, CommonS> {
+type P = RouteComponentProps & RouteProps
+
+class CharacterCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Character(),
@@ -124,7 +127,6 @@ class CharacterCreate extends React.Component<any, CommonS> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -133,6 +135,7 @@ class CharacterCreate extends React.Component<any, CommonS> {
         let err = this.validator.validateCharacter(character)
         // err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -144,6 +147,7 @@ class CharacterCreate extends React.Component<any, CommonS> {
         this.characterApi.create(formData).then(r => {
             history.push('/material/character/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

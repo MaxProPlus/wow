@@ -1,14 +1,17 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import './Home.scss'
+import {RouteComponentProps} from "react-router-dom"
 
-type stateTypes = {
+type P = RouteComponentProps
+
+type S = {
     isLoaded: boolean
     article: any[]
 }
 
-class Home extends React.Component<any, stateTypes> {
-    constructor(props: any) {
+class Home extends React.Component<P, S> {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,

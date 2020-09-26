@@ -7,7 +7,7 @@ import {Character, defaultReportAvatar, Report} from "../../../../server/src/com
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Textarea from "../../components/form/textarea/Textarea"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
@@ -21,15 +21,18 @@ import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {CommonS, handleFormData} from "./Common"
 import ReportApi from "../../api/ReportApi"
 import CharacterApi from "../../api/CharacterApi"
+import {RouteProps} from "../../types/RouteProps"
 
-class ReportCreate extends React.Component<any, CommonS> {
+type P = RouteComponentProps & RouteProps
+
+class ReportCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private reportApi = new ReportApi()
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Report(),
@@ -119,7 +122,6 @@ class ReportCreate extends React.Component<any, CommonS> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -128,6 +130,7 @@ class ReportCreate extends React.Component<any, CommonS> {
         let err = this.validator.validateReport(report)
         // err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -139,6 +142,7 @@ class ReportCreate extends React.Component<any, CommonS> {
         this.reportApi.create(formData).then(r => {
             history.push('/material/report/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

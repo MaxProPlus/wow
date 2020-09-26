@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Link} from "react-router-dom"
+import {Link, RouteComponentProps} from "react-router-dom"
 import history from "../../utils/history"
 import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
@@ -11,7 +11,9 @@ import Form from "../../components/form/Form"
 import Button from "../../components/button/Button"
 import './SignUp.scss'
 
-type stateTypes = {
+type P = RouteComponentProps
+
+type S = {
     login: string
     email: string
     password: string
@@ -19,12 +21,12 @@ type stateTypes = {
     errorMessage: string
 }
 
-class SignUp extends Component<{}, stateTypes> {
+class SignUp extends Component<P, S> {
     static contextType = UserContext
     validator = new Validator()
     userApi = new UserApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             login: '',
@@ -59,12 +61,12 @@ class SignUp extends Component<{}, stateTypes> {
             })
         })
     }
+
     handleChange = (e: any) => {
-        // @ts-ignore
         this.setState({
             errorMessage: '',
             [e.target.name]: e.target.value,
-        })
+        } as any)
     }
 
     render() {
@@ -87,7 +89,6 @@ class SignUp extends Component<{}, stateTypes> {
                     <div className="suggest">
                         Уже зарегистрированы? <Link to="/login">Войдите</Link>
                     </div>
-
                 </Form>
             </div>
         )

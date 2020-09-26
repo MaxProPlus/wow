@@ -1,5 +1,5 @@
 import Mapper from '../mappers/forum'
-import {CommentForum, CommentStory, Forum} from '../../common/entity/types'
+import {Account, CommentForum, CommentStory, Forum} from '../../common/entity/types'
 import {defaultAvatar, ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -48,7 +48,9 @@ class ForumModel {
     // Редактировать форум
     update = async (c: ForumUpload) => {
         const old = await this.mapper.selectById(c.id)
-        if (old.idAccount !== c.idAccount) {
+
+        old.coauthors = await this.mapper.selectCoauthorById(c.id)
+        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
 

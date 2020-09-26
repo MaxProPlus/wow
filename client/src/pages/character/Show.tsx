@@ -37,6 +37,10 @@ import ControlButton from "../../components/show/ControlButton"
 import Avatar from "../../components/show/Avatar"
 import Card from "../../components/show/Card"
 import List from "../../components/show/List"
+import {RouteComponentProps} from "react-router-dom"
+import {MatchId} from "../../types/RouteProps"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
@@ -47,11 +51,11 @@ type S = {
     comments: CommentCharacter[]
 }
 
-class CharacterPage extends React.Component<any, S> {
+class CharacterPage extends React.Component<P, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -63,7 +67,7 @@ class CharacterPage extends React.Component<any, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -80,7 +84,7 @@ class CharacterPage extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
@@ -124,7 +128,6 @@ class CharacterPage extends React.Component<any, S> {
                 isLoaded: true,
             })
         })
-
     }
 
     handleSendComment = (comment: CommentCharacter) => {
@@ -161,7 +164,6 @@ class CharacterPage extends React.Component<any, S> {
             modalShow: true
         })
     }
-
 
     render() {
         if (!!this.state.errorMessage) {
@@ -219,7 +221,6 @@ class CharacterPage extends React.Component<any, S> {
                     </div>
                     {(!this.state.character.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
                 </div>
             </div>
         )

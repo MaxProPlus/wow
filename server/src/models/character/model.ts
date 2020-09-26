@@ -1,5 +1,5 @@
 import Mapper from '../mappers/character'
-import {Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
+import {Account, Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -57,7 +57,9 @@ class CharacterModel {
     // Редактировать персонажа
     update = async (c: CharacterUpload) => {
         const oldCharacter = await this.mapper.selectById(c.id)
-        if (oldCharacter.idAccount !== c.idAccount) {
+
+        oldCharacter.coauthors = await this.mapper.selectCoauthorById(c.id)
+        if (oldCharacter.idAccount !== c.idAccount && (oldCharacter.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
 

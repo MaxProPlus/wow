@@ -1,5 +1,6 @@
 import React, {FC, FormEvent} from "react"
 import styles from './SearchBlock.module.scss'
+import Accordion from "../accordion/Accordion"
 
 type P = {
     children: any
@@ -8,13 +9,12 @@ type P = {
 }
 
 const SearchBlock: FC<P> = ({children, show, onSubmit}) => {
-
-    if (!show) {
-        return null
-    }
-
     return (
-        <form className={styles.block} onSubmit={onSubmit}>{children}</form>
+        <Accordion isActive={show} className={styles.blockAccordion}>
+            <form className={styles.block} onSubmit={onSubmit}>
+                {children}
+            </form>
+        </Accordion>
     )
 }
 

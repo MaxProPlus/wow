@@ -8,9 +8,11 @@ import styles from "../../css/listTitle.module.scss"
 import BlockReport from "../../components/list/BlockReport"
 import TicketApi from "../../api/TicketApi"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import ButtonIcon from "../../components/list/ButtonIcon"
 import penIcon from "../../img/pen.svg"
+
+type P = RouteComponentProps
 
 type S = {
     isLoaded: boolean,
@@ -18,12 +20,11 @@ type S = {
     list: TicketType[],
 }
 
-
-class TicketTypeList extends Component<any, S> {
+class TicketTypeList extends Component<P, S> {
     static contextType = UserContext
     private ticketApi = new TicketApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -51,7 +52,6 @@ class TicketTypeList extends Component<any, S> {
             })
         })
     }
-
 
     render() {
         if (!!this.state.errorMessage) {

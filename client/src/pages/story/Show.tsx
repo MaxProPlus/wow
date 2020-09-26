@@ -21,6 +21,10 @@ import history from "../../utils/history"
 import Avatar from "../../components/show/Avatar"
 import Card from "../../components/show/Card"
 import List from "../../components/show/List"
+import {RouteComponentProps} from "react-router-dom"
+import {MatchId} from "../../types/RouteProps"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
@@ -32,11 +36,11 @@ type S = {
     comments: CommentStory[]
 }
 
-class StoryPage extends React.Component<any, S> {
+class StoryPage extends React.Component<P, S> {
     static contextType = UserContext
     private storyApi = new StoryApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -53,10 +57,10 @@ class StoryPage extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && this.context.user.id > 0) {
-            const isAdmin = ((this.state.story.coauthors.findIndex((el:Account)=>{
+            const isAdmin = ((this.state.story.coauthors.findIndex((el: Account) => {
                 return el.id === this.context.user.id
             }) === -1) ? this.context.user.id === this.state.story.idAccount : true)
             if (isAdmin) {
@@ -101,7 +105,6 @@ class StoryPage extends React.Component<any, S> {
                 isLoaded: true,
             })
         })
-
     }
 
     handleSendComment = (comment: CommentStory) => {
@@ -179,7 +182,6 @@ class StoryPage extends React.Component<any, S> {
                 </div>
                 {(!this.state.story.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
             </div>
         )
     }

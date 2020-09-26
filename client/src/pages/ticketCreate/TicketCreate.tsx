@@ -8,10 +8,13 @@ import {Ticket, TicketType} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import Select from "../../components/form/select/Select"
 import Textarea from "../../components/form/textarea/Textarea"
+import {RouteProps} from "../../types/RouteProps"
+
+type P = RouteComponentProps & RouteProps
 
 type S = {
     isLoaded: boolean
@@ -22,12 +25,12 @@ type S = {
     error: string
 }
 
-class TicketCreate extends React.Component<any, S> {
+class TicketCreate extends React.Component<P, S> {
     static contextType = UserContext
     private ticketApi = new TicketApi()
     private validator = new Validator()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -71,6 +74,7 @@ class TicketCreate extends React.Component<any, S> {
             [e.target.id]: e.target.value
         } as { [K in keyof S]: S[K] })
     }
+
     handleSubmit = (e: any) => {
         e.preventDefault()
         this.setState({
@@ -83,6 +87,7 @@ class TicketCreate extends React.Component<any, S> {
         ticket.idTicketType = this.state.idTicketType
         const {ok, err} = this.validator.validateTicket(ticket)
         if (!ok) {
+            this.props.scrollTop()
             this.setState({
                 error: err,
                 isLoaded: true,
@@ -92,6 +97,7 @@ class TicketCreate extends React.Component<any, S> {
         this.ticketApi.create(ticket).then(r => {
             history.push('/help/ticket/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 error: err
             })

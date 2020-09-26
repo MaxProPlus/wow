@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Link} from "react-router-dom"
+import {Link, RouteComponentProps} from "react-router-dom"
 import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
@@ -10,18 +10,20 @@ import Form from "../../components/form/Form"
 import './SignIn.scss'
 import Button from "../../components/button/Button"
 
-type stateTypes = {
+type P = RouteComponentProps<{}, {}, any>
+
+type S = {
     username: string,
     password: string,
     isLoaded: boolean,
     errorMessage: string,
 }
 
-class SignIn extends Component<any, stateTypes> {
+class SignIn extends Component<P, S> {
     static contextType = UserContext
     userApi = new UserApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             username: '',
@@ -56,11 +58,12 @@ class SignIn extends Component<any, stateTypes> {
             })
         })
     }
+
     handleChange = (e: any) => {
         this.setState({
             errorMessage: '',
             [e.target.id]: e.target.value,
-        } as { [K in keyof stateTypes]: stateTypes[K] })
+        } as { [K in keyof S]: S[K] })
     }
 
     render() {

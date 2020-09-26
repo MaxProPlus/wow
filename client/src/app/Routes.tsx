@@ -93,10 +93,10 @@ const Routes = ({scrollTop}: P) => {
                    component={TicketTypeList}/>{/*категории тикетов*/}
             <Route path="/help/ticket/type/:id"
                    component={TicketList}/> {/*тикеты конкретной категории*/}
-            <Route exact path="/help/ticket/create"
-                   component={TicketCreate}/>{/*создание тикета*/}
+            <Route path="/help/ticket/create"
+                   render={(props) => (
+                       <TicketCreate {...props} scrollTop={scrollTop}/>)}/>{/*создание тикета*/}
             <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
-
 
             <Route exact path="/admin" component={AdminDashboard}/>
             <Route path="/admin/list" component={ListOfAdmins}/>

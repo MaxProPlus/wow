@@ -23,6 +23,10 @@ import ConfirmationWindow from "../../components/confirmationWindow/Confirmation
 import Avatar from "../../components/show/Avatar"
 import Card from "../../components/show/Card"
 import List from "../../components/show/List"
+import {MatchId} from "../../types/RouteProps"
+import {RouteComponentProps} from "react-router-dom"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
@@ -33,11 +37,11 @@ type S = {
     comments: CommentGuild[]
 }
 
-class GuildPage extends React.Component<any, S> {
+class GuildPage extends React.Component<P, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -49,7 +53,7 @@ class GuildPage extends React.Component<any, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -58,7 +62,6 @@ class GuildPage extends React.Component<any, S> {
                 id: nextProps.match.params.id
             }
         }
-
         return null
     }
 
@@ -66,7 +69,7 @@ class GuildPage extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
@@ -109,7 +112,6 @@ class GuildPage extends React.Component<any, S> {
                 isLoaded: true,
             })
         })
-
     }
 
     handleSendComment = (comment: CommentGuild) => {
@@ -190,7 +192,6 @@ class GuildPage extends React.Component<any, S> {
                 </div>
                 {(!this.state.guild.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
             </div>
         )
     }

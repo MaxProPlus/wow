@@ -2,7 +2,7 @@ import React, {ChangeEvent} from "react"
 import Validator from "../../../../server/src/common/validator"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
@@ -24,6 +24,9 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import CharacterApi from "../../api/CharacterApi"
 import GuildApi from "../../api/GuildApi"
 import UserApi from "../../api/UserApi"
+import {MatchId, RouteProps} from "../../types/RouteProps"
+
+type P = RouteProps & RouteComponentProps<MatchId>
 
 type S = CommonS & {
     id: string
@@ -33,7 +36,7 @@ type S = CommonS & {
     isAdmin: boolean
 }
 
-class StoryEdit extends React.Component<any, S> {
+class StoryEdit extends React.Component<P, S> {
     static contextType = UserContext
     private storyApi = new StoryApi()
     private characterApi = new CharacterApi()
@@ -42,7 +45,7 @@ class StoryEdit extends React.Component<any, S> {
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Story(),
@@ -64,7 +67,7 @@ class StoryEdit extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
             && this.context.user.id > 0 // Если контекст загружен
@@ -73,10 +76,10 @@ class StoryEdit extends React.Component<any, S> {
             // Проверяем есть ли id пользователя в массиве соавторов
             // Если есть, то он имеет право на редактирование
             // Если нет, то сравниваем id пользователя и id создателя материала
-            const isAdmin = ((this.state.coauthors.findIndex((el:Option)=>el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
+            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
             this.setState({
                 isAdmin,
-                globalErrorMessage: isAdmin?'': 'Нет прав'
+                globalErrorMessage: isAdmin ? '' : 'Нет прав'
             })
         }
     }
@@ -229,7 +232,6 @@ class StoryEdit extends React.Component<any, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -238,6 +240,7 @@ class StoryEdit extends React.Component<any, S> {
         let err = this.validator.validateStory(story)
         // err += this.validator.validateImg(this.state.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -248,6 +251,7 @@ class StoryEdit extends React.Component<any, S> {
         this.storyApi.update(this.state.id, formData).then(r => {
             history.push('/material/story/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

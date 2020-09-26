@@ -15,6 +15,10 @@ import ControlButton from "../../components/show/ControlButton"
 import Avatar from "../../components/show/Avatar"
 import ForumApi from "../../api/ForumApi"
 import SubTitle from "../../components/show/SubTitle"
+import {RouteComponentProps} from "react-router-dom"
+import {MatchId} from "../../types/RouteProps"
+
+type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
@@ -25,7 +29,7 @@ type S = {
     comments: CommentForum[]
 }
 
-class ForumPage extends React.Component<any, S> {
+class ForumPage extends React.Component<P, S> {
     static contextType = UserContext
     private forumApi = new ForumApi()
 
@@ -41,7 +45,7 @@ class ForumPage extends React.Component<any, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: any, prevState: S) {
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -50,7 +54,6 @@ class ForumPage extends React.Component<any, S> {
                 id: nextProps.match.params.id
             }
         }
-
         return null
     }
 
@@ -58,7 +61,7 @@ class ForumPage extends React.Component<any, S> {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<S>) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
@@ -84,7 +87,6 @@ class ForumPage extends React.Component<any, S> {
         })
     }
 
-
     updateComment = () => {
         this.setState({
             isLoaded: false,
@@ -102,7 +104,6 @@ class ForumPage extends React.Component<any, S> {
                 isLoaded: true,
             })
         })
-
     }
 
     handleSendComment = (comment: CommentForum) => {
@@ -169,7 +170,6 @@ class ForumPage extends React.Component<any, S> {
                     </div>
                     {(!this.state.forum.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-
                 </div>
             </div>
         )

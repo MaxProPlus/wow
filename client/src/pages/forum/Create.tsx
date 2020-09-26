@@ -7,7 +7,7 @@ import {defaultForumAvatar, Forum} from "../../../../server/src/common/entity/ty
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
-import {Redirect} from "react-router-dom"
+import {Redirect, RouteComponentProps} from "react-router-dom"
 import Textarea from "../../components/form/textarea/Textarea"
 import InputCheckBox from "../../components/form/inputCheckBox/InputCheckBox"
 import Form from "../../components/form/Form"
@@ -20,14 +20,17 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "../../components/
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {CommonS, handleFormData} from "./Common"
 import ForumApi from "../../api/ForumApi"
+import {RouteProps} from "../../types/RouteProps"
 
-class ForumCreate extends React.Component<any, CommonS> {
+type P = RouteComponentProps & RouteProps
+
+class ForumCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private forumApi = new ForumApi()
     private validator = new Validator()
     private avatar: File | any
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             ...new Forum(),
@@ -91,7 +94,6 @@ class ForumCreate extends React.Component<any, CommonS> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        this.props.scrollTop()
         this.setState({
             errorMessage: '',
             isLoaded: false,
@@ -100,6 +102,7 @@ class ForumCreate extends React.Component<any, CommonS> {
         let err = this.validator.validateForum(forum)
         // err += this.validator.validateImg(this.avatar)
         if (!!err) {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err,
                 isLoaded: true,
@@ -111,6 +114,7 @@ class ForumCreate extends React.Component<any, CommonS> {
         this.forumApi.create(formData).then(r => {
             history.push('/material/forum/' + r)
         }, err => {
+            this.props.scrollTop()
             this.setState({
                 errorMessage: err
             })

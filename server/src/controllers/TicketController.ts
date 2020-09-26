@@ -1,7 +1,6 @@
-import {Request, Response} from 'express'
+import {Express, Request, Response} from 'express'
 import Auth from '../services/auth'
 import {CommentTicket, Ticket, TicketType} from '../common/entity/types'
-import connection from '../services/mysql'
 import Validator from '../common/validator'
 import TicketModel from '../models/ticket/model'
 import RightModel from '../models/right/model'
@@ -12,10 +11,11 @@ class TicketController {
     private auth: Auth
     private validator = new Validator()
 
-    constructor() {
-        this.ticketModel = new TicketModel(connection)
-        this.rightModel = new RightModel(connection)
-        this.auth = new Auth(connection)
+    constructor(app: Express) {
+        const db = app.get('db')
+        this.ticketModel = new TicketModel(db)
+        this.rightModel = new RightModel(db)
+        this.auth = new Auth(db)
     }
 
     // Создать тикет

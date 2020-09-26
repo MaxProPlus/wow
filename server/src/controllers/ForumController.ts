@@ -1,7 +1,6 @@
-import {Request, Response} from 'express'
+import {Express, Request, Response} from 'express'
 import Auth from '../services/auth'
 import {CommentForum, Forum} from '../common/entity/types'
-import connection from '../services/mysql'
 import Validator from '../common/validator'
 import RightModel from '../models/right/model'
 import {ForumUpload} from '../entity/types'
@@ -14,10 +13,11 @@ class ForumController {
     private auth: Auth
     private validator = new Validator()
 
-    constructor() {
-        this.forumModel = new ForumModel(connection)
-        this.rightModel = new RightModel(connection)
-        this.auth = new Auth(connection)
+    constructor(app: Express) {
+        const db = app.get('db')
+        this.forumModel = new ForumModel(db)
+        this.rightModel = new RightModel(db)
+        this.auth = new Auth(db)
     }
 
     // Создать форум

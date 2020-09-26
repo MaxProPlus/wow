@@ -1,6 +1,7 @@
 // @ts-ignore
 import mysql from 'mysql2'
 
+// Конфиг подключения бд
 const db = {
     connectionLimit: process.env.DB_CONNECTION_LIMIT,
     host: process.env.DB_HOST,
@@ -9,6 +10,7 @@ const db = {
     password: process.env.DB_PASSWORD,
 }
 
+// Обертка для работы с бд
 class MyConnection {
     private pool = mysql.createPool(db)
 

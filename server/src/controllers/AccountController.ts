@@ -1,7 +1,6 @@
-import {Request, Response} from 'express'
+import {Express, Request, Response} from 'express'
 import AccountModel from '../models/account/model'
 import Auth from '../services/auth'
-import connection from '../services/mysql'
 import {Account, UserPassword} from '../common/entity/types'
 import Validator from '../common/validator'
 import {UploadedFile} from 'express-fileupload'
@@ -12,9 +11,10 @@ class AccountController {
     private userModel: AccountModel
     private auth: Auth
 
-    constructor() {
-        this.userModel = new AccountModel(connection)
-        this.auth = new Auth(connection)
+    constructor(app: Express) {
+        const db = app.get('db')
+        this.userModel = new AccountModel(db)
+        this.auth = new Auth(db)
     }
 
     // Регистрация

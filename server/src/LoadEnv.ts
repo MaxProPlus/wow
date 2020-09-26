@@ -15,6 +15,6 @@ const result = dotenv.config({
 })
 
 if (result.error) {
-    console.error(`Не найден файл ./${options.env}.env .Добавьте его на примере example.env`)
+    console.error(`Не найден файл ./${options.env}.env . Добавьте его на примере example.env`)
     throw result.error
 }

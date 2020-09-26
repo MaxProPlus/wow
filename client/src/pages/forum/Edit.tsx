@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Forum} from "../../../../server/src/common/entity/types"
+import {Account, Forum} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -17,10 +17,11 @@ import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
-import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "../../components/myMultiSelect/types"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import {CommonS, handleFormData} from "./Common"
 import ForumApi from "../../api/ForumApi"
 import {MatchId, RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteProps & RouteComponentProps<MatchId>
 
@@ -28,11 +29,14 @@ type S = CommonS & {
     id: string
     urlAvatar: string,
     idAccount: number
+    isAdmin: boolean,
+    globalErrorMessage: string,
 }
 
 class ForumEdit extends React.Component<P, S> {
     static contextType = UserContext
     private forumApi = new ForumApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -42,7 +46,9 @@ class ForumEdit extends React.Component<P, S> {
             ...new Forum(),
             id: props.match.params.id,
             isLoaded: false,
+            isAdmin: false,
             errorMessage: '',
+            globalErrorMessage: '',
             coauthorsOptions: [],
         }
     }
@@ -52,9 +58,18 @@ class ForumEdit extends React.Component<P, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
-        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
+            && this.context.user.id > 0 // Если контекст загружен
+            && this.state.idAccount !== 0) { // Если сюжет загружен
+
+            // Проверяем есть ли id пользователя в массиве соавторов
+            // Если есть, то он имеет право на редактирование
+            // Если нет, то сравниваем id пользователя и id создателя материала
+            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
             this.setState({
-                errorMessage: 'Нет прав'
+                isAdmin,
+                globalErrorMessage: isAdmin ? '' : 'Нет прав'
             })
         }
     }
@@ -62,6 +77,12 @@ class ForumEdit extends React.Component<P, S> {
     updateData = () => {
         this.forumApi.getById(this.state.id).then(r => {
             delete r.id
+            r[0].coauthors = r[0].coauthors.map((el: Account) => {
+                return {
+                    label: el.nickname,
+                    value: el.id
+                }
+            })
             this.setState(r[0])
         }, err => {
             this.setState({
@@ -103,7 +124,24 @@ class ForumEdit extends React.Component<P, S> {
         }
         switch (e.id) {
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -160,6 +198,9 @@ class ForumEdit extends React.Component<P, S> {
     }
 
     render() {
+        if (!!this.state.globalErrorMessage) {
+            return (<AlertDanger>{this.state.globalErrorMessage}</AlertDanger>)
+        }
         return (
             <div className="page-edit">
                 {!this.state.isLoaded && <Spinner/>}

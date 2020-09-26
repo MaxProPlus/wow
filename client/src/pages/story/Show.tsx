@@ -53,11 +53,24 @@ class StoryPage extends React.Component<P, S> {
         }
     }
 
+    static getDerivedStateFromProps(nextProps: P, prevState: S) {
+        // Проверка изменения url
+        if (nextProps.match.params.id !== prevState.id) {
+            if (isNaN(Number(nextProps.match.params.id))) {
+                history.push('/')
+            }
+            return {
+                id: nextProps.match.params.id
+            }
+        }
+        return null
+    }
+
     componentDidMount() {
         this.updateData()
     }
 
-    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && this.context.user.id > 0) {
             const isAdmin = ((this.state.story.coauthors.findIndex((el: Account) => {
@@ -68,6 +81,14 @@ class StoryPage extends React.Component<P, S> {
                     isAdmin
                 })
             }
+        }
+        // Проверка изменения url
+        if (prevProps.match.params.id !== this.state.id) {
+            this.setState({
+                isLoaded: false,
+                isAdmin: false
+            })
+            this.updateData()
         }
     }
 

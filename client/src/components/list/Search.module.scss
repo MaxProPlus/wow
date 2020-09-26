@@ -11,16 +11,20 @@
 
 .filter {
   position: absolute;
-  top: 7px;
   left: 7px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
   min-width: auto;
   cursor: pointer;
 }
 
 .search {
   position: absolute;
-  top: 7px;
   right: 7px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
   min-width: auto;
   cursor: pointer;
 }

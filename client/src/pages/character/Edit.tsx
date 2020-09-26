@@ -4,6 +4,7 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
+    Account,
     Character,
     characterActiveToString,
     characterStatusToString,
@@ -27,6 +28,7 @@ import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import {CommonS, handleFormData} from "./Common"
 import {MatchId, RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteProps & RouteComponentProps<MatchId>
 
@@ -34,6 +36,8 @@ type S = CommonS & {
     id: string
     urlAvatar: string,
     idAccount: number
+    isAdmin: boolean
+    globalErrorMessage: string,
 }
 
 class CharacterEdit extends React.Component<P, S> {
@@ -41,6 +45,7 @@ class CharacterEdit extends React.Component<P, S> {
     private characterApi = new CharacterApi()
     private validator = new Validator()
     private avatar: File | any
+    private userApi = new UserApi()
 
     constructor(props: P) {
         super(props)
@@ -48,7 +53,9 @@ class CharacterEdit extends React.Component<P, S> {
             ...new Character(),
             id: props.match.params.id,
             isLoaded: false,
+            isAdmin: false,
             errorMessage: '',
+            globalErrorMessage: '',
             friendsOptions: [],
             coauthorsOptions: [],
         }
@@ -59,9 +66,18 @@ class CharacterEdit extends React.Component<P, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
-        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
+            && this.context.user.id > 0 // Если контекст загружен
+            && this.state.idAccount !== 0) { // Если сюжет загружен
+
+            // Проверяем есть ли id пользователя в массиве соавторов
+            // Если есть, то он имеет право на редактирование
+            // Если нет, то сравниваем id пользователя и id создателя материала
+            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
             this.setState({
-                errorMessage: 'Нет прав'
+                isAdmin,
+                globalErrorMessage: isAdmin ? '' : 'Нет прав'
             })
         }
     }
@@ -72,6 +88,12 @@ class CharacterEdit extends React.Component<P, S> {
             r[0].friends = r[0].friends.map((el: Character) => {
                 return {
                     label: el.title,
+                    value: el.id
+                }
+            })
+            r[0].coauthors = r[0].coauthors.map((el: Account) => {
+                return {
+                    label: el.nickname,
                     value: el.id
                 }
             })
@@ -141,7 +163,24 @@ class CharacterEdit extends React.Component<P, S> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -198,6 +237,9 @@ class CharacterEdit extends React.Component<P, S> {
     }
 
     render() {
+        if (!!this.state.globalErrorMessage) {
+            return (<AlertDanger>{this.state.globalErrorMessage}</AlertDanger>)
+        }
         return (
             <div className="page-edit">
                 {!this.state.isLoaded && <Spinner/>}

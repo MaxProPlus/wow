@@ -6,7 +6,13 @@ import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
-import {Character, Guild, guildKitToString, guildStatusToString} from "../../../../server/src/common/entity/types"
+import {
+    Account,
+    Character,
+    Guild,
+    guildKitToString,
+    guildStatusToString
+} from "../../../../server/src/common/entity/types"
 import {Col, Row} from "react-bootstrap"
 import InputField from "../../components/form/inputField/InputField"
 import Textarea from "../../components/form/textarea/Textarea"
@@ -23,19 +29,23 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import CharacterApi from "../../api/CharacterApi"
 import {MatchId, RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteComponentProps<MatchId> & RouteProps
 
 type S = CommonS & {
     id: string
-    idAccount: number
     urlAvatar: string
+    idAccount: number
+    isAdmin: boolean
+    globalErrorMessage: string
 }
 
 class GuildEdit extends React.Component<P, S> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private characterApi = new CharacterApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: any
 
@@ -44,8 +54,10 @@ class GuildEdit extends React.Component<P, S> {
         this.state = {
             ...new Guild(),
             id: props.match.params.id,
-            isLoaded: true,
+            isLoaded: false,
+            isAdmin: false,
             errorMessage: '',
+            globalErrorMessage: '',
             articlesOptions: [],
             membersOptions: [],
             eventsOptions: [],
@@ -58,9 +70,18 @@ class GuildEdit extends React.Component<P, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: any) {
-        if (this.context.user.id > 0 && prevState.idAccount > 0 && prevState.idAccount !== this.context.user.id && !prevState.errorMessage) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
+            && this.context.user.id > 0 // Если контекст загружен
+            && this.state.idAccount !== 0) { // Если сюжет загружен
+
+            // Проверяем есть ли id пользователя в массиве соавторов
+            // Если есть, то он имеет право на редактирование
+            // Если нет, то сравниваем id пользователя и id создателя материала
+            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
             this.setState({
-                errorMessage: 'Нет прав'
+                isAdmin,
+                globalErrorMessage: isAdmin ? '' : 'Нет прав'
             })
         }
     }
@@ -71,6 +92,12 @@ class GuildEdit extends React.Component<P, S> {
             r[0].members = r[0].members.map((el: Character) => {
                 return {
                     label: el.title,
+                    value: el.id
+                }
+            })
+            r[0].coauthors = r[0].coauthors.map((el: Account) => {
+                return {
+                    label: el.nickname,
                     value: el.id
                 }
             })
@@ -140,7 +167,24 @@ class GuildEdit extends React.Component<P, S> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -197,6 +241,9 @@ class GuildEdit extends React.Component<P, S> {
     }
 
     render() {
+        if (!!this.state.globalErrorMessage) {
+            return (<AlertDanger>{this.state.globalErrorMessage}</AlertDanger>)
+        }
         return (
             <div className="page-edit guild-create">
                 {!this.state.isLoaded && <Spinner/>}

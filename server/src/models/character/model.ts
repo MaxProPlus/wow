@@ -20,23 +20,28 @@ class CharacterModel {
         await Promise.all(c.friends.map(async (idLink) => {
             await this.mapper.insertLink(id, idLink)
         }))
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            return this.mapper.insertCoauthor(id, el)
+        }))
         c.fileAvatar.mv(infoAvatar.path)
         return id
     }
 
     // Получить персонажа по id
     getById = (id: number): Promise<[Character, CommentCharacter[]]> => {
-        const p: [Promise<Character>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<CommentCharacter[]>] = [
+        const p: [Promise<Character>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentCharacter[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectByIdLink(id),
             this.mapper.selectGuildsById(id),
             this.mapper.selectStoresById(id),
+            this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Character, Character[], Guild[], Story[], CommentCharacter[]>(p).then(([c, links, guilds, stores, comments]) => {
+        return Promise.all<Character, Character[], Guild[], Story[], Account[], CommentCharacter[]>(p).then(([c, links, guilds, stores, coauthors, comments]) => {
             c.friends = links
             c.guilds = guilds
             c.stores = stores
+            c.coauthors = coauthors
             return [c, comments]
         }) as Promise<[Character, CommentCharacter[]]>
     }
@@ -76,6 +81,21 @@ class CharacterModel {
             // Если не находим в новом списке, то удаляем
             if (c.friends.indexOf(el.id) === -1) {
                 return await this.mapper.removeLink(c.id, el.id)
+            }
+        }))
+
+        // Перебор нового списка соавторов
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (oldCharacter.coauthors.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertCoauthor(c.id, el)
+            }
+        }))
+        // Перебор старого списка соавторов
+        await Promise.all(oldCharacter.coauthors.map(async (el: Account) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.coauthors.indexOf(el.id) === -1) {
+                return await this.mapper.removeCoauthor(c.id, el.id)
             }
         }))
 

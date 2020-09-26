@@ -28,8 +28,8 @@ class BasicMaterialMapper extends BasicMapper {
     selectCoauthorById = (id: number): Promise<Account[]> => {
         const sql = `select link.id, link.nickname 
                      from account link
-                              join ${this.table}_coauthor stg on link.id = stg.id_account
-                              join ${this.table} s on stg.id_${this.table} = s.id
+                              join ${this.table}_coauthor tc on link.id = tc.id_account
+                              join \`${this.table}\` s on tc.id_${this.table} = s.id
                      where s.id = ?`
         return this.pool.query(sql, [id]).then(([r]: [Account[]]) => {
             return Promise.resolve(r)

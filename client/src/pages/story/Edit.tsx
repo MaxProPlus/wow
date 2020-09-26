@@ -32,8 +32,8 @@ type S = CommonS & {
     id: string
     urlAvatar: string
     idAccount: number
-    globalErrorMessage: string
     isAdmin: boolean
+    globalErrorMessage: string
 }
 
 class StoryEdit extends React.Component<P, S> {
@@ -51,7 +51,7 @@ class StoryEdit extends React.Component<P, S> {
             ...new Story(),
             id: props.match.params.id,
             idAccount: 0,
-            isLoaded: true,
+            isLoaded: false,
             isAdmin: false,
             errorMessage: '',
             globalErrorMessage: '',
@@ -193,7 +193,7 @@ class StoryEdit extends React.Component<P, S> {
                 return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
-                        coauthorsOptions: r.data.filter((el: Guild) => {
+                        coauthorsOptions: r.data.filter((el: Account) => {
                             return this.state.coauthors.findIndex((e: Option) => e.value === el.id
                             ) === -1
                         }).map((el: Account) => {

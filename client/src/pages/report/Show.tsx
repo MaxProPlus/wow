@@ -1,6 +1,6 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {CommentReport, Report} from "../../../../server/src/common/entity/types"
+import {Account, CommentReport, Report} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import CommentForm from "../../components/commentFrom/CommentForm"
@@ -24,6 +24,7 @@ type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
+    isAdmin: boolean
     modalShow: boolean
     errorMessage: string
     id: string
@@ -39,6 +40,7 @@ class ReportPage extends React.Component<P, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            isAdmin: false,
             modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
@@ -48,6 +50,7 @@ class ReportPage extends React.Component<P, S> {
     }
 
     static getDerivedStateFromProps(nextProps: P, prevState: S) {
+        // Проверка изменения url
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -56,7 +59,6 @@ class ReportPage extends React.Component<P, S> {
                 id: nextProps.match.params.id
             }
         }
-
         return null
     }
 
@@ -65,6 +67,18 @@ class ReportPage extends React.Component<P, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && this.context.user.id > 0) {
+            const isAdmin = ((this.state.report.coauthors.findIndex((el: Account) => {
+                return el.id === this.context.user.id
+            }) === -1) ? this.context.user.id === this.state.report.idAccount : true)
+            if (isAdmin) {
+                this.setState({
+                    isAdmin
+                })
+            }
+        }
+        // Проверка изменения url
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
@@ -89,7 +103,6 @@ class ReportPage extends React.Component<P, S> {
             })
         })
     }
-
 
     updateComment = () => {
         this.setState({
@@ -157,7 +170,7 @@ class ReportPage extends React.Component<P, S> {
                                     show={this.state.modalShow} title="Вы действительно хотите удалить отчет / лог?"/>
                 <div>
                     <PageTitle title="Отчет / лог" icon={icon}>
-                        <ControlButton show={this.context.user.id === this.state.report.idAccount} id={this.state.id}
+                        <ControlButton show={this.state.isAdmin} id={this.state.id}
                                        type='report' nameRemove='отчет / лог'
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>

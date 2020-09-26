@@ -16,6 +16,10 @@ class ForumModel {
         const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'forumAvatar')
         c.urlAvatar = infoAvatar.url
 
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            return this.mapper.insertCoauthor(id, el)
+        }))
+
         const id = await this.mapper.insert(c)
         c.fileAvatar.mv(infoAvatar.path)
         return id
@@ -23,11 +27,13 @@ class ForumModel {
 
     // Получить форум по id
     getById = (id: number): Promise<[Forum, CommentForum[]]> => {
-        const p: [Promise<Forum>, Promise<CommentForum[]>] = [
+        const p: [Promise<Forum>, Promise<Account[]>, Promise<CommentForum[]>] = [
             this.mapper.selectById(id),
+            this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Forum, CommentForum[]>(p).then(([s, comments]) => {
+        return Promise.all<Forum, Account[], CommentForum[]>(p).then(([s, coauthors, comments]) => {
+            s.coauthors = coauthors
             return [s, comments]
         })
     }
@@ -54,6 +60,21 @@ class ForumModel {
             return Promise.reject('Нет прав')
         }
 
+        // Перебор нового списка соавторов
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (old.coauthors.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertCoauthor(c.id, el)
+            }
+        }))
+        // Перебор старого списка соавторов
+        await Promise.all(old.coauthors.map(async (el: Account) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.coauthors.indexOf(el.id) === -1) {
+                return await this.mapper.removeCoauthor(c.id, el.id)
+            }
+        }))
+
         // Обновить аватарку
         c.urlAvatar = old.urlAvatar
         let infoAvatar
@@ -68,11 +89,12 @@ class ForumModel {
 
     // Удалить форум
     remove = async (report: Forum) => {
-        const oldForum = await this.mapper.selectById(report.id)
-        if (oldForum.idAccount !== report.idAccount) {
+        const old = await this.mapper.selectById(report.id)
+        old.coauthors = await this.mapper.selectCoauthorById(report.id)
+        if (old.idAccount !== report.idAccount && (old.coauthors.findIndex((el: Account) => el.id === report.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
-        this.uploader.remove(oldForum.urlAvatar)
+        this.uploader.remove(old.urlAvatar)
         return this.mapper.remove(report.id)
     }
 

@@ -20,21 +20,26 @@ class GuildModel {
         await Promise.all(c.members.map(async (idLink) => {
             await this.mapper.insertMember(id, idLink)
         }))
+        await Promise.all(c.coauthors.map(async (el: number) => {
+            return this.mapper.insertCoauthor(id, el)
+        }))
         c.fileAvatar.mv(infoAvatar.path)
         return id
     }
 
     // Получить гильдию по id
     getById = (id: number): Promise<[Guild, CommentGuild[]]> => {
-        const p: [Promise<Guild>, Promise<Character[]>, Promise<Story[]>, Promise<CommentGuild[]>] = [
+        const p: [Promise<Guild>, Promise<Character[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentGuild[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
             this.mapper.selectStoresById(id),
+            this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Guild, Character[], Story[], CommentGuild[]>(p).then(([g, members, stores, comments]) => {
+        return Promise.all<Guild, Character[], Story[], Account[], CommentGuild[]>(p).then(([g, members, stores, coauthors, comments]) => {
             g.members = members
             g.stores = stores
+            g.coauthors = coauthors
             return [g, comments]
         })
     }
@@ -76,6 +81,21 @@ class GuildModel {
             }
         }))
 
+        // Перебор нового списка соавторов
+        await Promise.all(guild.coauthors.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (old.coauthors.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertCoauthor(guild.id, el)
+            }
+        }))
+        // Перебор старого списка соавторов
+        await Promise.all(old.coauthors.map(async (el: Account) => {
+            // Если не находим в новом списке, то удаляем
+            if (guild.coauthors.indexOf(el.id) === -1) {
+                return await this.mapper.removeCoauthor(guild.id, el.id)
+            }
+        }))
+
 
         guild.urlAvatar = old.urlAvatar
         // Обновить аватарку
@@ -90,13 +110,14 @@ class GuildModel {
     }
 
     // Удалить гильдию
-    remove = async (g: Guild) => {
-        const oldGuild = await this.mapper.selectById(g.id)
-        if (oldGuild.idAccount !== g.idAccount) {
+    remove = async (guild: Guild) => {
+        const old = await this.mapper.selectById(guild.id)
+        old.coauthors = await this.mapper.selectCoauthorById(guild.id)
+        if (old.idAccount !== guild.idAccount && (old.coauthors.findIndex((el: Account) => el.id === guild.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
-        this.uploader.remove(oldGuild.urlAvatar)
-        return this.mapper.remove(g.id)
+        this.uploader.remove(old.urlAvatar)
+        return this.mapper.remove(guild.id)
     }
 
     // Создать комментарий

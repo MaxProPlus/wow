@@ -129,12 +129,12 @@ class StoryModel {
 
     // Удалить сюжет
     remove = async (story: Story) => {
-        const oldStory = await this.mapper.selectById(story.id)
-        oldStory.coauthors = await this.mapper.selectCoauthorById(story.id)
-        if (oldStory.idAccount !== story.idAccount && (oldStory.coauthors.findIndex((el: Account) => el.id === story.idAccount)) === -1) {
+        const old = await this.mapper.selectById(story.id)
+        old.coauthors = await this.mapper.selectCoauthorById(story.id)
+        if (old.idAccount !== story.idAccount && (old.coauthors.findIndex((el: Account) => el.id === story.idAccount)) === -1) {
             return Promise.reject('Нет прав')
         }
-        this.uploader.remove(oldStory.urlAvatar)
+        this.uploader.remove(old.urlAvatar)
         return this.mapper.remove(story.id)
     }
 

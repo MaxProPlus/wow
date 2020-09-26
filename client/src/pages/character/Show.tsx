@@ -1,6 +1,7 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import {
+    Account,
     Character,
     characterActiveToString,
     characterStatusToString,
@@ -44,6 +45,7 @@ type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
+    isAdmin: boolean
     modalShow: boolean
     errorMessage: string
     id: string
@@ -59,6 +61,7 @@ class CharacterPage extends React.Component<P, S> {
         super(props)
         this.state = {
             isLoaded: false,
+            isAdmin: false,
             modalShow: false,
             errorMessage: '',
             id: props.match.params.id,
@@ -68,6 +71,7 @@ class CharacterPage extends React.Component<P, S> {
     }
 
     static getDerivedStateFromProps(nextProps: P, prevState: S) {
+        // Проверка изменения url
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {
                 history.push('/')
@@ -76,7 +80,6 @@ class CharacterPage extends React.Component<P, S> {
                 id: nextProps.match.params.id
             }
         }
-
         return null
     }
 
@@ -85,9 +88,22 @@ class CharacterPage extends React.Component<P, S> {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
+        // Проверить есть ли права на редактирование
+        if (!this.state.isAdmin && this.context.user.id > 0) {
+            const isAdmin = ((this.state.character.coauthors.findIndex((el: Account) => {
+                return el.id === this.context.user.id
+            }) === -1) ? this.context.user.id === this.state.character.idAccount : true)
+            if (isAdmin) {
+                this.setState({
+                    isAdmin
+                })
+            }
+        }
+        // Проверка изменения url
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
+                isAdmin: false
             })
             this.updateData()
         }
@@ -109,7 +125,6 @@ class CharacterPage extends React.Component<P, S> {
             })
         })
     }
-
 
     updateComment = () => {
         this.setState({
@@ -177,7 +192,7 @@ class CharacterPage extends React.Component<P, S> {
                                     show={this.state.modalShow} title="Вы действительно хотите удалить персонажа?"/>
                 <div className="page-character">
                     <PageTitle title="Персонаж" icon={icon}>
-                        <ControlButton show={this.context.user.id === this.state.character.idAccount} id={this.state.id}
+                        <ControlButton show={this.state.isAdmin} id={this.state.id}
                                        type='character' nameRemove='персонажа'
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>

@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {defaultForumAvatar, Forum} from "../../../../server/src/common/entity/types"
+import {Account, defaultForumAvatar, Forum} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -16,17 +16,19 @@ import icon from "../../img/brush.svg"
 import Helper from "../../utils/helper"
 import MyCropper from "../../components/myCropper/MyCropper"
 import PageTitle from "../../components/pageTitle/PageTitle"
-import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "../../components/myMultiSelect/types"
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../components/myMultiSelect/types"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {CommonS, handleFormData} from "./Common"
 import ForumApi from "../../api/ForumApi"
 import {RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteComponentProps & RouteProps
 
 class ForumCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private forumApi = new ForumApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -69,7 +71,24 @@ class ForumCreate extends React.Component<P, CommonS> {
         }
         switch (e.id) {
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }

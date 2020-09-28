@@ -169,7 +169,7 @@ class StoryPage extends React.Component<P, S> {
         }
 
         return (
-            <div className="page-guild">
+            <>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить сюжет?"/>
@@ -203,7 +203,7 @@ class StoryPage extends React.Component<P, S> {
                 </div>
                 {(!this.state.story.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-            </div>
+            </>
         )
     }
 }

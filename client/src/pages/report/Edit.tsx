@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Account, Character, Report} from "../../../../server/src/common/entity/types"
+import {Account, Character, Guild, Report, Story} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -23,6 +23,8 @@ import ReportApi from "../../api/ReportApi"
 import CharacterApi from "../../api/CharacterApi"
 import {MatchId, RouteProps} from "../../types/RouteProps"
 import UserApi from "../../api/UserApi"
+import GuildApi from "../../api/GuildApi"
+import StoryApi from "../../api/StoryApi"
 
 type P = RouteProps & RouteComponentProps<MatchId>
 
@@ -38,6 +40,8 @@ class ReportEdit extends React.Component<P, S> {
     static contextType = UserContext
     private reportApi = new ReportApi()
     private characterApi = new CharacterApi()
+    private guildApi = new GuildApi()
+    private storyApi = new StoryApi()
     private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
@@ -52,6 +56,8 @@ class ReportEdit extends React.Component<P, S> {
             errorMessage: '',
             globalErrorMessage: '',
             membersOptions: [],
+            guildsOptions: [],
+            storesOptions: [],
             coauthorsOptions: [],
         }
     }
@@ -81,6 +87,18 @@ class ReportEdit extends React.Component<P, S> {
         this.reportApi.getById(this.state.id).then(r => {
             delete r.id
             r[0].members = r[0].members.map((el: Report) => {
+                return {
+                    label: el.title,
+                    value: el.id
+                }
+            })
+            r[0].guilds = r[0].guilds.map((el: Report) => {
+                return {
+                    label: el.title,
+                    value: el.id
+                }
+            })
+            r[0].stores = r[0].stores.map((el: Report) => {
                 return {
                     label: el.title,
                     value: el.id
@@ -167,6 +185,44 @@ class ReportEdit extends React.Component<P, S> {
                         }).map((el: Account) => {
                             return {
                                 label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'guilds':
+                return this.guildApi.getAll(3, 1, {title: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        guildsOptions: r.data.filter((el: Character) => {
+                            return this.state.guilds.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Guild) => {
+                            return {
+                                label: el.title,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'stores':
+                return this.storyApi.getAll(3, 1, {title: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        storesOptions: r.data.filter((el: Character) => {
+                            return this.state.stores.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Story) => {
+                            return {
+                                label: el.title,
                                 value: el.id
                             }
                         })
@@ -277,6 +333,18 @@ class ReportEdit extends React.Component<P, S> {
                             <MyMultiSelect id="members" label="Список персонажей-участников"
                                            placeholder="Введите персонажей-участников..."
                                            value={this.state.members} options={this.state.membersOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="guilds" label="Список гильдий-участников"
+                                           placeholder="Введите гильдии-участников..."
+                                           value={this.state.guilds} options={this.state.guildsOptions}
+                                           onChange={this.handleChangeMultiSelect}
+                                           onAdd={this.handleAddMultiSelect}
+                                           onRemove={this.handleRemoveMultiSelect}/>
+                            <MyMultiSelect id="stores" label="Список сюжетов-участников"
+                                           placeholder="Введите сюжетов-участников..."
+                                           value={this.state.stores} options={this.state.storesOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>

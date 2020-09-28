@@ -148,9 +148,9 @@ class Setting extends React.Component<P, S> {
         e.preventDefault()
         let user = new Account()
         user.email = this.state.email
-        user.username = this.state.username
+        // user.username = this.state.username
         user.password = this.state.passwordAccept
-        const {ok, err} = this.validator.validateSecure(user)
+        const {ok, err} = this.validator.validateEmail(user)
         if (!ok) {
             this.setState({
                 errorSecure: err
@@ -230,8 +230,8 @@ class Setting extends React.Component<P, S> {
                         <AlertDanger>{this.state.errorSecure}</AlertDanger>
                         <InputField label="E-mail" type="email" value={this.state.email}
                                     id="email" onChange={this.handleChange}/>
-                        <InputField label="Username" type="text" value={this.state.username}
-                                    id="username" onChange={this.handleChange}/>
+                        {/*<InputField label="Username" type="text" value={this.state.username}*/}
+                        {/*            id="username" onChange={this.handleChange}/>*/}
                         <InputField label="Подтверждение пароля" type="password" value={this.state.passwordAccept}
                                     id="passwordAccept" onChange={this.handleChange}/>
                         <Form.Group>

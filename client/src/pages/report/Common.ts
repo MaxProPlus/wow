@@ -9,8 +9,12 @@ export type CommonS = {
     shortDescription: string // Анонс
     description: string // Внешность и характер
     rule: string // Дополнительные сведения
-    members: Option[] // Список друзей
-    membersOptions: Option[] // Список друзей
+    members: Option[] // Список персонажей-участников
+    membersOptions: Option[] // Список персонажей-участников
+    guilds: Option[] // Список гильдий-участников
+    guildsOptions: Option[] // Список гильдий-участников
+    stores: Option[] // Список сюжетов-участников
+    storesOptions: Option[] // Список сюжетов-участников
 
     // Прочее
     closed: number // Закрыть(материал будет доступен только автору)
@@ -35,6 +39,12 @@ export const handleFormData = (report: Report, avatar: File): FormData => {
     formData.append('style', report.style)
     report.members.forEach(el => {
         formData.append('members', String(el.value))
+    })
+    report.guilds.forEach(el => {
+        formData.append('guilds', String(el.value))
+    })
+    report.stores.forEach(el => {
+        formData.append('stores', String(el.value))
     })
     report.coauthors.forEach(el => {
         formData.append('coauthors', String(el.value))

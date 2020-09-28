@@ -1,4 +1,4 @@
-import {Character, CommentReport, Report} from '../../common/entity/types'
+import {Character, CommentReport, Guild, Report, Story} from '../../common/entity/types'
 import logger from '../../services/logger'
 import BasicMaterialMapper from './material'
 
@@ -28,6 +28,30 @@ class ReportMapper extends BasicMaterialMapper {
         const sql = `INSERT INTO report_to_character (id_report, id_character)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idReport]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить гильдии отчета
+    insertGuild = (id: number, idGuild: number) => {
+        const sql = `INSERT INTO report_to_guild (id_report, id_guild)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idGuild]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить сюжет отчета
+    insertStory = (id: number, idStory: number) => {
+        const sql = `INSERT INTO report_to_story (id_report, id_story)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [id, idStory]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -94,6 +118,67 @@ class ReportMapper extends BasicMaterialMapper {
                      where s.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить гильдии отчета
+    selectGuildsById = (id: number): Promise<Guild[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.game_title        as gameTitle,
+                            link.short_description as shortDescription,
+                            link.ideology,
+                            link.description,
+                            link.rule,
+                            link.more,
+                            link.status,
+                            link.kit,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from guild link
+                              join report_to_guild rtg on link.id = rtg.id_guild
+                              join report s on rtg.id_report = s.id
+                     where s.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
+            return Promise.resolve(r)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить сюжеты отчета
+    selectStoresById = (id: number): Promise<Story[]> => {
+        const sql = `select link.id,
+                            link.id_account        as idAccount,
+                            link.url_avatar        as urlAvatar,
+                            link.title,
+                            link.date_start        as dateStart,
+                            link.period,
+                            link.short_description as shortDescription,
+                            link.description,
+                            link.rule,
+                            link.more,
+                            link.status,
+                            link.closed,
+                            link.hidden,
+                            link.comment,
+                            link.style
+                     from story link
+                              join report_to_story rts on link.id = rts.id_story
+                              join report s on rts.id_report = s.id
+                     where s.id = ?
+                       and link.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -219,6 +304,40 @@ class ReportMapper extends BasicMaterialMapper {
                      from report_to_character
                      where id_report = ?
                        and id_character = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Удалить гильдию из отчета
+    removeGuild = (id: number, idLink: number) => {
+        const sql = `delete
+                     from report_to_guild
+                     where id_report = ?
+                       and id_guild = ?`
+        return this.pool.query(sql, [id, idLink]).then((r: any) => {
+            if (!r[0].affectedRows) {
+                return Promise.reject('Связь не найдена')
+            }
+            return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Удалить сюжет из отчета
+    removeStory = (id: number, idLink: number) => {
+        const sql = `delete
+                     from report_to_story
+                     where id_report = ?
+                       and id_story = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Связь не найдена')

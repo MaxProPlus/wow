@@ -7,6 +7,7 @@ import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
 import {
+    Account,
     Character,
     defaultGuildAvatar,
     Guild,
@@ -29,6 +30,7 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import CharacterApi from "../../api/CharacterApi"
 import {RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteComponentProps & RouteProps
 
@@ -36,6 +38,7 @@ class GuildCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private guildApi = new GuildApi()
     private characterApi = new CharacterApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -45,9 +48,7 @@ class GuildCreate extends React.Component<P, CommonS> {
             ...new Guild(),
             isLoaded: true,
             errorMessage: '',
-            articlesOptions: [],
             membersOptions: [],
-            eventsOptions: [],
             coauthorsOptions: [],
         }
     }
@@ -106,7 +107,24 @@ class GuildCreate extends React.Component<P, CommonS> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -208,21 +226,9 @@ class GuildCreate extends React.Component<P, CommonS> {
                                       placeholder="Если есть то, что вы еще не написали, то это тут..."
                                       value={this.state.more}
                                       onChange={this.handleChange}/>
-                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
-                                           placeholder="Напишите список тут..."
-                                           value={this.state.articles} options={this.state.articlesOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
                             <MyMultiSelect id="members" label="Список учасников"
                                            placeholder="Введите персонажей вашей гильдии..."
                                            value={this.state.members} options={this.state.membersOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
-                            <MyMultiSelect id="events" label="Список событий"
-                                           placeholder="Введите события вашей гильдии..."
-                                           value={this.state.events} options={this.state.eventsOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>

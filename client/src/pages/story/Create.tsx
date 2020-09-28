@@ -7,6 +7,7 @@ import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
 import {
+    Account,
     Character,
     defaultStoryAvatar,
     Guild,
@@ -30,6 +31,7 @@ import CharacterApi from "../../api/CharacterApi"
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import GuildApi from "../../api/GuildApi"
 import {RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteComponentProps & RouteProps
 
@@ -38,6 +40,7 @@ class StoryCreate extends React.Component<P, CommonS> {
     private storyApi = new StoryApi()
     private characterApi = new CharacterApi()
     private guildApi = new GuildApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -47,10 +50,8 @@ class StoryCreate extends React.Component<P, CommonS> {
             ...new Story(),
             isLoaded: true,
             errorMessage: '',
-            articlesOptions: [],
             membersOptions: [],
             guildsOptions: [],
-            eventsOptions: [],
             coauthorsOptions: [],
         }
     }
@@ -159,7 +160,24 @@ class StoryCreate extends React.Component<P, CommonS> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }
@@ -229,12 +247,12 @@ class StoryCreate extends React.Component<P, CommonS> {
                                       placeholder="Если есть то, что вы еще не написали, то это тут..."
                                       value={this.state.more}
                                       onChange={this.handleChange}/>
-                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
-                                           placeholder="Напишите список тут..."
-                                           value={this.state.articles} options={this.state.articlesOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
+                            {/*<MyMultiSelect id="articles" label="Список обсуждений/статей/логов"*/}
+                            {/*               placeholder="Напишите список тут..."*/}
+                            {/*               value={this.state.articles} options={this.state.articlesOptions}*/}
+                            {/*               onChange={this.handleChangeMultiSelect}*/}
+                            {/*               onAdd={this.handleAddMultiSelect}*/}
+                            {/*               onRemove={this.handleRemoveMultiSelect}/>*/}
                             <MyMultiSelect id="members" label="Список персонажей-участников"
                                            placeholder="Введите персонажей вашего сюжета..."
                                            value={this.state.members} options={this.state.membersOptions}
@@ -244,12 +262,6 @@ class StoryCreate extends React.Component<P, CommonS> {
                             <MyMultiSelect id="guilds" label="Список гильдий-участников"
                                            placeholder="Введите гильдии, которые принимают участие в сюжете..."
                                            value={this.state.guilds} options={this.state.guildsOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
-                            <MyMultiSelect id="events" label="Список событий"
-                                           placeholder="Введите события вашего сюжета..."
-                                           value={this.state.events} options={this.state.eventsOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>

@@ -46,13 +46,9 @@ class Validator {
     }
 
     // Валидация настроек безопасности
-    validateSecure(user: Account) {
+    validateEmail(user: Account) {
         let ok = true
         let err = ''
-        if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.username)) {
-            ok = false
-            err += 'Длина логина должна быть от 3 до 16 знаков и должен состоять из цифр, латинских букв, символов - и _.\n'
-        }
         if (!/^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i.test(user.email)) {
             ok = false
             err += 'Не валидный email.\n'
@@ -62,7 +58,11 @@ class Validator {
 
     // Валидация регистрации
     validateSignup(user: Account) {
-        let {ok, err} = this.validateSecure(user)
+        let {ok, err} = this.validateEmail(user)
+        if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.username)) {
+            ok = false
+            err += 'Длина логина должна быть от 3 до 16 знаков и должен состоять из цифр, латинских букв, символов - и _.\n'
+        }
         if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.password)) {
             ok = false
             err += 'Длина пароля должна быть от 3 до 16 знаков и должен состоять из цифр, прописных и строчных букв, символов - и _.\n'
@@ -239,7 +239,7 @@ class Validator {
     validateStory(g: Story) {
         let err = ''
         this.trimObject(g, ['title', 'period', 'shortDescription'])
-        this.normalize(g, ['articles', 'members', 'guilds', 'events', 'coauthors'])
+        this.normalize(g, ['members', 'guilds', 'coauthors'])
         if (!g.dateStart) {
             g.dateStart = (new Date()).toISOString().substr(0, 10)
         }
@@ -271,7 +271,7 @@ class Validator {
     validateReport(report: Report) {
         let err = ''
         this.trimObject(report, ['title', 'shortDescription', 'description', 'rule'])
-        this.normalize(report, ['members', 'coauthors'])
+        this.normalize(report, ['members', 'guilds', 'stores', 'coauthors'])
         if (report.title.length < 3 || report.title.length > 35) {
             err += 'Длина имени отчета / лога должна быть от 3 до 35 символов.\n'
         }

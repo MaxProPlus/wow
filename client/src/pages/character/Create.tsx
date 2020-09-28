@@ -4,6 +4,7 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
+    Account,
     Character,
     characterActiveToString,
     characterStatusToString,
@@ -28,12 +29,14 @@ import {MyMultiSelectInputEvent, MyMultiSelectListEvent, Option} from "../../com
 import MyMultiSelect from "../../components/myMultiSelect/MyMultiSelect"
 import {CommonS, handleFormData} from "./Common"
 import {RouteProps} from "../../types/RouteProps"
+import UserApi from "../../api/UserApi"
 
 type P = RouteComponentProps & RouteProps
 
 class CharacterCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
+    private userApi = new UserApi()
     private validator = new Validator()
     private avatar: File | any
 
@@ -102,7 +105,24 @@ class CharacterCreate extends React.Component<P, CommonS> {
                     })
                 })
             case 'coauthors':
-                return Promise.resolve()
+                return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        coauthorsOptions: r.data.filter((el: Account) => {
+                            return this.state.coauthors.findIndex((e: Option) => e.value === el.id
+                            ) === -1
+                        }).map((el: Account) => {
+                            return {
+                                label: el.nickname,
+                                value: el.id
+                            }
+                        })
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
             default:
                 return Promise.resolve()
         }

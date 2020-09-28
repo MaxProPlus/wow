@@ -186,7 +186,7 @@ class AccountController {
     // Редактирование настроек безопасноти
     updateSecure = async (req: Request, res: Response) => {
         const user: Account = req.body
-        const {ok, err} = this.validator.validateSecure(user)
+        const {ok, err} = this.validator.validateEmail(user)
         if (!ok) {
             return res.json({
                 status: 'INVALID_DATA',

@@ -109,8 +109,6 @@ class AccountModel {
 
     // Редактирование настроек безопасноти
     updateSecure = async (account: Account) => {
-        account.username = account.username.toUpperCase()
-        account.password = this.hash.getHash(account.username, account.password)
         return this.mapper.updateSecure(account)
     }
 

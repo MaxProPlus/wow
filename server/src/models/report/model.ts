@@ -1,5 +1,5 @@
 import Mapper from '../mappers/report'
-import {Account, Character, CommentReport, CommentStory, Report} from '../../common/entity/types'
+import {Account, Character, CommentReport, CommentStory, Guild, Report, Story} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -20,6 +20,12 @@ class ReportModel {
         await Promise.all(c.members.map(async (idLink) => {
             await this.mapper.insertMember(id, idLink)
         }))
+        await Promise.all(c.guilds.map(async (idLink) => {
+            await this.mapper.insertGuild(id, idLink)
+        }))
+        await Promise.all(c.stores.map(async (idLink) => {
+            await this.mapper.insertStory(id, idLink)
+        }))
         await Promise.all(c.coauthors.map(async (el: number) => {
             return this.mapper.insertCoauthor(id, el)
         }))
@@ -29,14 +35,18 @@ class ReportModel {
 
     // Получить отчет по id
     getById = (id: number): Promise<[Report, CommentReport[]]> => {
-        const p: [Promise<Report>, Promise<Character[]>, Promise<Account[]>, Promise<CommentReport[]>] = [
+        const p: [Promise<Report>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentReport[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
+            this.mapper.selectGuildsById(id),
+            this.mapper.selectStoresById(id),
             this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Report, Character[], Account[], CommentReport[]>(p).then(([s, c, coauthors, comments]) => {
-            s.members = c
+        return Promise.all<Report, Character[], Guild[], Story[], Account[], CommentReport[]>(p).then(([s, members,guilds, stores, coauthors, comments]) => {
+            s.members = members
+            s.guilds = guilds
+            s.stores = stores
             s.coauthors = coauthors
             return [s, comments]
         })
@@ -76,6 +86,38 @@ class ReportModel {
             // Если не находим в новом списке, то удаляем
             if (c.members.indexOf(el.id) === -1) {
                 return await this.mapper.removeMember(c.id, el.id)
+            }
+        }))
+
+        old.guilds = await this.mapper.selectGuildsById(c.id)
+        // Перебор нового списка гильдий отчета
+        await Promise.all(c.guilds.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (old.guilds.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertGuild(c.id, el)
+            }
+        }))
+        // Перебор старого списка гильдий отчета
+        await Promise.all(old.guilds.map(async (el: Character) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.guilds.indexOf(el.id) === -1) {
+                return await this.mapper.removeGuild(c.id, el.id)
+            }
+        }))
+
+        old.stores = await this.mapper.selectStoresById(c.id)
+        // Перебор нового списка участников отчета
+        await Promise.all(c.stores.map(async (el: number) => {
+            // Если не находим в старом списке, то добавляем
+            if (old.stores.findIndex(o => el === o.id) === -1) {
+                return await this.mapper.insertStory(c.id, el)
+            }
+        }))
+        // Перебор старого списка участников отчета
+        await Promise.all(old.stores.map(async (el: Character) => {
+            // Если не находим в новом списке, то удаляем
+            if (c.stores.indexOf(el.id) === -1) {
+                return await this.mapper.removeStory(c.id, el.id)
             }
         }))
 

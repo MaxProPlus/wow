@@ -16,14 +16,10 @@ export type CommonS = {
     description: string // Описание и история
     rule: string // Условия и правила
     more: string // Дополнительные сведения
-    articles: Option[] // Список обсуждений/статей/логов
-    articlesOptions: Option[] // Список обсуждений/статей/логов
     members: Option[] // Список участников
     membersOptions: Option[] // Список участников
     guilds: Option[] // Список гильдий
     guildsOptions: Option[] // Список гильдий
-    events: Option[] // Список событий
-    eventsOptions: Option[] // Список событий
 
     // Прочее
     status: number // Статус. 0 - активна, 1 - скоро открытие, 2 - распущена
@@ -51,17 +47,11 @@ export const handleFormData = (story: Story, avatar: File): FormData => {
     formData.append('closed', String(story.closed))
     formData.append('hidden', String(story.hidden))
     formData.append('comment', String(story.comment))
-    story.articles.forEach(el => {
-        formData.append('articles', String(el.value))
-    })
     story.members.forEach(el => {
         formData.append('members', String(el.value))
     })
     story.guilds.forEach(el => {
         formData.append('guilds', String(el.value))
-    })
-    story.events.forEach(el => {
-        formData.append('events', String(el.value))
     })
     story.coauthors.forEach(el => {
         formData.append('coauthors', String(el.value))

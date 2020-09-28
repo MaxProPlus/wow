@@ -253,11 +253,9 @@ class Mapper extends BasicMapper {
     // Редактирование настроек безопасноти
     updateSecure = (user: Account) => {
         const sql = `UPDATE account u
-                     SET u.email = ?,
-                         u.username=?,
-                         u.sha_pass_hash=?
+                     SET u.email = ?
                      WHERE u.id = ?`
-        return this.pool.query(sql, [user.email, user.username, user.password, user.id]).then(([r]: any) => {
+        return this.pool.query(sql, [user.email, user.id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')
             }

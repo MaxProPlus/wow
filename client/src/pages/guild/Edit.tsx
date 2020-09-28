@@ -58,9 +58,7 @@ class GuildEdit extends React.Component<P, S> {
             isAdmin: false,
             errorMessage: '',
             globalErrorMessage: '',
-            articlesOptions: [],
             membersOptions: [],
-            eventsOptions: [],
             coauthorsOptions: [],
         }
     }
@@ -292,21 +290,9 @@ class GuildEdit extends React.Component<P, S> {
                                       placeholder="Если есть то, что вы еще не написали, то это тут..."
                                       value={this.state.more}
                                       onChange={this.handleChange}/>
-                            <MyMultiSelect id="articles" label="Список обсуждений/статей/логов"
-                                           placeholder="Напишите список тут..."
-                                           value={this.state.articles} options={this.state.articlesOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
                             <MyMultiSelect id="members" label="Список учасников"
                                            placeholder="Введите персонажей вашей гильдии..."
                                            value={this.state.members} options={this.state.membersOptions}
-                                           onChange={this.handleChangeMultiSelect}
-                                           onAdd={this.handleAddMultiSelect}
-                                           onRemove={this.handleRemoveMultiSelect}/>
-                            <MyMultiSelect id="events" label="Список событий"
-                                           placeholder="Введите события вашей гильдии..."
-                                           value={this.state.events} options={this.state.eventsOptions}
                                            onChange={this.handleChangeMultiSelect}
                                            onAdd={this.handleAddMultiSelect}
                                            onRemove={this.handleRemoveMultiSelect}/>

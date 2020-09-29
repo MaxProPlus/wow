@@ -4,7 +4,7 @@ import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Account} from "../../../../server/src/common/entity/types"
+import {User} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/inputField/InputField"
 import Form from "../../components/form/Form"
 import './SignIn.scss'
@@ -40,7 +40,7 @@ class SignIn extends Component<P, S> {
             errorMessage: '',
             isLoaded: false,
         })
-        let user = new Account()
+        let user = new User()
         user.username = this.state.username
         user.password = this.state.password
         this.userApi.signIn(user).then(() => {

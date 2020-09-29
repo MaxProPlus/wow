@@ -39,7 +39,7 @@ class ForumController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -68,13 +68,13 @@ class ForumController {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        let idAccount = 0
+        let idUser = 0
         try {
-            idAccount = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
         }
         return this.forumModel.getById(id).then(([story, comments]) => {
-            if (!!story.closed && idAccount !== story.idAccount) {
+            if (!!story.closed && idUser !== story.idUser) {
                 return res.json({
                     status: 'ERROR_RIGHT',
                     errorMessage: 'Нет прав для просмотра',
@@ -137,7 +137,7 @@ class ForumController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -168,7 +168,7 @@ class ForumController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -191,7 +191,7 @@ class ForumController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentForum = req.body
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({

@@ -1,15 +1,15 @@
-import {Account, UserPassword} from '../../common/entity/types'
+import {User, UserPassword} from '../../common/entity/types'
 import {Token} from '../../entity/types'
 import logger from '../../services/logger'
-import BasicMapper from '../mappers/mapper'
+import BasicMapper from './mapper'
 
-class Mapper extends BasicMapper {
+class UserMapper extends BasicMapper {
 
     // Регистрация
-    signup = (account: Account) => {
+    signup = (user: User) => {
         const sql = `INSERT INTO account (username, sha_pass_hash, email, reg_mail, nickname)
                      VALUES (?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [account.username, account.password, account.email, account.email, account.username]).then(([r]: any) => {
+        return this.pool.query(sql, [user.username, user.password, user.email, user.email, user.username]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -18,12 +18,12 @@ class Mapper extends BasicMapper {
     }
 
     // Авторизация
-    login = (account: Account) => {
+    login = (user: User) => {
         const sql = `SELECT u.id
                      FROM account u
                      WHERE u.username = ?
                        AND u.sha_pass_hash = ?`
-        return this.pool.query(sql, [account.username, account.password]).then(([r]: any) => {
+        return this.pool.query(sql, [user.username, user.password]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Неверный логин или пароль')
             }
@@ -36,8 +36,8 @@ class Mapper extends BasicMapper {
 
     // Сохранить токен
     saveToken = (data: Token) => {
-        const sql = 'INSERT INTO token(id_account, text, ip) VALUES(?, ?, ?)'
-        return this.pool.query(sql, [data.idAccount, data.text, data.ip]).then(() => {
+        const sql = 'INSERT INTO token(id_user, text, ip) VALUES(?, ?, ?)'
+        return this.pool.query(sql, [data.idUser, data.text, data.ip]).then(() => {
             return Promise.resolve(data.text)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -47,11 +47,11 @@ class Mapper extends BasicMapper {
 
     // Получить контекст
     getContext = (token: string) => {
-        const sql = `SELECT t.id_account    AS id,
+        const sql = `SELECT t.id_user    AS id,
                             u.nickname   AS nickname,
                             u.url_avatar AS urlAvatar
                      FROM token t
-                              JOIN account u ON u.id = t.id_account
+                              JOIN account u ON u.id = t.id_user
                      WHERE t.text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.length) {
@@ -66,7 +66,7 @@ class Mapper extends BasicMapper {
 
     // Проверка авторизации по токену
     getIdByToken = (data: string) => {
-        const sql = `SELECT id_account AS id
+        const sql = `SELECT id_user AS id
                      FROM token
                      WHERE text = ?`
         return this.pool.query(sql, [data]).then(([r]: any) => {
@@ -84,7 +84,7 @@ class Mapper extends BasicMapper {
     getUsernameByToken = (token: string) => {
         const sql = `SELECT a.username
                      FROM token t
-                        join account a on t.id_account = a.id
+                        join account a on t.id_user = a.id
                      WHERE t.text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.length) {
@@ -99,9 +99,9 @@ class Mapper extends BasicMapper {
 
     // Проверка авторизации по токену и паролю
     getIdByTokenWithPassword = (token: string, pass: string) => {
-        const sql = `SELECT t.id_account AS id
+        const sql = `SELECT t.id_user AS id
                      FROM token t
-                              JOIN account a ON a.id = t.id_account
+                              JOIN account a ON a.id = t.id_user
                      WHERE t.text = ?
                        AND a.sha_pass_hash = ?`
         return this.pool.query(sql, [token, pass]).then(([r]: any) => {
@@ -135,7 +135,7 @@ class Mapper extends BasicMapper {
                             a.url_avatar AS urlAvatar
                      FROM account a
                      WHERE a.id = ?`
-        return this.pool.query(sql, [id]).then(([r]: [Account[]]) => {
+        return this.pool.query(sql, [id]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Не найден пользователь')
             }
@@ -235,7 +235,7 @@ class Mapper extends BasicMapper {
     }
 
     // Редактирование основной информации
-    updateGeneral = (user: Account) => {
+    updateGeneral = (user: User) => {
         const sql = `UPDATE account a
                      SET a.nickname   = ?
                      WHERE a.id = ? `
@@ -251,7 +251,7 @@ class Mapper extends BasicMapper {
     }
 
     // Редактирование настроек безопасноти
-    updateSecure = (user: Account) => {
+    updateSecure = (user: User) => {
         const sql = `UPDATE account u
                      SET u.email = ?
                      WHERE u.id = ?`
@@ -300,4 +300,4 @@ class Mapper extends BasicMapper {
     }
 }
 
-export default Mapper
+export default UserMapper

@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Account, Character, defaultReportAvatar, Guild, Report, Story} from "../../../../server/src/common/entity/types"
+import {User, Character, defaultReportAvatar, Guild, Report, Story} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -146,10 +146,10 @@ class ReportCreate extends React.Component<P, CommonS> {
                 return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
-                        coauthorsOptions: r.data.filter((el: Account) => {
+                        coauthorsOptions: r.data.filter((el: User) => {
                             return this.state.coauthors.findIndex((e: Option) => e.value === el.id
                             ) === -1
-                        }).map((el: Account) => {
+                        }).map((el: User) => {
                             return {
                                 label: el.nickname,
                                 value: el.id

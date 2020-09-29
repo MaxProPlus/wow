@@ -10,14 +10,14 @@ class CharacterMapper extends BasicMaterialMapper {
 
     // Создать персонажа
     insert = (character: Character) => {
-        const sql = `INSERT INTO \`character\` (id_account, url_avatar, title, nickname, short_description, race,
+        const sql = `INSERT INTO \`character\` (id_user, url_avatar, title, nickname, short_description, race,
                                                 nation,
                                                 territory, age, class, occupation, religion, languages, description,
                                                 history, more,
                                                 sex,
                                                 status, active, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [character.idAccount, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
+        return this.pool.query(sql, [character.idUser, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
             character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
@@ -42,7 +42,7 @@ class CharacterMapper extends BasicMaterialMapper {
     // Получить персонажа по id
     selectById = (id: number): Promise<Character> => {
         const sql = `select id,
-                            id_account        as idAccount,
+                            id_user        as idUser,
                             url_avatar        as urlAvatar,
                             title,
                             nickname,
@@ -82,7 +82,7 @@ class CharacterMapper extends BasicMaterialMapper {
     // Получить друзей персонажа по id
     selectByIdLink = (id: number): Promise<Character[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.nickname,
@@ -121,7 +121,7 @@ class CharacterMapper extends BasicMaterialMapper {
     // Получить гильдии персонажа
     selectGuildsById = (id: number): Promise<Guild[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.game_title        as gameTitle,
@@ -152,7 +152,7 @@ class CharacterMapper extends BasicMaterialMapper {
     // Получить сюжеты персонажа
     selectStoresById = (id: number): Promise<Story[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.date_start        as dateStart,
@@ -182,7 +182,7 @@ class CharacterMapper extends BasicMaterialMapper {
     // Получить всех персонажей
     selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
-                          id_account        as idAccount,
+                          id_user        as idUser,
                           url_avatar        as urlAvatar,
                           title,
                           nickname,
@@ -336,9 +336,9 @@ class CharacterMapper extends BasicMaterialMapper {
 
     // Создать комментарий к персонажу
     insertComment = (comment: CommentCharacter): Promise<number> => {
-        const sql = `INSERT INTO character_comment (text, id_account, id_character)
+        const sql = `INSERT INTO character_comment (text, id_user, id_character)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idCharacter]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idCharacter]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -350,12 +350,12 @@ class CharacterMapper extends BasicMaterialMapper {
     selectCommentsByIdCharacter = (id: number): Promise<CommentCharacter[]> => {
         const sql = `select c.id,
                             c.text,
-                            c.id_account   as idAccount,
+                            c.id_user   as idUser,
                             c.id_character as idCharacter,
                             a.nickname     as authorNickname,
                             a.url_avatar   as authorUrlAvatar
                      from character_comment c
-                              join account a on c.id_account = a.id
+                              join account a on c.id_user = a.id
                      where c.id_character = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {

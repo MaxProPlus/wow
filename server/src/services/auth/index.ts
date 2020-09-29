@@ -1,10 +1,10 @@
-import AccountModel from '../../models/account/model'
+import UserModel from '../../models/account/model'
 
 class Auth {
-    private userModel: AccountModel
+    private userModel: UserModel
 
     constructor(connection: any) {
-        this.userModel = new AccountModel(connection)
+        this.userModel = new UserModel(connection)
     }
 
     // Проверка авторизации по токену

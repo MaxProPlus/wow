@@ -1,25 +1,25 @@
 import {Express, Request, Response} from 'express'
-import AccountModel from '../models/account/model'
+import UserModel from '../models/account/model'
 import Auth from '../services/auth'
-import {Account, UserPassword} from '../common/entity/types'
+import {User, UserPassword} from '../common/entity/types'
 import Validator from '../common/validator'
 import {UploadedFile} from 'express-fileupload'
 import {About} from '../entity/types'
 
-class AccountController {
+class UserController {
     validator = new Validator()
-    private userModel: AccountModel
+    private userModel: UserModel
     private auth: Auth
 
     constructor(app: Express) {
         const db = app.get('db')
-        this.userModel = new AccountModel(db)
+        this.userModel = new UserModel(db)
         this.auth = new Auth(db)
     }
 
     // Регистрация
     signUp = (req: Request, res: Response) => {
-        const user: Account = req.body
+        const user: User = req.body
         const {ok, err} = this.validator.validateSignup(user)
         if (!ok) {
             return res.json({
@@ -44,7 +44,7 @@ class AccountController {
 
     // Авторизация
     signIn = (req: Request, res: Response) => {
-        const user: Account = req.body
+        const user: User = req.body
         const about = new About()
         about.ip = req.ip
         return this.userModel.login(user, about).then((r: any) => {
@@ -154,7 +154,7 @@ class AccountController {
 
     // Редактирование основной информации
     updateGeneral = async (req: Request, res: Response) => {
-        const user: Account = req.body
+        const user: User = req.body
         try {
             user.id = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
@@ -185,7 +185,7 @@ class AccountController {
 
     // Редактирование настроек безопасноти
     updateSecure = async (req: Request, res: Response) => {
-        const user: Account = req.body
+        const user: User = req.body
         const {ok, err} = this.validator.validateEmail(user)
         if (!ok) {
             return res.json({
@@ -283,4 +283,4 @@ class AccountController {
     }
 }
 
-export default AccountController
+export default UserController

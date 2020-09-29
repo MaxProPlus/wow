@@ -3,7 +3,7 @@ import Spinner from "../../components/spinner/Spinner"
 import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Account, Forum} from "../../../../server/src/common/entity/types"
+import {User, Forum} from "../../../../server/src/common/entity/types"
 import Validator from "../../../../server/src/common/validator"
 import history from "../../utils/history"
 import UserContext from "../../utils/userContext"
@@ -28,7 +28,7 @@ type P = RouteProps & RouteComponentProps<MatchId>
 type S = CommonS & {
     id: string
     urlAvatar: string,
-    idAccount: number
+    idUser: number
     isAdmin: boolean,
     globalErrorMessage: string,
 }
@@ -61,12 +61,12 @@ class ForumEdit extends React.Component<P, S> {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && !this.state.globalErrorMessage // Если еще не выполнили проверку
             && this.context.user.id > 0 // Если контекст загружен
-            && this.state.idAccount !== 0) { // Если сюжет загружен
+            && this.state.idUser !== 0) { // Если сюжет загружен
 
             // Проверяем есть ли id пользователя в массиве соавторов
             // Если есть, то он имеет право на редактирование
             // Если нет, то сравниваем id пользователя и id создателя материала
-            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idAccount)
+            const isAdmin = ((this.state.coauthors.findIndex((el: Option) => el.value === this.context.user.id) !== -1) ? true : this.context.user.id === this.state.idUser)
             this.setState({
                 isAdmin,
                 globalErrorMessage: isAdmin ? '' : 'Нет прав'
@@ -77,7 +77,7 @@ class ForumEdit extends React.Component<P, S> {
     updateData = () => {
         this.forumApi.getById(this.state.id).then(r => {
             delete r.id
-            r[0].coauthors = r[0].coauthors.map((el: Account) => {
+            r[0].coauthors = r[0].coauthors.map((el: User) => {
                 return {
                     label: el.nickname,
                     value: el.id
@@ -127,10 +127,10 @@ class ForumEdit extends React.Component<P, S> {
                 return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
-                        coauthorsOptions: r.data.filter((el: Account) => {
+                        coauthorsOptions: r.data.filter((el: User) => {
                             return this.state.coauthors.findIndex((e: Option) => e.value === el.id
                             ) === -1
-                        }).map((el: Account) => {
+                        }).map((el: User) => {
                             return {
                                 label: el.nickname,
                                 value: el.id

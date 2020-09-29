@@ -5,7 +5,7 @@ import UserApi from "../../api/UserApi"
 import history from "../../utils/history"
 import Spinner from "../../components/spinner/Spinner"
 import Profile from "../../components/profile/Profile"
-import {Account} from "../../../../server/src/common/entity/types"
+import {User} from "../../../../server/src/common/entity/types"
 import {RouteComponentProps} from "react-router-dom"
 import {MatchId} from "../../types/RouteProps"
 
@@ -13,7 +13,7 @@ type P = RouteComponentProps<MatchId>
 
 type S = {
     isLoaded: boolean
-    user: Account
+    user: User
 }
 
 class ProfilePage extends React.Component<P, S> {
@@ -24,7 +24,7 @@ class ProfilePage extends React.Component<P, S> {
         super(props)
         this.state = {
             isLoaded: false,
-            user: new Account(),
+            user: new User(),
         }
     }
 

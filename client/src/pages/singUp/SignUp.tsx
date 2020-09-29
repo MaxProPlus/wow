@@ -5,7 +5,7 @@ import UserApi from "../../api/UserApi"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Validator from "../../../../server/src/common/validator"
-import {Account} from "../../../../server/src/common/entity/types"
+import {User} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/inputField/InputField"
 import Form from "../../components/form/Form"
 import Button from "../../components/button/Button"
@@ -39,7 +39,7 @@ class SignUp extends Component<P, S> {
 
     handleSubmit = (e: any) => {
         e.preventDefault()
-        let user = new Account()
+        let user = new User()
         user.username = this.state.login
         user.email = this.state.email
         user.password = this.state.password

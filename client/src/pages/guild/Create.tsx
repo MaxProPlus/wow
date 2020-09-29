@@ -7,7 +7,7 @@ import Form from "../../components/form/Form"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import Button from "../../components/button/Button"
 import {
-    Account,
+    User,
     Character,
     defaultGuildAvatar,
     Guild,
@@ -110,10 +110,10 @@ class GuildCreate extends React.Component<P, CommonS> {
                 return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
-                        coauthorsOptions: r.data.filter((el: Account) => {
+                        coauthorsOptions: r.data.filter((el: User) => {
                             return this.state.coauthors.findIndex((e: Option) => e.value === el.id
                             ) === -1
-                        }).map((el: Account) => {
+                        }).map((el: User) => {
                             return {
                                 label: el.nickname,
                                 value: el.id

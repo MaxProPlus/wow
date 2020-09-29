@@ -1,11 +1,11 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/user'
 import Hash from '../../services/hash'
 import Uploader from '../../services/uploader'
-import {Account, UserPassword} from '../../common/entity/types'
+import {User, UserPassword} from '../../common/entity/types'
 import {About, defaultAvatar, Token, UserAuth} from '../../entity/types'
 import RightModel from '../right/model'
 
-class AccountModel {
+class UserModel {
     private mapper: Mapper
     private hash = new Hash()
     private uploader = new Uploader()
@@ -17,26 +17,26 @@ class AccountModel {
     }
 
     // Регистрация
-    signUp = async (user: Account, about: About) => {
+    signUp = async (user: User, about: About) => {
         user.username = user.username.toUpperCase()
         user.password = user.password.toUpperCase()
         user.password = this.hash.getHash(user.username, user.password)
         const id = await this.mapper.signup(user)
         return this.mapper.saveToken({
-            idAccount: id,
+            idUser: id,
             text: this.hash.getToken(),
             ip: about.ip,
         } as Token)
     }
 
     // Авторизация
-    login = async (user: Account, about: About) => {
+    login = async (user: User, about: About) => {
         user.username = user.username.toUpperCase()
         user.password = user.password.toUpperCase()
         user.password = this.hash.getHash(user.username, user.password)
         const id = await this.mapper.login(user)
         return this.mapper.saveToken({
-            idAccount: id,
+            idUser: id,
             text: this.hash.getToken(),
             ip: about.ip
         } as Token)
@@ -44,12 +44,12 @@ class AccountModel {
 
     // Получить контекст
     getContext = async (token: string) => {
-        const account: Account = await this.mapper.getContext(token)
-        if (!account.urlAvatar) {
-            account.urlAvatar = defaultAvatar
+        const user: User = await this.mapper.getContext(token)
+        if (!user.urlAvatar) {
+            user.urlAvatar = defaultAvatar
         }
-        account.rights = await this.rightModel.getRights(account.id)
-        return Promise.resolve(account)
+        user.rights = await this.rightModel.getRights(user.id)
+        return Promise.resolve(user)
     }
 
     // Проверка авторизации по токену
@@ -76,7 +76,7 @@ class AccountModel {
 
     // Получить пользователя по id
     getById = (id: number) => {
-        return this.mapper.selectById(id).then((user: Account) => {
+        return this.mapper.selectById(id).then((user: User) => {
             if (!user.urlAvatar) {
                 user.urlAvatar = defaultAvatar
             }
@@ -102,14 +102,14 @@ class AccountModel {
     }
 
     // Редактирование основной информации
-    updateGeneral = async (account: Account) => {
-        await this.mapper.updateGeneral(account)
-        return this.mapper.selectUserGeneralById(account.id)
+    updateGeneral = async (user: User) => {
+        await this.mapper.updateGeneral(user)
+        return this.mapper.selectUserGeneralById(user.id)
     }
 
     // Редактирование настроек безопасноти
-    updateSecure = async (account: Account) => {
-        return this.mapper.updateSecure(account)
+    updateSecure = async (user: User) => {
+        return this.mapper.updateSecure(user)
     }
 
     // Редактирование пароля
@@ -130,4 +130,4 @@ class AccountModel {
     }
 }
 
-export default AccountModel
+export default UserModel

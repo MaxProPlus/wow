@@ -10,12 +10,12 @@ class GuildMapper extends BasicMaterialMapper {
 
     // Создать гильдию
     insert = (guild: Guild) => {
-        const {idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more, status, kit, closed, hidden, comment, style} = guild
-        const sql = `INSERT INTO guild (id_account, url_avatar, title, game_title, ideology, short_description,
+        const {idUser, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more, status, kit, closed, hidden, comment, style} = guild
+        const sql = `INSERT INTO guild (id_user, url_avatar, title, game_title, ideology, short_description,
                                         description, rule, more,
                                         status, kit, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [idAccount, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
+        return this.pool.query(sql, [idUser, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
             status, kit, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -39,7 +39,7 @@ class GuildMapper extends BasicMaterialMapper {
     // Получить гильдию по id
     selectById = (id: number): Promise<Guild> => {
         const sql = `select id,
-                            id_account        as idAccount,
+                            id_user        as idUser,
                             url_avatar        as urlAvatar,
                             title,
                             game_title        as gameTitle,
@@ -71,7 +71,7 @@ class GuildMapper extends BasicMaterialMapper {
     // Получить участников гильдии
     selectMembersById = (id: number): Promise<Character[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.nickname,
@@ -110,7 +110,7 @@ class GuildMapper extends BasicMaterialMapper {
     // Получить сюжеты гильдии
     selectStoresById = (id: number): Promise<Story[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.date_start        as dateStart,
@@ -140,7 +140,7 @@ class GuildMapper extends BasicMaterialMapper {
     // Получить все гильдии
     selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
-                          id_account        as idAccount,
+                          id_user        as idUser,
                           url_avatar        as urlAvatar,
                           title,
                           game_title        as gameTitle,
@@ -277,9 +277,9 @@ class GuildMapper extends BasicMaterialMapper {
 
     // Создать комментарий
     insertComment = (comment: CommentGuild): Promise<number> => {
-        const sql = `INSERT INTO guild_comment (text, id_account, id_guild)
+        const sql = `INSERT INTO guild_comment (text, id_user, id_guild)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idGuild]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idGuild]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -291,12 +291,12 @@ class GuildMapper extends BasicMaterialMapper {
     selectCommentsByIdGuild = (id: number) => {
         const sql = `select c.id,
                             c.text,
-                            c.id_account as idAccount,
+                            c.id_user as idUser,
                             c.id_guild   as idGuild,
                             a.nickname   as authorNickname,
                             a.url_avatar as authorUrlAvatar
                      from guild_comment c
-                              join account a on c.id_account = a.id
+                              join account a on c.id_user = a.id
                      where c.id_guild = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentGuild[]]) => {

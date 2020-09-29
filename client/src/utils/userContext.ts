@@ -1,8 +1,8 @@
 import React from "react"
-import {Account} from "../../../server/src/common/entity/types"
+import {User} from "../../../server/src/common/entity/types"
 
 const UserContext = React.createContext({
-    user: new Account(), updateLogin: () => {
+    user: new User(), updateLogin: () => {
     }
 })
 

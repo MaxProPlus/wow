@@ -5,7 +5,7 @@ export const defaultAvatar = '/avatar/standard.png'
 
 export class Token {
     id = 0
-    idAccount = 0
+    idUser = 0
     text = ''
     ip = ''
 }

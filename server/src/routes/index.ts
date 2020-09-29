@@ -1,5 +1,5 @@
 import {Express, Router} from 'express'
-import AccountController from '../controllers/AccountController'
+import UserController from '../controllers/UserController'
 import TicketController from '../controllers/TicketController'
 import CharacterController from '../controllers/CharacterController'
 import GuildController from '../controllers/GuildController'
@@ -12,7 +12,7 @@ export default (app: Express) => {
     const router = Router()
 
     // Инициализация контроллеров
-    const accountController = new AccountController(app)
+    const userController = new UserController(app)
     const ticketController = new TicketController(app)
     const characterController = new CharacterController(app)
     const guildController = new GuildController(app)
@@ -20,17 +20,17 @@ export default (app: Express) => {
     const reportController = new ReportController(app)
     const forumController = new ForumController(app)
 
-    router.post('/users/general', accountController.updateGeneral)
-    router.post('/users/avatar', accountController.updateAvatar)
-    router.post('/users/secure', accountController.updateSecure)
-    router.post('/users/password', accountController.updatePassword)
-    router.post('/users/signup', accountController.signUp)
-    router.post('/users/signin', accountController.signIn)
-    router.get('/users/logout', accountController.logout)
-    router.get('/users/context', accountController.getContext)
-    router.get('/users/general', accountController.getGeneral)
-    router.get('/users/:id', accountController.getUser)
-    router.get('/users', accountController.getAll)
+    router.post('/users/general', userController.updateGeneral)
+    router.post('/users/avatar', userController.updateAvatar)
+    router.post('/users/secure', userController.updateSecure)
+    router.post('/users/password', userController.updatePassword)
+    router.post('/users/signup', userController.signUp)
+    router.post('/users/signin', userController.signIn)
+    router.get('/users/logout', userController.logout)
+    router.get('/users/context', userController.getContext)
+    router.get('/users/general', userController.getGeneral)
+    router.get('/users/:id', userController.getUser)
+    router.get('/users', userController.getAll)
 
     // Тикеты
     router.post('/tickets', ticketController.create)

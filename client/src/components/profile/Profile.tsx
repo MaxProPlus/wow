@@ -2,9 +2,9 @@ import React from 'react'
 import AvatarImg from "../../components/avatar-img/AvatarImg"
 import './Profile.scss'
 import history from "../../utils/history"
-import {Account} from "../../../../server/src/common/entity/types"
+import {User} from "../../../../server/src/common/entity/types"
 
-type propsTypes = Account & {
+type propsTypes = User & {
     children?: any
     onClick?: any
 }

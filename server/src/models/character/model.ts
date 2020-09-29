@@ -1,5 +1,5 @@
 import Mapper from '../mappers/character'
-import {Account, Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
+import {User, Character, CommentCharacter, Guild, Story} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -29,7 +29,7 @@ class CharacterModel {
 
     // Получить персонажа по id
     getById = (id: number): Promise<[Character, CommentCharacter[]]> => {
-        const p: [Promise<Character>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentCharacter[]>] = [
+        const p: [Promise<Character>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<User[]>, Promise<CommentCharacter[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectByIdLink(id),
             this.mapper.selectGuildsById(id),
@@ -37,7 +37,7 @@ class CharacterModel {
             this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Character, Character[], Guild[], Story[], Account[], CommentCharacter[]>(p).then(([c, links, guilds, stores, coauthors, comments]) => {
+        return Promise.all<Character, Character[], Guild[], Story[], User[], CommentCharacter[]>(p).then(([c, links, guilds, stores, coauthors, comments]) => {
             c.friends = links
             c.guilds = guilds
             c.stores = stores
@@ -64,7 +64,7 @@ class CharacterModel {
         const oldCharacter = await this.mapper.selectById(c.id)
 
         oldCharacter.coauthors = await this.mapper.selectCoauthorById(c.id)
-        if (oldCharacter.idAccount !== c.idAccount && (oldCharacter.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
+        if (oldCharacter.idUser !== c.idUser && (oldCharacter.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
 
@@ -92,7 +92,7 @@ class CharacterModel {
             }
         }))
         // Перебор старого списка соавторов
-        await Promise.all(oldCharacter.coauthors.map(async (el: Account) => {
+        await Promise.all(oldCharacter.coauthors.map(async (el: User) => {
             // Если не находим в новом списке, то удаляем
             if (c.coauthors.indexOf(el.id) === -1) {
                 return await this.mapper.removeCoauthor(c.id, el.id)
@@ -115,7 +115,7 @@ class CharacterModel {
     // Удалить персонажа
     remove = async (character: Character) => {
         const oldCharacter = await this.mapper.selectById(character.id)
-        if (oldCharacter.idAccount !== character.idAccount) {
+        if (oldCharacter.idUser !== character.idUser) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(oldCharacter.urlAvatar)
@@ -125,7 +125,7 @@ class CharacterModel {
     // Создать комментарий к персонажу
     createComment = async (comment: CommentCharacter) => {
         const c = await this.mapper.selectById(comment.idCharacter)
-        if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
+        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
             return Promise.reject('Комментирование запрещено')
         }
         return this.mapper.insertComment(comment)

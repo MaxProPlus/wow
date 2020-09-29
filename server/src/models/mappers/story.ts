@@ -9,12 +9,12 @@ class StoryMapper extends BasicMaterialMapper {
 
     // Создать сюжет
     insert = (story: Story) => {
-        const {idAccount, urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style} = story
-        const sql = `INSERT INTO story (id_account, url_avatar, title, period, date_start, short_description,
+        const {idUser, urlAvatar, title, dateStart, period, shortDescription, description, rule, more, status, closed, hidden, comment, style} = story
+        const sql = `INSERT INTO story (id_user, url_avatar, title, period, date_start, short_description,
                                         description, rule, more,
                                         status, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [idAccount, urlAvatar, title, period, dateStart, shortDescription,
+        return this.pool.query(sql, [idUser, urlAvatar, title, period, dateStart, shortDescription,
             description, rule, more, status, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -50,7 +50,7 @@ class StoryMapper extends BasicMaterialMapper {
     // Получить сюжет по id
     selectById = (id: number): Promise<Story> => {
         const sql = `select id,
-                            id_account        as idAccount,
+                            id_user        as idUser,
                             url_avatar        as urlAvatar,
                             title,
                             date_start        as dateStart,
@@ -85,7 +85,7 @@ class StoryMapper extends BasicMaterialMapper {
     // Получить участников сюжета
     selectMembersById = (id: number): Promise<Character[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.nickname,
@@ -124,7 +124,7 @@ class StoryMapper extends BasicMaterialMapper {
     // Получить гильдии сюжета
     selectGuildsById = (id: number): Promise<Guild[]> => {
         const sql = `select link.id,
-                            link.id_account        as idAccount,
+                            link.id_user        as idUser,
                             link.url_avatar        as urlAvatar,
                             link.title,
                             link.game_title        as gameTitle,
@@ -155,7 +155,7 @@ class StoryMapper extends BasicMaterialMapper {
     // Получить все сюжеты
     selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
-                          id_account        as idAccount,
+                          id_user        as idUser,
                           url_avatar        as urlAvatar,
                           title,
                           date_start        as dateStart,
@@ -307,9 +307,9 @@ class StoryMapper extends BasicMaterialMapper {
 
     // Создать комментарий
     insertComment = (comment: CommentStory): Promise<number> => {
-        const sql = `INSERT INTO story_comment (text, id_account, id_story)
+        const sql = `INSERT INTO story_comment (text, id_user, id_story)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idStory]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idStory]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -321,12 +321,12 @@ class StoryMapper extends BasicMaterialMapper {
     selectCommentsByIdStory = (id: number) => {
         const sql = `select c.id,
                             c.text,
-                            c.id_account as idAccount,
+                            c.id_user as idUser,
                             c.id_story   as idStory,
                             a.nickname   as authorNickname,
                             a.url_avatar as authorUrlAvatar
                      from story_comment c
-                              join account a on c.id_account = a.id
+                              join account a on c.id_user = a.id
                      where c.id_story = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentStory[]]) => {

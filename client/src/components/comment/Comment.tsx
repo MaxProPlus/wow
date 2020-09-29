@@ -12,9 +12,9 @@ export default function Comment(props: propsTypes) {
     return (
         <div className="comment-item">
             <div className="d-flex justify-content-between">
-                <Link to={'/profile/' + props.idAccount}><AvatarImg url={props.authorUrlAvatar}/></Link>
+                <Link to={'/profile/' + props.idUser}><AvatarImg url={props.authorUrlAvatar}/></Link>
                 <div className="flex-grow-1">
-                    <div className="comment-author__nickname"><Link to={'/profile/' + props.idAccount}>{props.authorNickname}</Link>
+                    <div className="comment-author__nickname"><Link to={'/profile/' + props.idUser}>{props.authorNickname}</Link>
                     </div>
                     {/*<div>{props.date}</div>*/}
                 </div>

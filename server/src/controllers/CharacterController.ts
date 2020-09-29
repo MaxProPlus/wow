@@ -39,7 +39,7 @@ class CharacterController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -68,13 +68,13 @@ class CharacterController {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        let idAccount = 0
+        let idUser = 0
         try {
-            idAccount = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
         }
         return this.characterModel.getById(id).then(([character, comments]) => {
-            if (!!character.closed && idAccount !== character.idAccount) {
+            if (!!character.closed && idUser !== character.idUser) {
                 return res.json({
                     status: 'ERROR_RIGHT',
                     errorMessage: 'Нет прав для просмотра',
@@ -149,7 +149,7 @@ class CharacterController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -180,7 +180,7 @@ class CharacterController {
             })
         }
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -203,7 +203,7 @@ class CharacterController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentCharacter = req.body
         try {
-            c.idAccount = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(req.cookies.token)
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({

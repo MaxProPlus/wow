@@ -1,4 +1,4 @@
-export class Account {
+export class User {
     id = 0
     username = ''
     email = ''
@@ -20,7 +20,7 @@ export class UserPassword {
 export class Comment {
     id = 0
     text = ''
-    idAccount = 0
+    idUser = 0
     authorNickname = ''
     authorUrlAvatar = ''
 }
@@ -51,11 +51,11 @@ export class CommentForum extends Comment {
 
 export class Ticket {
     id = 0
+    idUser = 0
     title = ''
     text = ''
     status = TicketStatus.START
     idTicketType = 0
-    idAccount = 0
     userNickname = ''
     moderNickname = ''
 }
@@ -88,7 +88,7 @@ export function ticketStatusToString(status: number) {
 
 export class Character {
     id = 0
-    idAccount = 0
+    idUser = 0
     urlAvatar = ''
     title = '' // Полное имя персонажа
     nickname = '' // Игровое имя
@@ -204,7 +204,7 @@ export function characterActiveToString(active: number) {
 // Гильдия
 export class Guild {
     id = 0
-    idAccount = 0
+    idUser = 0
     urlAvatar = '' // avatar
 
     // Главное
@@ -260,7 +260,7 @@ export function guildKitToString(active: number) {
 // Сюжет
 export class Story {
     id = 0
-    idAccount = 0
+    idUser = 0
     urlAvatar = '' // avatar
 
     // Главное
@@ -302,7 +302,7 @@ export function storyStatusToString(status: number) {
 
 export class Report {
     id = 0
-    idAccount = 0
+    idUser = 0
     urlAvatar = ''
 
     // Главное
@@ -326,7 +326,7 @@ export class Report {
 
 export class Forum {
     id = 0
-    idAccount = 0
+    idUser = 0
     urlAvatar = ''
 
     // Главное

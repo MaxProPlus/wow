@@ -1,4 +1,4 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/right'
 
 class RightModel {
     private mapper: Mapper
@@ -7,16 +7,16 @@ class RightModel {
         this.mapper = new Mapper(connection.getPoolPromise())
     }
 
-    getRights = (idAccount: number) => {
-        return this.mapper.selectRights(idAccount)
+    getRights = (id: number) => {
+        return this.mapper.selectRights(id)
     }
 
-    ticketRead = (idAccount: number): Promise<boolean> => {
-        return this.mapper.checkRight('TICKET_READ', idAccount)
+    ticketRead = (id: number): Promise<boolean> => {
+        return this.mapper.checkRight('TICKET_READ', id)
     }
 
-    ticketUpdateStatus = (idAccount: number): Promise<boolean> => {
-        return this.mapper.checkRight('TICKET_UPDATE_STATUS', idAccount)
+    ticketUpdateStatus = (id: number): Promise<boolean> => {
+        return this.mapper.checkRight('TICKET_UPDATE_STATUS', id)
     }
 }
 

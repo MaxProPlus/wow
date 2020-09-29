@@ -1,8 +1,8 @@
-import {Account, UserPassword} from "../../../server/src/common/entity/types"
+import {User, UserPassword} from "../../../server/src/common/entity/types"
 import Api from "./BasicApi"
 
 class UserApi extends Api {
-    updateGeneral(profile: Account) {
+    updateGeneral(profile: User) {
         const url = '/api/users/general'
         return this.post(url, profile).then(r => {
             if (r.status !== 'OK')
@@ -20,7 +20,7 @@ class UserApi extends Api {
         })
     }
 
-    updateSecure(user: Account) {
+    updateSecure(user: User) {
         const url = '/api/users/secure'
         return this.post(url, user).then(r => {
             if (r.status !== 'OK')
@@ -47,7 +47,7 @@ class UserApi extends Api {
         })
     }
 
-    signIn(user: Account) {
+    signIn(user: User) {
         const url = '/api/users/signin'
         return this.post(url, user).then(r => {
             if (r.status !== 'OK')
@@ -74,9 +74,9 @@ class UserApi extends Api {
         })
     }
 
-    signup(account: Account) {
+    signup(user: User) {
         const url = '/api/users/signup'
-        return this.post(url, account).then(r => {
+        return this.post(url, user).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
             return Promise.resolve()

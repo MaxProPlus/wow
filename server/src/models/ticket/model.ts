@@ -1,4 +1,4 @@
-import Mapper from './mapper'
+import Mapper from '../mappers/ticket'
 import {CommentTicket, Ticket, TicketStatus} from '../../common/entity/types'
 import {defaultAvatar} from '../../entity/types'
 

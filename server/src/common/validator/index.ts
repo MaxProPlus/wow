@@ -1,4 +1,4 @@
-import {Account, Character, Comment, Forum, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
+import {User, Character, Comment, Forum, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -46,7 +46,7 @@ class Validator {
     }
 
     // Валидация настроек безопасности
-    validateEmail(user: Account) {
+    validateEmail(user: User) {
         let ok = true
         let err = ''
         if (!/^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i.test(user.email)) {
@@ -57,7 +57,7 @@ class Validator {
     }
 
     // Валидация регистрации
-    validateSignup(user: Account) {
+    validateSignup(user: User) {
         let {ok, err} = this.validateEmail(user)
         if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.username)) {
             ok = false
@@ -90,7 +90,7 @@ class Validator {
     }
 
     // Валидация основной информации
-    validateGeneral(user: Account) {
+    validateGeneral(user: User) {
         let ok = true
         let err = ''
         user.nickname = this.trim(user.nickname)

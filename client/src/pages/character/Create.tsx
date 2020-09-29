@@ -4,7 +4,7 @@ import Button from "../../components/button/Button"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {
-    Account,
+    User,
     Character,
     characterActiveToString,
     characterStatusToString,
@@ -108,10 +108,10 @@ class CharacterCreate extends React.Component<P, CommonS> {
                 return this.userApi.getAll(3, 1, {nickname: e.value}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
-                        coauthorsOptions: r.data.filter((el: Account) => {
+                        coauthorsOptions: r.data.filter((el: User) => {
                             return this.state.coauthors.findIndex((e: Option) => e.value === el.id
                             ) === -1
-                        }).map((el: Account) => {
+                        }).map((el: User) => {
                             return {
                                 label: el.nickname,
                                 value: el.id

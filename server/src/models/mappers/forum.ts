@@ -9,11 +9,11 @@ class ForumMapper extends BasicMaterialMapper {
 
     // Создать форум
     insert = (forum: Forum) => {
-        const {idAccount, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = forum
-        const sql = `INSERT INTO forum (id_account, url_avatar, title, short_description,
+        const {idUser, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = forum
+        const sql = `INSERT INTO forum (id_user, url_avatar, title, short_description,
                                         description, rule, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [idAccount, urlAvatar, title, shortDescription,
+        return this.pool.query(sql, [idUser, urlAvatar, title, shortDescription,
             description, rule, closed, hidden, comment, style]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
@@ -25,7 +25,7 @@ class ForumMapper extends BasicMaterialMapper {
     // Получить форум по id
     selectById = (id: number): Promise<Forum> => {
         const sql = `select id,
-                            id_account        as idAccount,
+                            id_user        as idUser,
                             url_avatar        as urlAvatar,
                             title,
                             short_description as shortDescription,
@@ -52,7 +52,7 @@ class ForumMapper extends BasicMaterialMapper {
     // Получить список форумов
     selectAll = (limit: number, page: number, data?: any) => {
         let sql = `select id,
-                          id_account        as idAccount,
+                          id_user        as idUser,
                           url_avatar        as urlAvatar,
                           title,
                           short_description as shortDescription,
@@ -163,9 +163,9 @@ class ForumMapper extends BasicMaterialMapper {
 
     // Создать комментарий
     insertComment = (comment: CommentForum): Promise<number> => {
-        const sql = `INSERT INTO forum_comment (text, id_account, id_forum)
+        const sql = `INSERT INTO forum_comment (text, id_user, id_forum)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idForum]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idForum]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -177,12 +177,12 @@ class ForumMapper extends BasicMaterialMapper {
     selectCommentsByIdForum = (id: number) => {
         const sql = `select c.id,
                             c.text,
-                            c.id_account as idAccount,
+                            c.id_user as idUser,
                             c.id_forum   as idForum,
                             a.nickname   as authorNickname,
                             a.url_avatar as authorUrlAvatar
                      from forum_comment c
-                              join account a on c.id_account = a.id
+                              join account a on c.id_user = a.id
                      where c.id_forum = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentForum[]]) => {

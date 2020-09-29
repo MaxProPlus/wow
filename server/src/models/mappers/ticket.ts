@@ -1,18 +1,14 @@
-import {Account, CommentTicket, Ticket, TicketStatus, TicketType} from '../../common/entity/types'
+import {User, CommentTicket, Ticket, TicketStatus, TicketType} from '../../common/entity/types'
 import logger from '../../services/logger'
+import BasicMapper from './mapper'
 
-class Mapper {
-    private pool: any
-
-    constructor(pool: any) {
-        this.pool = pool
-    }
+class TicketMapper extends BasicMapper{
 
     // Создать тикет
     insert = (ticket: Ticket) => {
-        const sql = `INSERT INTO ticket (title, text, id_ticket_type, id_account)
+        const sql = `INSERT INTO ticket (title, text, id_ticket_type, id_user)
                      VALUES (?, ?, ?, ?)`
-        return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idAccount]).then(([r]: any) => {
+        return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idUser]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -22,9 +18,9 @@ class Mapper {
 
     // Создать комментарий на тикет
     insertComment = (comment: CommentTicket) => {
-        const sql = `INSERT INTO comment (text, id_account, id_ticket)
+        const sql = `INSERT INTO ticket_comment (text, id_user, id_ticket)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idAccount, comment.idTicket]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idTicket]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -57,15 +53,15 @@ class Mapper {
                t.text,
                t.status,
                t.date_init        as dateInit,
-               t.id_account       as idAccount,
-               t.id_account_moder as idAccountModer,
+               t.id_user       as idUser,
+               t.id_user_moder as idUserModer,
                aUser.nickname     as userNickname,
                aModer.nickname    as moderNickname
         from ticket t
-                 join account aUser on t.id_account = aUser.id
-                 left join account aModer on t.id_account_moder = aModer.id
+                 join account aUser on t.id_user = aUser.id
+                 left join account aModer on t.id_user_moder = aModer.id
         where t.id = ?`
-        return this.pool.query(sql, [id]).then(([r]: [Account[]]) => {
+        return this.pool.query(sql, [id]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Тикет не найден')
             }
@@ -80,12 +76,12 @@ class Mapper {
     selectCommentsByIdTicket = (id: number) => {
         const sql = `select c.id,
                c.text,
-               c.id_account as idAccount,
+               c.id_user as idUser,
                c.id_ticket  as idTicket,
                a.nickname   as authorNickname,
                a.url_avatar as authorUrlAvatar
         from comment c
-                 join account a on c.id_account = a.id
+                 join account a on c.id_user = a.id
         where c.id_ticket = ?`
         return this.pool.query(sql, [id]).then(([r]: [CommentTicket[]]) => {
             return Promise.resolve(r)
@@ -128,7 +124,7 @@ class Mapper {
 
     // Получить все тикеты по id типу
     selectTicketsByType = (id: number, limit: number, page: number) => {
-        const sql = `select t.id, t.title, t.id_ticket_type as idTicketType, t.text, t.status, t.date_init as dateInit, t.id_account as idAccount, t.id_account_moder as idAccountModer 
+        const sql = `select t.id, t.title, t.id_ticket_type as idTicketType, t.text, t.status, t.date_init as dateInit, t.id_user as idUser, t.id_user_moder as idUserModer 
             from ticket t 
             where t.id_ticket_type = ? limit ? offset ?`
         return this.pool.query(sql, [id, limit, limit * (page - 1)]).then(([r]: [Ticket[]]) => {
@@ -153,4 +149,4 @@ class Mapper {
     }
 }
 
-export default Mapper
+export default TicketMapper

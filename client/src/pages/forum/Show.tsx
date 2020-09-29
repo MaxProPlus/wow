@@ -1,6 +1,6 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
-import {Account, CommentForum, Forum} from "../../../../server/src/common/entity/types"
+import {User, CommentForum, Forum} from "../../../../server/src/common/entity/types"
 import UserContext from "../../utils/userContext"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import CommentForm from "../../components/commentFrom/CommentForm"
@@ -67,9 +67,9 @@ class ForumPage extends React.Component<P, S> {
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && this.context.user.id > 0) {
-            const isAdmin = ((this.state.forum.coauthors.findIndex((el: Account) => {
+            const isAdmin = ((this.state.forum.coauthors.findIndex((el: User) => {
                 return el.id === this.context.user.id
-            }) === -1) ? this.context.user.id === this.state.forum.idAccount : true)
+            }) === -1) ? this.context.user.id === this.state.forum.idUser : true)
             if (isAdmin) {
                 this.setState({
                     isAdmin

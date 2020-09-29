@@ -1,7 +1,7 @@
 import React from "react"
 import Spinner from "../../components/spinner/Spinner"
 import {
-    Account,
+    User,
     CommentGuild,
     Guild,
     guildKitToString,
@@ -81,9 +81,9 @@ class GuildPage extends React.Component<P, S> {
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>) {
         // Проверить есть ли права на редактирование
         if (!this.state.isAdmin && this.context.user.id > 0) {
-            const isAdmin = ((this.state.guild.coauthors.findIndex((el: Account) => {
+            const isAdmin = ((this.state.guild.coauthors.findIndex((el: User) => {
                 return el.id === this.context.user.id
-            }) === -1) ? this.context.user.id === this.state.guild.idAccount : true)
+            }) === -1) ? this.context.user.id === this.state.guild.idUser : true)
             if (isAdmin) {
                 this.setState({
                     isAdmin

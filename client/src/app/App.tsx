@@ -5,7 +5,7 @@ import './App.scss'
 import history from "utils/history"
 import UserApi from "api/UserApi"
 import UserContext from "utils/userContext"
-import {Account} from "../../../server/src/common/entity/types"
+import {User} from "../../../server/src/common/entity/types"
 import HeaderTop from "./headerTop/HeaderTop"
 import Routes from "./Routes"
 import Cookie from "../utils/cookie"
@@ -14,7 +14,7 @@ import HeaderLeft from "./headerLeft/HeaderLeft"
 interface IState {
     isLoaded: boolean
     showMenu: boolean
-    user: Account
+    user: User
 }
 
 class App extends React.Component<{}, IState> {
@@ -27,7 +27,7 @@ class App extends React.Component<{}, IState> {
         this.state = {
             isLoaded: false,
             showMenu: false,
-            user: new Account(),
+            user: new User(),
         }
     }
 
@@ -36,7 +36,7 @@ class App extends React.Component<{}, IState> {
         if (!token) {
             this.setState({
                 user: {
-                    ...new Account(),
+                    ...new User(),
                     id: -1,
                 }
             })
@@ -54,7 +54,7 @@ class App extends React.Component<{}, IState> {
         }, () => {
             this.setState({
                 user: {
-                    ...new Account(),
+                    ...new User(),
                     id: -1,
                 }
             })

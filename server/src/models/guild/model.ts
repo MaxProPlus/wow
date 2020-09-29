@@ -1,5 +1,5 @@
 import Mapper from '../mappers/guild'
-import {Account, Character, CommentGuild, Guild, Story} from '../../common/entity/types'
+import {User, Character, CommentGuild, Guild, Story} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -29,14 +29,14 @@ class GuildModel {
 
     // Получить гильдию по id
     getById = (id: number): Promise<[Guild, CommentGuild[]]> => {
-        const p: [Promise<Guild>, Promise<Character[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentGuild[]>] = [
+        const p: [Promise<Guild>, Promise<Character[]>, Promise<Story[]>, Promise<User[]>, Promise<CommentGuild[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
             this.mapper.selectStoresById(id),
             this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Guild, Character[], Story[], Account[], CommentGuild[]>(p).then(([g, members, stores, coauthors, comments]) => {
+        return Promise.all<Guild, Character[], Story[], User[], CommentGuild[]>(p).then(([g, members, stores, coauthors, comments]) => {
             g.members = members
             g.stores = stores
             g.coauthors = coauthors
@@ -61,7 +61,7 @@ class GuildModel {
     update = async (guild: GuildUpload) => {
         const old = await this.mapper.selectById(guild.id)
         old.coauthors = await this.mapper.selectCoauthorById(guild.id)
-        if (old.idAccount !== guild.idAccount && (old.coauthors.findIndex((el: Account) => el.id === guild.idAccount)) === -1) {
+        if (old.idUser !== guild.idUser && (old.coauthors.findIndex((el: User) => el.id === guild.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
 
@@ -89,7 +89,7 @@ class GuildModel {
             }
         }))
         // Перебор старого списка соавторов
-        await Promise.all(old.coauthors.map(async (el: Account) => {
+        await Promise.all(old.coauthors.map(async (el: User) => {
             // Если не находим в новом списке, то удаляем
             if (guild.coauthors.indexOf(el.id) === -1) {
                 return await this.mapper.removeCoauthor(guild.id, el.id)
@@ -113,7 +113,7 @@ class GuildModel {
     remove = async (guild: Guild) => {
         const old = await this.mapper.selectById(guild.id)
         old.coauthors = await this.mapper.selectCoauthorById(guild.id)
-        if (old.idAccount !== guild.idAccount && (old.coauthors.findIndex((el: Account) => el.id === guild.idAccount)) === -1) {
+        if (old.idUser !== guild.idUser && (old.coauthors.findIndex((el: User) => el.id === guild.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(old.urlAvatar)
@@ -123,7 +123,7 @@ class GuildModel {
     // Создать комментарий
     createComment = async (comment: CommentGuild) => {
         const c = await this.mapper.selectById(comment.idGuild)
-        if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
+        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
             return Promise.reject('Комментирование запрещено')
         }
         return this.mapper.insertComment(comment)

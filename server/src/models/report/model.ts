@@ -1,5 +1,5 @@
 import Mapper from '../mappers/report'
-import {Account, Character, CommentReport, CommentStory, Guild, Report, Story} from '../../common/entity/types'
+import {User, Character, CommentReport, CommentStory, Guild, Report, Story} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -35,7 +35,7 @@ class ReportModel {
 
     // Получить отчет по id
     getById = (id: number): Promise<[Report, CommentReport[]]> => {
-        const p: [Promise<Report>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<Account[]>, Promise<CommentReport[]>] = [
+        const p: [Promise<Report>, Promise<Character[]>, Promise<Guild[]>, Promise<Story[]>, Promise<User[]>, Promise<CommentReport[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectMembersById(id),
             this.mapper.selectGuildsById(id),
@@ -43,7 +43,7 @@ class ReportModel {
             this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Report, Character[], Guild[], Story[], Account[], CommentReport[]>(p).then(([s, members,guilds, stores, coauthors, comments]) => {
+        return Promise.all<Report, Character[], Guild[], Story[], User[], CommentReport[]>(p).then(([s, members,guilds, stores, coauthors, comments]) => {
             s.members = members
             s.guilds = guilds
             s.stores = stores
@@ -69,7 +69,7 @@ class ReportModel {
     update = async (c: ReportUpload) => {
         const old = await this.mapper.selectById(c.id)
         old.coauthors = await this.mapper.selectCoauthorById(c.id)
-        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
+        if (old.idUser !== c.idUser && (old.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
 
@@ -129,7 +129,7 @@ class ReportModel {
             }
         }))
         // Перебор старого списка соавторов
-        await Promise.all(old.coauthors.map(async (el: Account) => {
+        await Promise.all(old.coauthors.map(async (el: User) => {
             // Если не находим в новом списке, то удаляем
             if (c.coauthors.indexOf(el.id) === -1) {
                 return await this.mapper.removeCoauthor(c.id, el.id)
@@ -152,7 +152,7 @@ class ReportModel {
     remove = async (report: Report) => {
         const old = await this.mapper.selectById(report.id)
         old.coauthors = await this.mapper.selectCoauthorById(report.id)
-        if (old.idAccount !== report.idAccount && (old.coauthors.findIndex((el: Account) => el.id === report.idAccount)) === -1) {
+        if (old.idUser !== report.idUser && (old.coauthors.findIndex((el: User) => el.id === report.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(old.urlAvatar)
@@ -162,7 +162,7 @@ class ReportModel {
     // Создать комментарий
     createComment = async (comment: CommentReport) => {
         const c = await this.mapper.selectById(comment.idReport)
-        if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
+        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
             return Promise.reject('Комментирование запрещено')
         }
         return this.mapper.insertComment(comment)

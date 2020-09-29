@@ -1,5 +1,5 @@
 import Mapper from '../mappers/forum'
-import {Account, CommentForum, CommentStory, Forum} from '../../common/entity/types'
+import {User, CommentForum, CommentStory, Forum} from '../../common/entity/types'
 import {defaultAvatar, ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 
@@ -27,12 +27,12 @@ class ForumModel {
 
     // Получить форум по id
     getById = (id: number): Promise<[Forum, CommentForum[]]> => {
-        const p: [Promise<Forum>, Promise<Account[]>, Promise<CommentForum[]>] = [
+        const p: [Promise<Forum>, Promise<User[]>, Promise<CommentForum[]>] = [
             this.mapper.selectById(id),
             this.mapper.selectCoauthorById(id),
             this.getComments(id),
         ]
-        return Promise.all<Forum, Account[], CommentForum[]>(p).then(([s, coauthors, comments]) => {
+        return Promise.all<Forum, User[], CommentForum[]>(p).then(([s, coauthors, comments]) => {
             s.coauthors = coauthors
             return [s, comments]
         })
@@ -56,7 +56,7 @@ class ForumModel {
         const old = await this.mapper.selectById(c.id)
 
         old.coauthors = await this.mapper.selectCoauthorById(c.id)
-        if (old.idAccount !== c.idAccount && (old.coauthors.findIndex((el: Account) => el.id === c.idAccount)) === -1) {
+        if (old.idUser !== c.idUser && (old.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
 
@@ -68,7 +68,7 @@ class ForumModel {
             }
         }))
         // Перебор старого списка соавторов
-        await Promise.all(old.coauthors.map(async (el: Account) => {
+        await Promise.all(old.coauthors.map(async (el: User) => {
             // Если не находим в новом списке, то удаляем
             if (c.coauthors.indexOf(el.id) === -1) {
                 return await this.mapper.removeCoauthor(c.id, el.id)
@@ -91,7 +91,7 @@ class ForumModel {
     remove = async (report: Forum) => {
         const old = await this.mapper.selectById(report.id)
         old.coauthors = await this.mapper.selectCoauthorById(report.id)
-        if (old.idAccount !== report.idAccount && (old.coauthors.findIndex((el: Account) => el.id === report.idAccount)) === -1) {
+        if (old.idUser !== report.idUser && (old.coauthors.findIndex((el: User) => el.id === report.idUser)) === -1) {
             return Promise.reject('Нет прав')
         }
         this.uploader.remove(old.urlAvatar)
@@ -101,7 +101,7 @@ class ForumModel {
     // Создать комментарий
     createComment = async (comment: CommentForum) => {
         const c = await this.mapper.selectById(comment.idForum)
-        if (!!c.comment || (!!c.closed && c.idAccount !== comment.idAccount)) {
+        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
             return Promise.reject('Комментирование запрещено')
         }
         return this.mapper.insertComment(comment)

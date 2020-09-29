@@ -4,7 +4,7 @@ import userContext from "../../utils/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import history from "../../utils/history"
 import Validator from "../../../../server/src/common/validator"
-import {Account, UserPassword} from "../../../../server/src/common/entity/types"
+import {User, UserPassword} from "../../../../server/src/common/entity/types"
 import InputField from "../../components/form/inputField/InputField"
 import AlertDanger from "../../components/alert-danger/AlertDanger"
 import {Redirect, RouteComponentProps} from "react-router-dom"
@@ -117,7 +117,7 @@ class Setting extends React.Component<P, S> {
 
     handleSubmitProfile = (e: any) => {
         e.preventDefault()
-        let user = new Account()
+        let user = new User()
         user.nickname = this.state.nickname
         const {ok, err} = this.validator.validateGeneral(user)
         if (!ok) {
@@ -146,7 +146,7 @@ class Setting extends React.Component<P, S> {
 
     handleSubmitSecure = (e: any) => {
         e.preventDefault()
-        let user = new Account()
+        let user = new User()
         user.email = this.state.email
         // user.username = this.state.username
         user.password = this.state.passwordAccept

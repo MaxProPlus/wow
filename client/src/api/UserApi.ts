@@ -56,6 +56,16 @@ class UserApi extends Api {
         })
     }
 
+    // api подтверждение регистрации
+    acceptEmail(token: string) {
+        const url = `/api/users/accept/reg?token=${token}`
+        return this.get(url).then(r => {
+            if (r.status !== 'OK')
+                return Promise.reject(r.errorMessage)
+            return Promise.resolve()
+        })
+    }
+
     logout() {
         const url = '/api/users/logout'
         return this.get(url).then(r => {

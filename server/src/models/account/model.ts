@@ -17,16 +17,31 @@ class UserModel {
     }
 
     // Регистрация
-    signUp = async (user: User, about: About) => {
+    signUp = async (user: User) => {
+        user.nickname = user.username
         user.username = user.username.toUpperCase()
         user.password = user.password.toUpperCase()
         user.password = this.hash.getHash(user.username, user.password)
-        const id = await this.mapper.signup(user)
-        return this.mapper.saveToken({
-            idUser: id,
-            text: this.hash.getToken(),
-            ip: about.ip,
-        } as Token)
+        user.token = this.hash.getToken()
+        try {
+            await this.mapper.selectAccountByUsername(user.username)
+            return Promise.reject()
+        } catch (e) {
+        }
+        await this.mapper.insertUserReg(user)
+        return user.token
+    }
+
+    // Подтверждение почты
+    acceptEmail = async (token: string) => {
+        const user = await this.mapper.selectUserRegByToken(token)
+        try {
+            await this.mapper.selectAccountByUsername(user.username)
+            return Promise.reject()
+        } catch (e) {
+        }
+        const id = await this.mapper.insertAccount(user)
+        return this.mapper.insertUser(user, id)
     }
 
     // Авторизация
@@ -93,7 +108,7 @@ class UserModel {
         const p = []
         p.push(this.mapper.selectAll(limit, page, data))
         p.push(this.mapper.selectCount(data))
-        return Promise.all(p).then((r)=>{
+        return Promise.all(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],

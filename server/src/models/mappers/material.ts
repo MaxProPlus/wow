@@ -27,7 +27,7 @@ class BasicMaterialMapper extends BasicMapper {
     // Получить список соавторов
     selectCoauthorById = (id: number): Promise<User[]> => {
         const sql = `select link.id, link.nickname 
-                     from account link
+                     from user link
                               join ${this.table}_coauthor tc on link.id = tc.id_user
                               join \`${this.table}\` s on tc.id_${this.table} = s.id
                      where s.id = ?`

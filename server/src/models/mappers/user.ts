@@ -5,11 +5,35 @@ import BasicMapper from './mapper'
 
 class UserMapper extends BasicMapper {
 
-    // Регистрация
-    signup = (user: User) => {
-        const sql = `INSERT INTO account (username, sha_pass_hash, email, reg_mail, nickname)
+    // Занести в бд user
+    insertUserReg = (user: User) => {
+        const sql = `INSERT INTO user_reg (nickname, username, password, email, token)
                      VALUES (?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [user.username, user.password, user.email, user.email, user.username]).then(([r]: any) => {
+        return this.pool.query(sql, [user.nickname, user.username, user.password, user.email, user.token]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить в таблицу сервера игры
+    insertAccount = (user: User) => {
+        const sql = `INSERT INTO account (username, sha_pass_hash, email, reg_mail)
+                     VALUES (?, ?, ?, ?)`
+        return this.pool.query(sql, [user.username, user.password, user.email, user.email]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Добавить в таблицу пользователей сервера
+    insertUser = (user: User, idAccount: number) => {
+        const sql = `INSERT INTO user (nickname, id_account)
+                     VALUES (?, ?)`
+        return this.pool.query(sql, [user.nickname, idAccount]).then(([r]: any) => {
             return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -19,10 +43,11 @@ class UserMapper extends BasicMapper {
 
     // Авторизация
     login = (user: User) => {
-        const sql = `SELECT u.id
-                     FROM account u
-                     WHERE u.username = ?
-                       AND u.sha_pass_hash = ?`
+        const sql = `select u.id
+                     from user u
+                              join account a on u.id_account = a.id
+                     where a.username = ?
+                       and a.sha_pass_hash = ?`
         return this.pool.query(sql, [user.username, user.password]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Неверный логин или пароль')
@@ -51,7 +76,7 @@ class UserMapper extends BasicMapper {
                             u.nickname   AS nickname,
                             u.url_avatar AS urlAvatar
                      FROM token t
-                              JOIN account u ON u.id = t.id_user
+                              JOIN user u ON u.id = t.id_user
                      WHERE t.text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.length) {
@@ -82,10 +107,11 @@ class UserMapper extends BasicMapper {
 
     // Получить username по токену
     getUsernameByToken = (token: string) => {
-        const sql = `SELECT a.username
-                     FROM token t
-                        join account a on t.id_user = a.id
-                     WHERE t.text = ?`
+        const sql = `select a.username
+                     from token t
+                              join user u on t.id_user = u.id
+                              join account a on u.id_account = a.id
+                     where t.text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Ошибка авторизации')
@@ -99,16 +125,49 @@ class UserMapper extends BasicMapper {
 
     // Проверка авторизации по токену и паролю
     getIdByTokenWithPassword = (token: string, pass: string) => {
-        const sql = `SELECT t.id_user AS id
-                     FROM token t
-                              JOIN account a ON a.id = t.id_user
-                     WHERE t.text = ?
-                       AND a.sha_pass_hash = ?`
+        const sql = `select t.id_user as id
+                     from token t
+                              join user u on u.id = t.id_user
+                              join account a on u.id_account = a.id
+                     where t.text = ?
+                       and a.sha_pass_hash = ?`
         return this.pool.query(sql, [token, pass]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Ошибка авторизации')
             }
             return Promise.resolve(r[0].id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить пользователя по username
+    selectAccountByUsername = (username: string) => {
+        const sql = `select id
+                     from account
+                     where username = ?`
+        return this.pool.query(sql, [username]).then(([r]: [User[]]) => {
+            if (!r.length) {
+                return Promise.reject('Не найден пользователь')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить пользователя по токену
+    selectUserRegByToken = (token: string) => {
+        const sql = `select nickname, username, password, email
+                     from user_reg
+                     where token = ?`
+        return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
+            if (!r.length) {
+                return Promise.reject('Ошибка токена')
+            }
+            return Promise.resolve(r[0])
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')
@@ -130,11 +189,11 @@ class UserMapper extends BasicMapper {
 
     // Получить пользователя по id
     selectById = (id: number) => {
-        const sql = `SELECT a.id,
-                            a.nickname,
-                            a.url_avatar AS urlAvatar
-                     FROM account a
-                     WHERE a.id = ?`
+        const sql = `SELECT u.id,
+                            u.nickname,
+                            u.url_avatar AS urlAvatar
+                     FROM user u
+                     WHERE u.id = ?`
         return this.pool.query(sql, [id]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Не найден пользователь')
@@ -148,12 +207,12 @@ class UserMapper extends BasicMapper {
 
     // Получить информацию о пользователе
     selectUserGeneralById = (id: number) => {
-        const sql = `SELECT a.nickname,
-                            a.url_avatar as urlAvatar,
-                            a.username,
+        const sql = `SELECT u.nickname,
+                            u.url_avatar as urlAvatar,
                             a.email
-                     FROM account a
-                     WHERE a.id = ?`
+                     FROM user u
+                              join account a on u.id_account = a.id
+                     WHERE u.id = ?`
         return this.pool.query(sql, [id]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Не найден пользователь')
@@ -168,7 +227,7 @@ class UserMapper extends BasicMapper {
     // Выборка всех пользователей
     selectAll = (limit: number, page: number, data?: any) => {
         let sql = `SELECT id, nickname
-                     FROM account`
+                   FROM user`
         const where = []
         if (!!data) {
             if (Object.keys(data).length !== 0) {
@@ -205,7 +264,7 @@ class UserMapper extends BasicMapper {
     // Получить количество пользователей
     selectCount = (data: any): Promise<number> => {
         let sql = `SELECT count(id) as count
-                   FROM account`
+                   FROM user`
         const where = []
         if (!!data) {
             if (Object.keys(data).length !== 0) {
@@ -236,9 +295,9 @@ class UserMapper extends BasicMapper {
 
     // Редактирование основной информации
     updateGeneral = (user: User) => {
-        const sql = `UPDATE account a
-                     SET a.nickname   = ?
-                     WHERE a.id = ? `
+        const sql = `UPDATE user u
+                     SET u.nickname = ?
+                     WHERE u.id = ? `
         return this.pool.query(sql, [user.nickname, user.id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')
@@ -252,9 +311,10 @@ class UserMapper extends BasicMapper {
 
     // Редактирование настроек безопасноти
     updateSecure = (user: User) => {
-        const sql = `UPDATE account u
-                     SET u.email = ?
-                     WHERE u.id = ?`
+        const sql = `update account a
+            join user u on a.id = u.id_account
+                     set a.email = ?
+                     where u.id = ?`
         return this.pool.query(sql, [user.email, user.id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')
@@ -268,9 +328,10 @@ class UserMapper extends BasicMapper {
 
     // Редактирование пароля
     updatePassword = (user: UserPassword) => {
-        const sql = `UPDATE account a
-                     SET a.sha_pass_hash = ?
-                     WHERE a.id = ?`
+        const sql = `update account a
+            join user u on a.id = u.id_account
+                     set a.sha_pass_hash = ?
+                     where u.id = ?`
         return this.pool.query(sql, [user.password, user.id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')
@@ -284,9 +345,9 @@ class UserMapper extends BasicMapper {
 
     // Загрузка аватарки
     updateAvatar = (id: number, avatarUrl: string) => {
-        const sql = `UPDATE account p
-                     SET p.url_avatar = ?
-                     WHERE p.id = ?`
+        const sql = `UPDATE user u
+                     SET u.url_avatar = ?
+                     WHERE u.id = ?`
         return this.pool.query(sql, [avatarUrl, id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')

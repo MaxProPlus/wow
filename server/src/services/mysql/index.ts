@@ -20,6 +20,4 @@ class MyConnection {
     }
 }
 
-const connection = new MyConnection()
-
-export default connection
+export default ()=>new MyConnection()

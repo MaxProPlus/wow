@@ -323,10 +323,10 @@ class StoryMapper extends BasicMaterialMapper {
                             c.text,
                             c.id_user as idUser,
                             c.id_story   as idStory,
-                            a.nickname   as authorNickname,
-                            a.url_avatar as authorUrlAvatar
+                            u.nickname   as authorNickname,
+                            u.url_avatar as authorUrlAvatar
                      from story_comment c
-                              join account a on c.id_user = a.id
+                              join user u on c.id_user = u.id
                      where c.id_story = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentStory[]]) => {

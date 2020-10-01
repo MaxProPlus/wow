@@ -6,6 +6,7 @@ export class User {
     urlAvatar = ''
     password = ''
     passwordRepeat = ''
+    token = ''
     rights = []
 }
 

@@ -1,14 +1,15 @@
 import React, {Component} from 'react'
 import {Link, RouteComponentProps} from "react-router-dom"
-import UserApi from "../../api/UserApi"
-import UserContext from "../../utils/userContext"
-import Spinner from "../../components/spinner/Spinner"
-import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {User} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/inputField/InputField"
-import Form from "../../components/form/Form"
+import UserApi from "../../../api/UserApi"
+import UserContext from "../../../utils/userContext"
+import Spinner from "../../../components/spinner/Spinner"
+import AlertDanger from "../../../components/alert-danger/AlertDanger"
+import {User} from "../../../../../server/src/common/entity/types"
+import InputField from "../../../components/form/inputField/InputField"
+import Form from "../../../components/form/Form"
 import './SignIn.scss'
-import Button from "../../components/button/Button"
+import Button from "../../../components/button/Button"
+import AlertAccept from "../../../components/alertAccept/AlertAccept"
 
 type P = RouteComponentProps<{}, {}, any>
 
@@ -16,6 +17,7 @@ type S = {
     username: string,
     password: string,
     isLoaded: boolean,
+    acceptMessage: string,
     errorMessage: string,
 }
 
@@ -29,7 +31,32 @@ class SignIn extends Component<P, S> {
             username: '',
             password: '',
             isLoaded: true,
+            acceptMessage: '',
             errorMessage: '',
+        }
+    }
+
+    componentDidMount() {
+        // Проверка, есть ли token в get параметрах
+        const token = (new URL('http://example.com'+this.props.location.search)).searchParams.get('token')
+        if (!!token) {
+            // Если есть, то запросить подтверждение почты
+            this.setState({
+                isLoaded: false
+            })
+            this.userApi.acceptEmail(token).then(()=>{
+                this.setState({
+                    acceptMessage: 'Почта успешно подтверждена',
+                    isLoaded: true,
+                })
+            }, err => {
+                this.setState({
+                    errorMessage: err,
+                    isLoaded: true,
+                })
+            }).finally(()=>{
+                this.props.history.replace(this.props.location.pathname)
+            })
         }
     }
 
@@ -72,6 +99,7 @@ class SignIn extends Component<P, S> {
                 <Form onSubmit={this.handleSubmit}>
                     {!this.state.isLoaded && <Spinner/>}
                     <div className="title">Вход</div>
+                    <AlertAccept>{this.state.acceptMessage}</AlertAccept>
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <InputField label="Имя пользователя" type="text" value={this.state.username}
                                 id="username" onChange={this.handleChange}/>

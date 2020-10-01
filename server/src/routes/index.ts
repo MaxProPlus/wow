@@ -25,6 +25,7 @@ export default (app: Express) => {
     router.post('/users/secure', userController.updateSecure)
     router.post('/users/password', userController.updatePassword)
     router.post('/users/signup', userController.signUp)
+    router.get('/users/accept/reg', userController.acceptEmail)
     router.post('/users/signin', userController.signIn)
     router.get('/users/logout', userController.logout)
     router.get('/users/context', userController.getContext)

@@ -3,21 +3,23 @@ import path from 'path'
 import fs from 'fs'
 import logger from '../logger'
 
-const hash = new Hash()
-
+// Возращаемый тип getInfo для дальшейшего перемещения и сохранения в бд
 type FileInfo = {
-    url: string
-    path: string
+    url: string // url путь для доступа к картинке
+    path: string // физический путь до картинки
 }
 
+// Класс для загрузки и удаления изображений
 class Uploader {
+    private hash = new Hash()
+
     // Подготовить файл к сохранению, сформировать путь и url
-    getInfo = (file: any, url: string): FileInfo => {
-        url = '/' + url
-        const filePath = path.join(__dirname, '../../../upload/' + url)
-        const fileName = hash.getHashWithSalt(file.md5) + '.' + file.name.split('.').pop()
+    getInfo = (file: any, folderName: string): FileInfo => {
+        folderName = '/' + folderName
+        const filePath = path.join(__dirname, '../../../upload/' + folderName)
+        const fileName = this.hash.getHashWithSalt(file.md5) + '.' + file.name.split('.').pop()
         return {
-            url: path.join(url, fileName),
+            url: path.join(folderName, fileName),
             path: path.join(filePath, fileName)
         }
     }

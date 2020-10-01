@@ -5,14 +5,17 @@ import {User, UserPassword} from '../common/entity/types'
 import Validator from '../common/validator'
 import {UploadedFile} from 'express-fileupload'
 import {About} from '../entity/types'
+import {Smtp} from '../services/smtp'
 
 class UserController {
     validator = new Validator()
     private userModel: UserModel
     private auth: Auth
+    private smtp: Smtp
 
     constructor(app: Express) {
         const db = app.get('db')
+        this.smtp = app.get('smtp')
         this.userModel = new UserModel(db)
         this.auth = new Auth(db)
     }
@@ -27,17 +30,36 @@ class UserController {
                 errorMessage: err,
             })
         }
-        const about = new About()
-        about.ip = req.ip
-        return this.userModel.signUp(user, about).then((r: string) => {
-            res.cookie('token', r)
+        return this.userModel.signUp(user).then((token: string) => {
+            this.smtp.sendConfirmation(user.email, user.nickname, token).then(() => {
+                return res.json({
+                    status: 'OK',
+                })
+            }, () => {
+                return res.json({
+                    status: 'ERROR',
+                    errorMessage: 'Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией'
+                })
+            })
+        }, () => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: 'Ошибка регистрации, возможно логин или email уже занят',
+            })
+        })
+    }
+
+    // Подтверждение email
+    acceptEmail = (req: Request, res: Response) => {
+        const token = req.query.token as string
+        return this.userModel.acceptEmail(token).then(() => {
             return res.json({
                 status: 'OK',
             })
         }, () => {
             return res.json({
                 status: 'ERROR',
-                errorMessage: 'Ошибка регистрации, возможно логин или email уже занят',
+                errorMessage: 'Ошибка регистрации, неверный токен',
             })
         })
     }

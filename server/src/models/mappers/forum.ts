@@ -179,10 +179,10 @@ class ForumMapper extends BasicMaterialMapper {
                             c.text,
                             c.id_user as idUser,
                             c.id_forum   as idForum,
-                            a.nickname   as authorNickname,
-                            a.url_avatar as authorUrlAvatar
+                            u.nickname   as authorNickname,
+                            u.url_avatar as authorUrlAvatar
                      from forum_comment c
-                              join account a on c.id_user = a.id
+                              join user u on c.id_user = u.id
                      where c.id_forum = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentForum[]]) => {

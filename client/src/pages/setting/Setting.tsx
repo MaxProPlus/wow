@@ -11,6 +11,7 @@ import {Redirect, RouteComponentProps} from "react-router-dom"
 import Form from "../../components/form/Form"
 import Button from "../../components/button/Button"
 import './Setting.scss'
+import AlertAccept from "../../components/alertAccept/AlertAccept"
 
 type P = RouteComponentProps
 
@@ -26,6 +27,7 @@ type S = {
     errorAvatar: string,
     errorGeneral: string,
     errorSecure: string,
+    acceptSecure: string,
     errorPassword: string,
     isLoaded: boolean,
 }
@@ -48,6 +50,7 @@ class Setting extends React.Component<P, S> {
             avatar: '',
             errorAvatar: '',
             errorGeneral: '',
+            acceptSecure: '',
             errorSecure: '',
             errorPassword: '',
             isLoaded: false,
@@ -55,6 +58,28 @@ class Setting extends React.Component<P, S> {
     }
 
     componentDidMount() {
+        // Проверка, есть ли token в get параметрах
+        const token = (new URL('http://example.com'+this.props.location.search)).searchParams.get('token')
+        if (!!token) {
+            // Если есть, то запросить подтверждение почты
+            this.setState({
+                isLoaded: false
+            })
+            this.userApi.acceptEmail(token).then(()=>{
+                this.setState({
+                    acceptSecure: 'Почта успешно подтверждена',
+                    isLoaded: true,
+                })
+            }, err => {
+                this.setState({
+                    errorSecure: err,
+                    isLoaded: true,
+                })
+            }).finally(()=>{
+                this.props.history.replace(this.props.location.pathname)
+            })
+        }
+
         this.userApi.getGeneral().then(r => {
             this.setState(r)
         }, () => {
@@ -119,8 +144,8 @@ class Setting extends React.Component<P, S> {
         e.preventDefault()
         let user = new User()
         user.nickname = this.state.nickname
-        const {ok, err} = this.validator.validateGeneral(user)
-        if (!ok) {
+        const err = this.validator.validateGeneral(user)
+        if (!!err) {
             this.setState({
                 errorGeneral: err,
             })
@@ -148,10 +173,9 @@ class Setting extends React.Component<P, S> {
         e.preventDefault()
         let user = new User()
         user.email = this.state.email
-        // user.username = this.state.username
         user.password = this.state.passwordAccept
-        const {ok, err} = this.validator.validateEmail(user)
-        if (!ok) {
+        const err = this.validator.validateEmail(user)
+        if (!!err) {
             this.setState({
                 errorSecure: err
             })
@@ -159,9 +183,14 @@ class Setting extends React.Component<P, S> {
         }
         this.setState({
             isLoaded: false,
+            acceptSecure: '',
             errorSecure: '',
         })
-        this.userApi.updateSecure(user).catch(err => {
+        this.userApi.updateSecure(user).then(()=>{
+            this.setState({
+                acceptSecure: 'Подтверждение отправлено на почту',
+            })
+        }, err => {
             this.setState({
                 errorSecure: err,
             })
@@ -178,8 +207,8 @@ class Setting extends React.Component<P, S> {
         user.passwordAccept = this.state.passwordOld
         user.password = this.state.password
         user.passwordRepeat = this.state.passwordRepeat
-        const {ok, err} = this.validator.validatePassword(user)
-        if (!ok) {
+        const err = this.validator.validatePassword(user)
+        if (!!err) {
             this.setState({
                 errorPassword: err,
             })
@@ -228,10 +257,9 @@ class Setting extends React.Component<P, S> {
                     <Form onSubmit={this.handleSubmitSecure}>
                         <div className="title">Настройки безопасности</div>
                         <AlertDanger>{this.state.errorSecure}</AlertDanger>
+                        <AlertAccept>{this.state.acceptSecure}</AlertAccept>
                         <InputField label="E-mail" type="email" value={this.state.email}
                                     id="email" onChange={this.handleChange}/>
-                        {/*<InputField label="Username" type="text" value={this.state.username}*/}
-                        {/*            id="username" onChange={this.handleChange}/>*/}
                         <InputField label="Подтверждение пароля" type="password" value={this.state.passwordAccept}
                                     id="passwordAccept" onChange={this.handleChange}/>
                         <Form.Group>

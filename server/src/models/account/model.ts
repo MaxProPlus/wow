@@ -24,7 +24,10 @@ class UserModel {
         user.password = this.hash.getHash(user.username, user.password)
         user.token = this.hash.getToken()
         try {
-            await this.mapper.selectAccountByUsername(user.username)
+            await this.mapper.selectAccountByQuery({
+                username: user.username,
+                email: user.email
+            })
             return Promise.reject()
         } catch (e) {
         }
@@ -32,16 +35,34 @@ class UserModel {
         return user.token
     }
 
-    // Подтверждение почты
-    acceptEmail = async (token: string) => {
+    // Подтверждение регистрации
+    acceptReg = async (token: string) => {
         const user = await this.mapper.selectUserRegByToken(token)
         try {
-            await this.mapper.selectAccountByUsername(user.username)
+            await this.mapper.selectAccountByQuery({
+                username: user.username,
+                email: user.email
+            })
             return Promise.reject()
         } catch (e) {
         }
         const id = await this.mapper.insertAccount(user)
-        return this.mapper.insertUser(user, id)
+        await this.mapper.insertUser(user, id)
+        return this.mapper.removeUserReg(token)
+    }
+
+    // Подтверждение почты
+    acceptEmail = async (token: string) => {
+        const user = await this.mapper.selectUserEmailByToken(token)
+        try {
+            await this.mapper.selectAccountByQuery({
+                email: user.email
+            })
+            return Promise.reject()
+        } catch (e) {
+        }
+        await this.mapper.updateSecure(user)
+        return this.mapper.removeUserEmail(token)
     }
 
     // Авторизация
@@ -124,7 +145,17 @@ class UserModel {
 
     // Редактирование настроек безопасноти
     updateSecure = async (user: User) => {
-        return this.mapper.updateSecure(user)
+        user.token = this.hash.getToken()
+        try {
+            await this.mapper.selectAccountByQuery({
+                email: user.email
+            })
+            return Promise.reject('Ошибка, данный email возможно занят')
+        } catch (e) {
+        }
+
+        await this.mapper.insertAccountEmail(user)
+        return user.token
     }
 
     // Редактирование пароля

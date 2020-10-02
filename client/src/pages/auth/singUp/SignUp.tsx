@@ -52,8 +52,8 @@ class SignUp extends Component<P, S> {
         user.email = this.state.email
         user.password = this.state.password
         user.passwordRepeat = this.state.passwordRepeat
-        const {ok, err} = this.validator.validateSignup(user)
-        if (!ok) {
+        const err = this.validator.validateSignup(user)
+        if (!!err) {
             this.setState({
                 errorMessage: err
             })
@@ -61,7 +61,7 @@ class SignUp extends Component<P, S> {
         }
         this.userApi.signup(user).then(() => {
             this.setState({
-                acceptMessage: 'Проверьте свою почту',
+                acceptMessage: 'Письмо отправлено на почту',
                 isLoaded: true,
             })
         }, err => {

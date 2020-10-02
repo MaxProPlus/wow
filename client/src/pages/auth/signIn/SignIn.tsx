@@ -44,7 +44,7 @@ class SignIn extends Component<P, S> {
             this.setState({
                 isLoaded: false
             })
-            this.userApi.acceptEmail(token).then(()=>{
+            this.userApi.acceptReg(token).then(()=>{
                 this.setState({
                     acceptMessage: 'Почта успешно подтверждена',
                     isLoaded: true,

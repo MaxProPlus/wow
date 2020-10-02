@@ -31,7 +31,6 @@ class Validator {
                     break
             }
         }))
-
     }
 
     // Валидация комментария
@@ -47,62 +46,51 @@ class Validator {
 
     // Валидация настроек безопасности
     validateEmail(user: User) {
-        let ok = true
         let err = ''
         if (!/^[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}$/i.test(user.email)) {
-            ok = false
             err += 'Не валидный email.\n'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация регистрации
     validateSignup(user: User) {
-        let {ok, err} = this.validateEmail(user)
+        let err = this.validateEmail(user)
         if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.username)) {
-            ok = false
             err += 'Длина логина должна быть от 3 до 16 знаков и должен состоять из цифр, латинских букв, символов - и _.\n'
         }
         if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.password)) {
-            ok = false
             err += 'Длина пароля должна быть от 3 до 16 знаков и должен состоять из цифр, прописных и строчных букв, символов - и _.\n'
         }
         if (user.password !== user.passwordRepeat) {
-            ok = false
             err += 'Пароли не совпадают.\n'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация пароля
     validatePassword(user: UserPassword) {
-        let ok = true
         let err = ''
         if (!/^[A-Za-z0-9_-]{3,16}$/.test(user.password)) {
-            ok = false
             err += 'Длина пароля должна быть от 3 до 16 знаков и должен состоять из цифр, прописных и строчных букв, символов - и _.\n'
         }
         if (user.password !== user.passwordRepeat) {
-            ok = false
             err += 'Пароли не совпадают.\n'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация основной информации
     validateGeneral(user: User) {
-        let ok = true
         let err = ''
         user.nickname = this.trim(user.nickname)
         if (user.nickname === '') {
-            ok = false
             err += 'Никнейм не может быть пустым.\n'
         }
         if (user.nickname.length > 32) {
-            ok = false
             err += 'Никнейм не должен превышать 32 символов.\n'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация изображений

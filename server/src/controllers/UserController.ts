@@ -23,8 +23,8 @@ class UserController {
     // Регистрация
     signUp = (req: Request, res: Response) => {
         const user: User = req.body
-        const {ok, err} = this.validator.validateSignup(user)
-        if (!ok) {
+        const err = this.validator.validateSignup(user)
+        if (!!err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,
@@ -49,10 +49,10 @@ class UserController {
         })
     }
 
-    // Подтверждение email
-    acceptEmail = (req: Request, res: Response) => {
+    // Подтверждение регистрации
+    acceptReg = (req: Request, res: Response) => {
         const token = req.query.token as string
-        return this.userModel.acceptEmail(token).then(() => {
+        return this.userModel.acceptReg(token).then(() => {
             return res.json({
                 status: 'OK',
             })
@@ -60,6 +60,21 @@ class UserController {
             return res.json({
                 status: 'ERROR',
                 errorMessage: 'Ошибка регистрации, неверный токен',
+            })
+        })
+    }
+
+    // Подтверждение email
+    acceptEmail = (req: Request, res: Response) => {
+        const token = req.query.token as string
+        return this.userModel.acceptEmail(token).then(() => {
+            return res.json({
+                status: 'OK',
+            })
+        }, (err) => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: 'Ошибка, неверный токен',
             })
         })
     }
@@ -185,8 +200,8 @@ class UserController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        const {ok, err} = this.validator.validateGeneral(user)
-        if (!ok) {
+        const err = this.validator.validateGeneral(user)
+        if (!!err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,
@@ -208,8 +223,8 @@ class UserController {
     // Редактирование настроек безопасноти
     updateSecure = async (req: Request, res: Response) => {
         const user: User = req.body
-        const {ok, err} = this.validator.validateEmail(user)
-        if (!ok) {
+        const err = this.validator.validateEmail(user)
+        if (!!err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,
@@ -224,9 +239,16 @@ class UserController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.userModel.updateSecure(user).then(() => {
-            return res.json({
-                status: 'OK',
+        return this.userModel.updateSecure(user).then((token) => {
+            this.smtp.sendChangeEmail(user.email, token).then(() => {
+                return res.json({
+                    status: 'OK',
+                })
+            }, () => {
+                return res.json({
+                    status: 'ERROR',
+                    errorMessage: 'Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией'
+                })
             })
         }, (err: any) => {
             return res.json({
@@ -249,8 +271,8 @@ class UserController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        const {ok, err} = this.validator.validatePassword(user)
-        if (!ok) {
+        const err = this.validator.validatePassword(user)
+        if (!!err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,

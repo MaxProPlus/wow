@@ -142,12 +142,31 @@ class UserMapper extends BasicMapper {
         })
     }
 
-    // Получить пользователя по username
-    selectAccountByUsername = (username: string) => {
-        const sql = `select id
-                     from account
-                     where username = ?`
-        return this.pool.query(sql, [username]).then(([r]: [User[]]) => {
+    // Получить пользователя по запросу
+    selectAccountByQuery = (data: any) => {
+        let sql = `select id
+                   from account`
+        const where = []
+        if (!!data) {
+            if (Object.keys(data).length !== 0) {
+                sql += ' where'
+            }
+            let i = 0
+            // tslint:disable-next-line:forin
+            for (const key in data) {
+                if (i++ !== 0) {
+                    sql += ` and`
+                }
+                if (typeof data[key] === 'string') {
+                    sql += ` ${key} like ?`
+                    where.push(`%${data[key]}%`)
+                } else {
+                    sql += ` ${key} = ?`
+                    where.push(data[key])
+                }
+            }
+        }
+        return this.pool.query(sql, where).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Не найден пользователь')
             }
@@ -162,7 +181,23 @@ class UserMapper extends BasicMapper {
     selectUserRegByToken = (token: string) => {
         const sql = `select nickname, username, password, email
                      from user_reg
-                     where token = ?`
+                     where is_remove = 0 and token = ?`
+        return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
+            if (!r.length) {
+                return Promise.reject('Ошибка токена')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    // Получить пользователя по токену
+    selectUserEmailByToken = (token: string) => {
+        const sql = `select id_user as id, email
+                     from user_email
+                     where is_remove = 0 and token = ?`
         return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Ошибка токена')
@@ -311,6 +346,7 @@ class UserMapper extends BasicMapper {
 
     // Редактирование настроек безопасноти
     updateSecure = (user: User) => {
+        console.log(user)
         const sql = `update account a
             join user u on a.id = u.id_account
                      set a.email = ?
@@ -320,6 +356,17 @@ class UserMapper extends BasicMapper {
                 return Promise.reject('Не найден пользователь')
             }
             return Promise.resolve(user.id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
+    insertAccountEmail = (user: User) => {
+        const sql = `INSERT INTO user_email (id_user, email, token)
+                     VALUES (?, ?, ?)`
+        return this.pool.query(sql, [user.id, user.email, user.token]).then(([r]: any) => {
+            return Promise.resolve(r.insertId)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')
@@ -353,6 +400,40 @@ class UserMapper extends BasicMapper {
                 return Promise.reject('Не найден пользователь')
             }
             return Promise.resolve(id)
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+
+    }
+
+    // удалить подтверждение пользователя
+    removeUserReg = (token: string) => {
+        const sql = `UPDATE user_reg
+                     SET is_remove = 1 
+                     WHERE token = ?`
+        return this.pool.query(sql, [token]).then(([r]: any) => {
+            if (!r.affectedRows) {
+                return Promise.reject('Не найден пользователь')
+            }
+            return Promise.resolve()
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+
+    }
+
+    // удалить подтверждение смены email
+    removeUserEmail = (token: string) => {
+        const sql = `UPDATE user_email
+                     SET is_remove = 1 
+                     WHERE token = ?`
+        return this.pool.query(sql, [token]).then(([r]: any) => {
+            if (!r.affectedRows) {
+                return Promise.reject('Не найден пользователь')
+            }
+            return Promise.resolve()
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')

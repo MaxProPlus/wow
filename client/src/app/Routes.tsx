@@ -31,6 +31,7 @@ import ForumList from "../pages/forum/List"
 import ForumPage from "../pages/forum/Show"
 import TicketTypeList from "../pages/ticket/TypeList"
 import TicketList from "../pages/ticket/List"
+import FeedbackList from "../pages/feedback/List"
 
 type P = {
     scrollTop: () => void
@@ -88,6 +89,9 @@ const Routes = ({scrollTop}: P) => {
                    render={(props) => (
                        <ForumEdit {...props} scrollTop={scrollTop}/>)}/>
             <Route path="/material/forum/:id" component={ForumPage}/>
+
+
+            <Route exact path="/help/feedback" component={FeedbackList}/>
 
             <Route exact path="/help/ticket/type"
                    component={TicketTypeList}/>{/*категории тикетов*/}

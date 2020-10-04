@@ -139,8 +139,7 @@ class UserModel {
 
     // Редактирование основной информации
     updateGeneral = async (user: User) => {
-        await this.mapper.updateGeneral(user)
-        return this.mapper.selectUserGeneralById(user.id)
+        return this.mapper.updateGeneral(user)
     }
 
     // Редактирование настроек безопасноти

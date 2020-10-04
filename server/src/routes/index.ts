@@ -6,6 +6,7 @@ import GuildController from '../controllers/GuildController'
 import StoryController from '../controllers/StoryController'
 import ReportController from '../controllers/ReportController'
 import ForumController from '../controllers/ForumController'
+import FeedbackController from '../controllers/FeedbackController'
 
 // Инициализация роутов
 export default (app: Express) => {
@@ -19,6 +20,7 @@ export default (app: Express) => {
     const storyController = new StoryController(app)
     const reportController = new ReportController(app)
     const forumController = new ForumController(app)
+    const feedbackController = new FeedbackController(app)
 
     router.post('/users/general', userController.updateGeneral)
     router.post('/users/avatar', userController.updateAvatar)
@@ -92,6 +94,10 @@ export default (app: Express) => {
     router.post('/forums/comments', forumController.createComment)
     router.get('/forums/:id/comments', forumController.getComments)
     // router.delete('/forums/:idCharacter/comments/:idComment', forumController.removeComment)
+
+    // Обратная связь
+    router.get('/feedback', feedbackController.getAll)
+    router.post('/feedback', feedbackController.update)
 
     return router
 }

@@ -23,6 +23,10 @@ type S = {
     password: string,
     passwordRepeat: string,
     nickname: string,
+    linkDs: string,
+    linkMail: string,
+    linkVk: string,
+    linkTg: string,
     avatar: any,
     errorAvatar: string,
     errorGeneral: string,
@@ -42,6 +46,10 @@ class Setting extends React.Component<P, S> {
         this.state = {
             email: '',
             username: '',
+            linkDs: '',
+            linkMail: '',
+            linkVk: '',
+            linkTg: '',
             passwordAccept: '',
             passwordOld: '',
             password: '',
@@ -144,6 +152,10 @@ class Setting extends React.Component<P, S> {
         e.preventDefault()
         let user = new User()
         user.nickname = this.state.nickname
+        user.linkDs = this.state.linkDs
+        user.linkMail = this.state.linkMail
+        user.linkVk = this.state.linkVk
+        user.linkTg = this.state.linkTg
         const err = this.validator.validateGeneral(user)
         if (!!err) {
             this.setState({
@@ -155,8 +167,7 @@ class Setting extends React.Component<P, S> {
             isLoaded: false,
             errorGeneral: '',
         })
-        this.userApi.updateGeneral(user).then(r => {
-            this.setState(r)
+        this.userApi.updateGeneral(user).then(() => {
             this.context.updateLogin()
         }, (err) => {
             this.setState({
@@ -249,6 +260,14 @@ class Setting extends React.Component<P, S> {
                         <div className="title">Общие настройки</div>
                         <InputField label="Никнейм" type="text" value={this.state.nickname}
                                     id="nickname" onChange={this.handleChange}/>
+                        <InputField label="Дискорд" placeholder="Example#1234" type="text" value={this.state.linkDs}
+                                    id="linkDs" onChange={this.handleChange}/>
+                        <InputField label="Почта" placeholder="example@example.com" type="text" value={this.state.linkMail}
+                                    id="linkMail" onChange={this.handleChange}/>
+                        <InputField label="Вконтакте" placeholder="id1234" type="text" value={this.state.linkVk}
+                                    id="linkVk" onChange={this.handleChange}/>
+                        <InputField label="Телеграм" placeholder="example" type="text" value={this.state.linkTg}
+                                    id="linkTg" onChange={this.handleChange}/>
                         <Form.Group>
                             <Button>Сохранить</Button>
                         </Form.Group>

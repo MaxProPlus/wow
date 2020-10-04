@@ -125,7 +125,7 @@ class ForumList extends Component<P, S> {
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
-            <div className="character-list">
+            <>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Последние обсуждения" icon={icon} className={styles.header}>
                     <Search href="/material/forum/create" id="title" text="Создать обсуждение"
@@ -156,7 +156,7 @@ class ForumList extends Component<P, S> {
                     :
                     'Форумы не найдены'}
                 {more}
-            </div>
+            </>
         )
     }
 }

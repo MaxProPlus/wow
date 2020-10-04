@@ -18,6 +18,10 @@ class RightModel {
     ticketUpdateStatus = (id: number): Promise<boolean> => {
         return this.mapper.checkRight('TICKET_UPDATE_STATUS', id)
     }
+
+    feedbackEdit = (id: number): Promise<boolean> => {
+        return this.mapper.checkRight('FEEDBACK_EDIT', id)
+    }
 }
 
 export default RightModel

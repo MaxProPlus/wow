@@ -181,7 +181,8 @@ class UserMapper extends BasicMapper {
     selectUserRegByToken = (token: string) => {
         const sql = `select nickname, username, password, email
                      from user_reg
-                     where is_remove = 0 and token = ?`
+                     where is_remove = 0
+                       and token = ?`
         return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Ошибка токена')
@@ -197,7 +198,8 @@ class UserMapper extends BasicMapper {
     selectUserEmailByToken = (token: string) => {
         const sql = `select id_user as id, email
                      from user_email
-                     where is_remove = 0 and token = ?`
+                     where is_remove = 0
+                       and token = ?`
         return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
             if (!r.length) {
                 return Promise.reject('Ошибка токена')
@@ -243,6 +245,10 @@ class UserMapper extends BasicMapper {
     // Получить информацию о пользователе
     selectUserGeneralById = (id: number) => {
         const sql = `SELECT u.nickname,
+                            u.link_ds    as linkDs,
+                            u.link_mail  as linkMail,
+                            u.link_vk    as linkVk,
+                            u.link_tg    as linkTg,
                             u.url_avatar as urlAvatar,
                             a.email
                      FROM user u
@@ -286,9 +292,6 @@ class UserMapper extends BasicMapper {
         sql += ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: any) => {
-            if (!r.length) {
-                return Promise.reject('Не найдены пользователи')
-            }
             return Promise.resolve(r)
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
@@ -330,10 +333,14 @@ class UserMapper extends BasicMapper {
 
     // Редактирование основной информации
     updateGeneral = (user: User) => {
-        const sql = `UPDATE user u
-                     SET u.nickname = ?
-                     WHERE u.id = ? `
-        return this.pool.query(sql, [user.nickname, user.id]).then(([r]: any) => {
+        const sql = `UPDATE user
+                     SET nickname  = ?,
+                         link_ds   = ?,
+                         link_mail = ?,
+                         link_vk   = ?,
+                         link_tg   = ?
+                     WHERE id = ? `
+        return this.pool.query(sql, [user.nickname, user.linkDs, user.linkMail, user.linkVk, user.linkTg, user.id]).then(([r]: any) => {
             if (!r.affectedRows) {
                 return Promise.reject('Не найден пользователь')
             }
@@ -410,7 +417,7 @@ class UserMapper extends BasicMapper {
     // удалить подтверждение пользователя
     removeUserReg = (token: string) => {
         const sql = `UPDATE user_reg
-                     SET is_remove = 1 
+                     SET is_remove = 1
                      WHERE token = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.affectedRows) {
@@ -427,7 +434,7 @@ class UserMapper extends BasicMapper {
     // удалить подтверждение смены email
     removeUserEmail = (token: string) => {
         const sql = `UPDATE user_email
-                     SET is_remove = 1 
+                     SET is_remove = 1
                      WHERE token = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r.affectedRows) {

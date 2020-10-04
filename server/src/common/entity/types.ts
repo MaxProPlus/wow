@@ -3,6 +3,10 @@ export class User {
     username = ''
     email = ''
     nickname = ''
+    linkDs = ''
+    linkMail = ''
+    linkVk = ''
+    linkTg = ''
     urlAvatar = ''
     password = ''
     passwordRepeat = ''
@@ -344,6 +348,12 @@ export class Forum {
     closed = 0 // Закрыть(материал будет доступен только автору)
     hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
     comment = 0 // Запретить комментарии
+}
+
+export class Feedback extends User{
+    id = 0
+    idUser = 0
+    role = ''
 }
 
 export const defaultCharacterAvatar = '/characterAvatar/standard.png'

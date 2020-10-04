@@ -11,7 +11,7 @@ const db = {
 }
 
 // Обертка для работы с бд
-class MyConnection {
+export class DB {
     private pool = mysql.createPool(db)
 
     // Получить промис пул соединений
@@ -20,4 +20,4 @@ class MyConnection {
     }
 }
 
-export default ()=>new MyConnection()
+export default ()=>new DB()

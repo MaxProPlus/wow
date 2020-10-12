@@ -184,8 +184,8 @@ class ReportPage extends React.Component<P, S> {
                         <Motto>{this.state.report.shortDescription}</Motto>
                     </Col>
                 </Row>
-                <InfoBlock title="Описание отчета / лога" value={this.state.report.description}/>
-                <InfoBlock title="Важная информация" value={this.state.report.rule}/>
+                <InfoBlock title="Описание отчета / лога">{this.state.report.description}</InfoBlock>
+                <InfoBlock title="Важная информация">{this.state.report.rule}</InfoBlock>
                 <Card title="Участники" href="/material/character/" list={this.state.report.members}/>
                 <List title="Гильдии" href="/material/guild/" list={this.state.report.guilds}/>
                 <List title="Сюжеты" href="/material/story/" list={this.state.report.stores}/>

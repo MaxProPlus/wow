@@ -3,6 +3,14 @@
 .title {
   font-size: 1.5rem;
   text-transform: uppercase;
+  margin-bottom: 7px;
+  img {
+    display: inline;
+    min-width: auto;
+    height: 1.5rem;
+    vertical-align: bottom;
+    margin-bottom: 5px;
+  }
 }
 
 .description {

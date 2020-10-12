@@ -201,9 +201,9 @@ class GuildPage extends React.Component<P, S> {
                                          value={guildStatusToString(this.state.guild.status)}/>
                     </Col>
                 </Row>
-                <InfoBlock title="Описание и история" value={this.state.guild.description}/>
-                <InfoBlock title="Условия и правила" value={this.state.guild.rule}/>
-                <InfoBlock title="Дополнительные сведения" value={this.state.guild.more}/>
+                <InfoBlock title="Описание и история">{this.state.guild.description}</InfoBlock>
+                <InfoBlock title="Условия и правила">{this.state.guild.rule}</InfoBlock>
+                <InfoBlock title="Дополнительные сведения">{this.state.guild.more}</InfoBlock>
                 <Card title="Участники" href="/material/character/" list={this.state.guild.members}/>
                 <List title="Сюжеты" href="/material/story/" list={this.state.guild.stores}/>
                 <div className="comments">

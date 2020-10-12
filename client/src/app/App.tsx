@@ -1,7 +1,7 @@
 import React from 'react'
 import {Router} from "react-router-dom"
-import '../css/common.scss'
 import './App.scss'
+import '../css/common.scss'
 import history from "utils/history"
 import UserApi from "api/UserApi"
 import UserContext from "utils/userContext"

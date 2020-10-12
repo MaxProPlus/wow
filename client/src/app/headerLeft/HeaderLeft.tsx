@@ -88,13 +88,13 @@ class HeaderLeft extends Component<P, S> {
                         <div onClick={this.props.hideMenu} className={styles.subHeader}>
                             <Link
                                 className={`${styles.item} ${styles.subItem}${this.state.path.includes('/reg') ? ` ${styles.active}` : ''}`}
-                                to="/reg">Регистрация</Link>
-                            <Link
-                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/rule') ? ` ${styles.active}` : ''}`}
-                                to="/rule">Правила</Link>
+                                to="/start/reg">Регистрация</Link>
                             <Link
                                 className={`${styles.item} ${styles.subItem}${this.state.path.includes('/how') ? ` ${styles.active}` : ''}`}
-                                to="/how">Как играть?</Link>
+                                to="/start/how">Как играть?</Link>
+                            <Link
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/rule') ? ` ${styles.active}` : ''}`}
+                                to="/start/rule">Правила</Link>
                         </div>
                     </Accordion>
 

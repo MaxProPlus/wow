@@ -191,9 +191,9 @@ class StoryPage extends React.Component<P, S> {
                                          value={storyStatusToString(this.state.story.status)}/>
                     </Col>
                 </Row>
-                <InfoBlock title="Сюжет" value={this.state.story.description}/>
-                <InfoBlock title="Условия и правила" value={this.state.story.rule}/>
-                <InfoBlock title="Дополнительные сведения" value={this.state.story.more}/>
+                <InfoBlock title="Сюжет">{this.state.story.description}</InfoBlock>
+                <InfoBlock title="Условия и правила">{this.state.story.rule}</InfoBlock>
+                <InfoBlock title="Дополнительные сведения">{this.state.story.more}</InfoBlock>
                 <Card title="Участники" href="/material/character/" list={this.state.story.members}/>
                 <List title="Гильдии" href="/material/guild/" list={this.state.story.guilds}/>
                 <div className="comments">

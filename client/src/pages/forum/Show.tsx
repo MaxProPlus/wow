@@ -175,7 +175,7 @@ class ForumPage extends React.Component<P, S> {
                     <Avatar src={this.state.forum.urlAvatar}/>
                     <Title className="text-center">{this.state.forum.title}</Title>
                     <SubTitle className="text-center">{this.state.forum.shortDescription}</SubTitle>
-                    <InfoBlock title={this.state.forum.description} value={this.state.forum.rule}/>
+                    <InfoBlock title={this.state.forum.description}>{this.state.forum.rule}</InfoBlock>
 
                     <div className="comments">
                         {this.state.comments.map((c) =>

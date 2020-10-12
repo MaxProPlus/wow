@@ -14,6 +14,24 @@
   height: 100%;
 }
 
+h1 {
+  margin: 0;
+}
+
+ul {
+  list-style-type: '► ';
+  list-style-position: inside;
+  padding-left: 0;
+
+  li::marker {
+    color: #5b87ef;
+  }
+}
+
+hr {
+  color: #E59042;
+}
+
 .page-title {
   display: flex;
   justify-content: space-between;

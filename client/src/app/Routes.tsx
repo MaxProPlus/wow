@@ -32,6 +32,7 @@ import ForumPage from "../pages/forum/Show"
 import TicketTypeList from "../pages/ticket/TypeList"
 import TicketList from "../pages/ticket/List"
 import FeedbackList from "../pages/feedback/List"
+import RulePage from "../pages/start/rule/Rule"
 
 type P = {
     scrollTop: () => void
@@ -44,6 +45,8 @@ const Routes = ({scrollTop}: P) => {
             <Route path="/signup" component={SignUp}/>
             <Route path="/profile/:id" component={Profile}/>
             <Route path="/setting" component={Setting}/>
+
+            <Route exact path="/start/rule" component={RulePage}/>
 
             <Route exact path="/material/character" component={CharacterList}/>
             <Route exact path="/material/character/create"

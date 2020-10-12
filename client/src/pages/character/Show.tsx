@@ -222,9 +222,9 @@ class CharacterPage extends React.Component<P, S> {
                                              value={characterActiveToString(this.state.character.active)}/>
                         </Col>
                     </Row>
-                    <InfoBlock title="Внешность и характер" value={this.state.character.description}/>
-                    <InfoBlock title="История персонажа" value={this.state.character.history}/>
-                    <InfoBlock title="Дополнительные сведения" value={this.state.character.more}/>
+                    <InfoBlock title="Внешность и характер">{this.state.character.description}</InfoBlock>
+                    <InfoBlock title="История персонажа">{this.state.character.history}</InfoBlock>
+                    <InfoBlock title="Дополнительные сведения">{this.state.character.more}</InfoBlock>
                     <Card title="Друзья и знакомые" href="/material/character/" list={this.state.character.friends}/>
                     <List title="Гильдии" href="/material/guild/" list={this.state.character.guilds}/>
                     <List title="Сюжеты" href="/material/story/" list={this.state.character.stores}/>

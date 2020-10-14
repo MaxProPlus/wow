@@ -1,10 +1,10 @@
 import React from 'react'
 import {Router} from "react-router-dom"
 import './App.scss'
-import '../css/common.scss'
+import '../css/styles.scss'
 import history from "utils/history"
 import UserApi from "api/UserApi"
-import UserContext from "utils/userContext"
+import UserContext from "contexts/userContext"
 import {User} from "../../../server/src/common/entity/types"
 import HeaderTop from "./headerTop/HeaderTop"
 import Routes from "./Routes"

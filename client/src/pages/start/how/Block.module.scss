@@ -1,0 +1,42 @@
+@import "../../../css/common";
+@import "../../../css/variables";
+
+.title {
+  img {
+    display: inline-block;
+    margin-left: 1px;
+    margin-right: 13px;
+  }
+}
+
+.description {
+  @extend %border-2;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 10px 14px;
+  color: $color2;
+}
+
+@media (min-width: 576px) {
+  .description {
+    margin-left: 40px;
+
+    &::before {
+      display: block;
+      content: '';
+      position: absolute;
+      background-color: $color1;
+      left: -30px;
+      top: 0;
+      width: 2px;
+      height: 108%;
+    }
+  }
+
+  .description:last-child {
+    &::before {
+      display: none;
+    }
+  }
+
+}

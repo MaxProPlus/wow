@@ -1,7 +1,7 @@
 import React from "react"
 import './AdminDashboard.scss'
 import Spinner from "../../../components/spinner/Spinner"
-import UserContext from "../../../utils/userContext"
+import UserContext from "../../../contexts/userContext"
 import {Link} from "react-router-dom"
 
 type S = {

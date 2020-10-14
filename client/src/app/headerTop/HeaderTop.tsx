@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Link} from "react-router-dom"
-import UserContext from "../../utils/userContext"
+import UserContext from "../../contexts/userContext"
 import Dropdown from 'components/dropdown/Dropdown'
 import './HeaderTop.scss'
 import menuImg from './menu-black-18dp.svg'

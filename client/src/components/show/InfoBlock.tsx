@@ -14,14 +14,14 @@ const InfoBlock = ({icon, title, children}: P) => {
     if (!icon) {
         return (
             <div>
-                <div className={styles.title}>{title}</div>
+                <h3>{title}</h3>
                 <div className={styles.description}>{children}</div>
             </div>
         )
     }
     return (
         <div>
-            <div className={styles.title}><img src={icon} alt=""/> {title}</div>
+            <h3><img src={icon} alt=""/> {title}</h3>
             <div className={styles.description}>{children}</div>
         </div>
     )

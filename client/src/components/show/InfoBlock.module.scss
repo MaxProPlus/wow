@@ -1,21 +1,8 @@
 @import '../../css/variables';
 
-.title {
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-  img {
-    display: inline;
-    min-width: auto;
-    height: 1.5rem;
-    vertical-align: bottom;
-    margin-bottom: 5px;
-  }
-}
-
 .description {
   border: 1px solid $border-color;
-  background-color: rgba(33, 40, 59, 0.35);
+  background-color: transparentize($border-color, .65);
   padding: .375rem .75rem;
   color: $color2;
   white-space: pre-line;

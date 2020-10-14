@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './CommentForm.scss'
-import userContext from "../../utils/userContext"
+import userContext from "../../contexts/userContext"
 import AvatarImg from "../../components/avatar-img/AvatarImg"
 import Button from "../../components/button/Button"
 import Input from "../../components/input/Input"

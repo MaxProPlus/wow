@@ -1,0 +1,75 @@
+@import '../../../css/variables';
+
+.block {
+  margin: 0 15px 15px;
+  background-color: transparentize($border-color, .65);
+  border: 1px solid $border-color;
+
+  &:hover .nickname {
+    color: #5B87EF;
+  }
+
+  >div:first-child {
+    padding-left: 0;
+  }
+
+  >div:last-child {
+    padding-right: 0;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+.nickname {
+  font-size: 1rem;
+  transition: color .3s ease;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.role {
+  font-size: 12px;
+  color: #E5D542;
+  margin-bottom: 7px;
+}
+
+.blockLink {
+  display: flex;
+  flex-direction: column;
+  margin-top: 7px;
+}
+
+.link {
+  text-transform: uppercase;
+  margin-bottom: 7px;
+  margin-right: 30px;
+  padding: .375rem .75rem;
+  display: flex;
+  align-items: center;
+  img {
+    display: inline-block;
+    min-width: auto;
+    height: 1rem;
+    margin-right: 7px;
+  }
+}
+
+.ds {
+  background-color: #7289DA;
+}
+
+.mail {
+  background-color: #5B87EF;
+}
+
+.vk {
+  background-color: #4A76A8;
+}
+
+.tg {
+  background-color: #56B6DF;
+}
+

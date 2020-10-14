@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Link, RouteComponentProps} from "react-router-dom"
 import UserApi from "../../../api/UserApi"
-import UserContext from "../../../utils/userContext"
+import UserContext from "../../../contexts/userContext"
 import AlertDanger from "../../../components/alert-danger/AlertDanger"
 import Validator from "../../../../../server/src/common/validator"
 import {User} from "../../../../../server/src/common/entity/types"

@@ -1,6 +1,6 @@
 import React from "react"
 import UserApi from "../../api/UserApi"
-import userContext from "../../utils/userContext"
+import userContext from "../../contexts/userContext"
 import Spinner from "../../components/spinner/Spinner"
 import history from "../../utils/history"
 import Validator from "../../../../server/src/common/validator"

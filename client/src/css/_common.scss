@@ -1,0 +1,15 @@
+@import "./variables";
+
+%bg {
+  background-color: transparentize($border-color, .65)
+}
+
+%border-1 {
+  @extend %bg;
+  border: 1px solid $border-color;
+}
+
+%border-2 {
+  @extend %bg;
+  border: 2px solid $border-color;
+}

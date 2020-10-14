@@ -18,7 +18,7 @@
   font-weight: 400;
   line-height: 1.5;
   color: $color1;
-  background-color: rgba(33, 40, 59, 0.35);
+  background-color: transparentize($border-color, .65);
   background-clip: padding-box;
   border: 1px solid $border-color;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;

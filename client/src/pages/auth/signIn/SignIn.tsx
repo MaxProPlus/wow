@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {Link, RouteComponentProps} from "react-router-dom"
 import UserApi from "../../../api/UserApi"
-import UserContext from "../../../utils/userContext"
+import UserContext from "../../../contexts/userContext"
 import Spinner from "../../../components/spinner/Spinner"
 import AlertDanger from "../../../components/alert-danger/AlertDanger"
 import {User} from "../../../../../server/src/common/entity/types"

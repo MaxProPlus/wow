@@ -1,5 +1,5 @@
 import React, {Component} from "react"
-import UserContext from "../../utils/userContext"
+import UserContext from "../../contexts/userContext"
 import UserApi from "../../api/UserApi"
 import history from "../../utils/history"
 import './Dropdown.scss'

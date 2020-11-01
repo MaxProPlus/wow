@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEvent} from "react"
+import React, {ChangeEvent, FormEvent} from 'react'
 import './Form.scss'
 
 type PForm = {
@@ -8,9 +8,9 @@ type PForm = {
 }
 
 const Form = (props: PForm) => {
-    let className = "form"
+    let className = 'form'
     if (props.className) {
-        className += " " + props.className
+        className += ' ' + props.className
     }
     return (
         <form className={className} onSubmit={props.onSubmit}>{props.children}</form>
@@ -37,9 +37,9 @@ type PInput = {
 }
 
 Form.Input = (props: PInput) => {
-    let className = "form-control"
+    let className = 'form-control'
     if (props.type === 'file') {
-        className = "form-control-file"
+        className = 'form-control-file'
     }
     return (
         <input className={className}
@@ -63,7 +63,7 @@ type PTextArea = {
 }
 
 Form.TextArea = (props: PTextArea) => {
-    let className = "form-control"
+    let className = 'form-control'
     return (
         <textarea className={className}
                   placeholder={props.placeholder}
@@ -85,7 +85,7 @@ type PSelect = {
 }
 
 Form.Select = (props: PSelect) => {
-    let className = "form-control"
+    let className = 'form-control'
     return (
         <select className={className} onChange={props.onChange} value={props.value} name={props.id}
                 id={props.id}>{props.children}</select>

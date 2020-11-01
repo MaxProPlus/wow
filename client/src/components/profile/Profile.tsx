@@ -1,8 +1,8 @@
 import React from 'react'
-import AvatarImg from "../../components/avatar-img/AvatarImg"
+import AvatarImg from '../../components/avatar-img/AvatarImg'
 import './Profile.scss'
-import history from "../../utils/history"
-import {User} from "../../../../server/src/common/entity/types"
+import history from '../../utils/history'
+import {User} from '../../../../server/src/common/entity/types'
 
 type propsTypes = User & {
     children?: any

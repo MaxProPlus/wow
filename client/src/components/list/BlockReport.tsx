@@ -1,10 +1,11 @@
-import React from "react"
-import {Col, Row} from "react-bootstrap"
-import {Link} from "react-router-dom"
+import React from 'react'
+import {Col, Row} from 'react-bootstrap'
+import {Link} from 'react-router-dom'
 import styles from './BlockReport.module.scss'
 
 
 type P = {
+    className?: string,
     href: string,
     id: number,
     urlAvatar: string,
@@ -12,10 +13,10 @@ type P = {
     muteTitle: string,
 }
 
-const BlockReport = ({id, title, muteTitle, urlAvatar, href}: P) => {
+const BlockReport = ({className, id, title, muteTitle, urlAvatar, href}: P) => {
 
     return (
-        <Row className={styles.block}>
+        <Row className={`${styles.block} ${className || ''}`}>
             <Col xs={3}>
                 <Link to={href + id}>
                     <img src={urlAvatar} alt=""/>

@@ -1,7 +1,7 @@
-import React from "react"
+import React from 'react'
 import styles from './Card.module.scss'
-import {Row} from "react-bootstrap"
-import Block from "../list/Block"
+import {Row} from 'react-bootstrap'
+import Block from '../list/Block'
 
 type P = {
     title: string
@@ -19,7 +19,7 @@ const Card = ({title, href, list}: P) => {
             <Row>
                 {list.map(el =>
                     (<Block key={el.id} id={el.id} title='' muteTitle=''
-                            urlAvatar={el.urlAvatar} href={href} size={2}/>)
+                            urlAvatar={el.urlAvatar} href={href} size={2}/>),
                 )}
             </Row>
         </div>

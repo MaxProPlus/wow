@@ -1,23 +1,23 @@
 import React from 'react'
-import {Router} from "react-router-dom"
+import {Router} from 'react-router-dom'
 import './App.scss'
 import '../css/styles.scss'
-import history from "utils/history"
-import UserApi from "api/UserApi"
-import UserContext from "contexts/userContext"
-import {User} from "../../../server/src/common/entity/types"
-import HeaderTop from "./headerTop/HeaderTop"
-import Routes from "./Routes"
-import Cookie from "../utils/cookie"
-import HeaderLeft from "./headerLeft/HeaderLeft"
+import history from 'utils/history'
+import UserApi from 'api/UserApi'
+import UserContext from 'contexts/userContext'
+import {User} from '../../../server/src/common/entity/types'
+import HeaderTop from './headerTop/HeaderTop'
+import Routes from './Routes'
+import Cookie from '../utils/cookie'
+import HeaderLeft from './headerLeft/HeaderLeft'
 
-interface IState {
+interface S {
     isLoaded: boolean
     showMenu: boolean
     user: User
 }
 
-class App extends React.Component<{}, IState> {
+class App extends React.Component<{}, S> {
     private userApi = new UserApi()
     private wrapperRef?: HTMLElement
     private containerRef?: HTMLElement
@@ -31,6 +31,9 @@ class App extends React.Component<{}, IState> {
         }
     }
 
+    /**
+     * Авторизация по токену
+     */
     updateLogin = () => {
         let token = Cookie.getCookie('token')
         if (!token) {
@@ -38,7 +41,7 @@ class App extends React.Component<{}, IState> {
                 user: {
                     ...new User(),
                     id: -1,
-                }
+                },
             })
             return
         }
@@ -48,7 +51,7 @@ class App extends React.Component<{}, IState> {
                     user: {
                         ...state.user,
                         ...user,
-                    }
+                    },
                 }
             })
         }, () => {
@@ -56,7 +59,7 @@ class App extends React.Component<{}, IState> {
                 user: {
                     ...new User(),
                     id: -1,
-                }
+                },
             })
         })
     }
@@ -105,10 +108,10 @@ class App extends React.Component<{}, IState> {
                 <UserContext.Provider value={{user: this.state.user, updateLogin: this.updateLogin}}>
                     <div className="app">
                         <HeaderLeft ref={this.setWrapperRef} showMenu={this.state.showMenu} hideMenu={this.hideMenu}/>
-                        <div ref={this.setContainerRef} className="my-container">
+                        <div ref={this.setContainerRef} className="app__body">
                             <HeaderTop onClickMenu={this.handleToggleMenu}/>
-                            <div className="container-inner">
-                                <div className="page">
+                            <div className="app-body__content">
+                                <div className="content">
                                     <Routes scrollTop={this.scrollTop}/>
                                 </div>
                             </div>

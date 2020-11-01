@@ -1,19 +1,20 @@
-import React, {ChangeEvent, Component} from "react"
-import {Story} from "../../../../../server/src/common/entity/types"
-import Button from "../../../components/button/Button"
-import {Col, Row} from "react-bootstrap"
-import styles from "../../../css/listTitle.module.scss"
-import icon from "./img/icon.svg"
-import StoryApi from "../../../api/StoryApi"
-import Spinner from "../../../components/spinner/Spinner"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import Search from "../../../components/list/Search"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import Block from "../../../components/list/Block"
-import SearchBlock from "../../../components/list/SearchBlock"
-import Form from "../../../components/form/Form"
-import InputField from "../../../components/form/inputField/InputField"
-import {RouteComponentProps} from "react-router-dom"
+import React, {ChangeEvent, Component} from 'react'
+import {Story} from '../../../../../server/src/common/entity/types'
+import Button from '../../../components/button/Button'
+import {Col, Row} from 'react-bootstrap'
+import styles from '../../../css/listTitle.module.scss'
+import icon from './img/icon.svg'
+import StoryApi from '../../../api/StoryApi'
+import Spinner from '../../../components/spinner/Spinner'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import Search from '../../../components/list/Search'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import Block from '../../../components/list/Block'
+import SearchBlock from '../../../components/list/SearchBlock'
+import Form from '../../../components/form/Form'
+import InputField from '../../../components/form/inputField/InputField'
+import {RouteComponentProps} from 'react-router-dom'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -86,7 +87,7 @@ class StoryList extends Component<P, S> {
     toggle = () => {
         this.setState((state) => {
             return {
-                filterShow: !state.filterShow
+                filterShow: !state.filterShow,
             }
         })
     }
@@ -94,7 +95,7 @@ class StoryList extends Component<P, S> {
     handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
-            [e.target.id]: e.target.value
+            [e.target.id]: e.target.value,
         } as any)
     }
 
@@ -111,19 +112,19 @@ class StoryList extends Component<P, S> {
         this.data = data
         this.page = 1
         this.setState({
-            isLoaded: false
+            isLoaded: false,
         })
         this.updateData(true)
     }
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle className={styles.header} title="Сюжеты" icon={icon}>
                     <Search href="/material/story/create" id="title" text="Создать сюжет" placeholder="Поиск сюжета"
@@ -155,13 +156,13 @@ class StoryList extends Component<P, S> {
                     <Row>
                         {this.state.list.map(el =>
                             (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.shortDescription}
-                                    urlAvatar={el.urlAvatar} href="/material/story/" size={4}/>)
+                                    urlAvatar={el.urlAvatar} href="/material/story/" size={4}/>),
                         )}
                     </Row>
                     :
                     'Сюжеты не найдены'}
                 {more}
-            </div>
+            </Page>
         )
     }
 }

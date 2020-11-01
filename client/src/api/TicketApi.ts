@@ -1,5 +1,5 @@
-import {CommentTicket, Ticket, TicketStatus} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentTicket, Ticket, TicketStatus} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class TicketApi extends Api {
     // Создать тикет

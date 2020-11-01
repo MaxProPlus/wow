@@ -1,5 +1,5 @@
-import {CommentForum} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentForum} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class ForumApi extends Api {
 

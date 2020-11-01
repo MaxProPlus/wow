@@ -1,39 +1,44 @@
-import React from "react"
-import {Route, Switch} from "react-router-dom"
-import Home from "../pages/home/Home"
-import SignIn from "../pages/auth/signIn/SignIn"
-import SignUp from "../pages/auth/singUp/SignUp"
-import Profile from "../pages/profile/Profile"
-import Setting from "../pages/setting/Setting"
-import TicketCreate from "../pages/help/ticketCreate/TicketCreate"
-import TicketPage from "../pages/help/ticketPage/TicketPage"
-import CharacterList from "../pages/material/character/List"
-import CharacterCreate from "../pages/material/character/Create"
-import CharacterEdit from "../pages/material/character/Edit"
-import CharacterPage from "../pages/material/character/Show"
-import GuildList from "../pages/material/guild/List"
-import GuildCreate from "../pages/material/guild/Create"
-import GuildEdit from "../pages/material/guild/Edit"
-import GuildPage from "../pages/material/guild/Show"
-import StoryList from "../pages/material/story/List"
-import StoryCreate from "../pages/material/story/Create"
-import StoryEdit from "../pages/material/story/Edit"
-import StoryPage from "../pages/material/story/Show"
-import AdminDashboard from "../pages/admin/dashboard/AdminDashboard"
-import ListOfAdmins from "../pages/admin/listOfAdmins/ListOfAdmins"
-import ReportCreate from "../pages/material/report/Create"
-import ReportEdit from "../pages/material/report/Edit"
-import ReportList from "../pages/material/report/List"
-import ReportPage from "../pages/material/report/Show"
-import ForumCreate from "../pages/material/forum/Create"
-import ForumEdit from "../pages/material/forum/Edit"
-import ForumList from "../pages/material/forum/List"
-import ForumPage from "../pages/material/forum/Show"
-import TicketTypeList from "../pages/help/ticket/TypeList"
-import TicketList from "../pages/help/ticket/List"
-import FeedbackList from "../pages/help/feedback/List"
-import RulePage from "../pages/start/rule/Rule"
-import HowPage from "../pages/start/how/How"
+import React from 'react'
+import {Route, Switch} from 'react-router-dom'
+import Home from '../pages/home/Home'
+import SignIn from '../pages/auth/signIn/SignIn'
+import SignUp from '../pages/auth/singUp/SignUp'
+import Profile from '../pages/profile/Profile'
+import Setting from '../pages/setting/Setting'
+import TicketCreate from '../pages/help/ticketCreate/TicketCreate'
+import TicketPage from '../pages/help/ticketPage/TicketPage'
+import CharacterList from '../pages/material/character/List'
+import CharacterCreate from '../pages/material/character/Create'
+import CharacterEdit from '../pages/material/character/Edit'
+import CharacterPage from '../pages/material/character/Show'
+import GuildList from '../pages/material/guild/List'
+import GuildCreate from '../pages/material/guild/Create'
+import GuildEdit from '../pages/material/guild/Edit'
+import GuildPage from '../pages/material/guild/Show'
+import StoryList from '../pages/material/story/List'
+import StoryCreate from '../pages/material/story/Create'
+import StoryEdit from '../pages/material/story/Edit'
+import StoryPage from '../pages/material/story/Show'
+import AdminDashboard from '../pages/admin/dashboard/AdminDashboard'
+import ListOfAdmins from '../pages/admin/listOfAdmins/ListOfAdmins'
+import ReportCreate from '../pages/material/report/Create'
+import ReportEdit from '../pages/material/report/Edit'
+import ReportList from '../pages/material/report/List'
+import ReportPage from '../pages/material/report/Show'
+import ForumCreate from '../pages/material/forum/Create'
+import ForumEdit from '../pages/material/forum/Edit'
+import ForumList from '../pages/material/forum/List'
+import ForumPage from '../pages/material/forum/Show'
+import TicketTypeList from '../pages/help/ticket/TypeList'
+import TicketList from '../pages/help/ticket/List'
+import FeedbackList from '../pages/help/feedback/List'
+import RulePage from '../pages/start/rule/Rule'
+import HowPage from '../pages/start/how/How'
+import ArticleList from '../pages/article/List'
+import ArticleCreate from '../pages/article/Create'
+import ArticleEdit from '../pages/article/Edit'
+import ArticlePage from '../pages/article/Show'
+import NotFound from '../pages/notFound/NotFound'
 
 type P = {
     scrollTop: () => void
@@ -49,6 +54,15 @@ const Routes = ({scrollTop}: P) => {
 
             <Route exact path="/start/how" component={HowPage}/>
             <Route exact path="/start/rule" component={RulePage}/>
+
+            <Route exact path="/article" component={ArticleList}/>
+            <Route exact path="/article/create"
+                   render={(props) => (
+                       <ArticleCreate {...props} scrollTop={scrollTop}/>)}/>
+            <Route path="/article/edit/:id"
+                   render={(props) => (
+                       <ArticleEdit {...props} scrollTop={scrollTop}/>)}/>
+            <Route path="/article/:id" component={ArticlePage}/>
 
             <Route exact path="/material/character" component={CharacterList}/>
             <Route exact path="/material/character/create"
@@ -109,7 +123,7 @@ const Routes = ({scrollTop}: P) => {
 
             <Route exact path="/admin" component={AdminDashboard}/>
             <Route path="/admin/list" component={ListOfAdmins}/>
-            <Route path="/*">Страница не найдена или еще не создана ¯\_(ツ)_/¯</Route>
+            <Route path="/*" component={NotFound}/>
         </Switch>
     )
 }

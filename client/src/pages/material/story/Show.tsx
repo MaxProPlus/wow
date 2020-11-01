@@ -1,28 +1,29 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
-import {User, CommentStory, Story, storyStatusToString} from "../../../../../server/src/common/entity/types"
-import UserContext from "../../../contexts/userContext"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import Comment from "../../../components/comment/Comment"
-import {Col, Row} from "react-bootstrap"
-import InfoBlockInline from "../../../components/show/InfoBlockInline"
-import InfoBlock from "../../../components/show/InfoBlock"
-import Title from "../../../components/show/Title"
-import Motto from "../../../components/show/Motto"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
+import {CommentStory, Story, storyStatusToString, User} from '../../../../../server/src/common/entity/types'
+import UserContext from '../../../contexts/userContext'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import Comment from '../../../components/comment/Comment'
+import {Col, Row} from 'react-bootstrap'
+import InfoBlockInline from '../../../components/show/InfoBlockInline'
+import InfoBlock from '../../../components/show/InfoBlock'
+import Title from '../../../components/show/Title'
+import Motto from '../../../components/show/Motto'
 import icon from './img/icon.svg'
-import StoryApi from "../../../api/StoryApi"
+import StoryApi from '../../../api/StoryApi'
 import dateIcon from './img/date.svg'
 import statusIcon from '../../../img/status.svg'
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import ControlButton from "../../../components/show/ControlButton"
-import ConfirmationWindow from "../../../components/confirmationWindow/ConfirmationWindow"
-import history from "../../../utils/history"
-import Avatar from "../../../components/show/Avatar"
-import Card from "../../../components/show/Card"
-import List from "../../../components/show/List"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../../types/RouteProps"
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import ControlButton from '../../../components/show/ControlButton'
+import ConfirmationWindow from '../../../components/confirmationWindow/ConfirmationWindow'
+import history from '../../../utils/history'
+import Avatar from '../../../components/show/Avatar'
+import Card from '../../../components/show/Card'
+import List from '../../../components/show/List'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -60,7 +61,7 @@ class StoryPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
         return null
@@ -78,7 +79,7 @@ class StoryPage extends React.Component<P, S> {
             }) === -1) ? this.context.user.id === this.state.story.idUser : true)
             if (isAdmin) {
                 this.setState({
-                    isAdmin
+                    isAdmin,
                 })
             }
         }
@@ -86,7 +87,7 @@ class StoryPage extends React.Component<P, S> {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
-                isAdmin: false
+                isAdmin: false,
             })
             this.updateData()
         }
@@ -100,7 +101,7 @@ class StoryPage extends React.Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -136,7 +137,7 @@ class StoryPage extends React.Component<P, S> {
     handleRemove = () => {
         this.setState({
             modalShow: false,
-            isLoaded: false
+            isLoaded: false,
         })
         this.storyApi.remove(this.state.id).then(() => {
             history.push('/material/story')
@@ -153,29 +154,29 @@ class StoryPage extends React.Component<P, S> {
 
     hideRemoveWindow = () => {
         this.setState({
-            modalShow: false
+            modalShow: false,
         })
     }
 
     showRemoveWindow = () => {
         this.setState({
-            modalShow: true
+            modalShow: true,
         })
     }
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
 
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить сюжет?"/>
                 <PageTitle title="Сюжет" icon={icon}>
                     <ControlButton show={this.state.isAdmin} id={this.state.id}
-                                   type='story' nameRemove='сюжет'
+                                   href="/material/story" nameRemove="Удалить сюжет"
                                    showRemoveWindow={this.showRemoveWindow}/>
                 </PageTitle>
                 <Row>
@@ -198,12 +199,12 @@ class StoryPage extends React.Component<P, S> {
                 <List title="Гильдии" href="/material/guild/" list={this.state.story.guilds}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
-                        <Comment key={c.id} {...c}/>
+                        <Comment key={c.id} {...c}/>,
                     )}
                 </div>
                 {(!this.state.story.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-            </>
+            </Page>
         )
     }
 }

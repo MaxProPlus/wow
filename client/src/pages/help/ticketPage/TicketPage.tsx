@@ -1,16 +1,17 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
-import TicketApi from "../../../api/TicketApi"
-import {CommentTicket, Ticket, TicketStatus, ticketStatusToString} from "../../../../../server/src/common/entity/types"
-import history from "../../../utils/history"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
+import TicketApi from '../../../api/TicketApi'
+import {CommentTicket, Ticket, TicketStatus, ticketStatusToString} from '../../../../../server/src/common/entity/types'
+import history from '../../../utils/history'
 import './TicketPage.scss'
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import CommentC from "../../../components/comment/Comment"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import UserContext from "../../../contexts/userContext"
-import {Redirect, RouteComponentProps} from "react-router-dom"
-import Select from "../../../components/form/select/Select"
-import {MatchId} from "../../../types/RouteProps"
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import CommentC from '../../../components/comment/Comment'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import UserContext from '../../../contexts/userContext'
+import {Redirect, RouteComponentProps} from 'react-router-dom'
+import Select from '../../../components/form/select/Select'
+import {MatchId} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -46,7 +47,7 @@ class TicketPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
 
@@ -71,7 +72,7 @@ class TicketPage extends React.Component<P, S> {
             this.setState({
                 ticket: r[0],
                 comments: r[1],
-                status: r[0].status
+                status: r[0].status,
             })
 
         }, err => {
@@ -113,7 +114,7 @@ class TicketPage extends React.Component<P, S> {
         const status = parseInt(e.target.value)
         this.setState({
             isLoaded: false,
-            status: status
+            status: status,
         })
         this.ticketApi.changeStatus(this.state.id, status).then(() => {
             this.updateData()
@@ -124,10 +125,10 @@ class TicketPage extends React.Component<P, S> {
 
     render() {
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
-                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
+                <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
                 <div className="page-ticket">
                     <AlertDanger>{this.state.errorMessage}</AlertDanger>
                     <div className="ticket">
@@ -139,7 +140,7 @@ class TicketPage extends React.Component<P, S> {
                         {this.context.user.rights.includes('TICKET_UPDATE_STATUS') &&
                         <Select label="Статус заявки:" value={this.state.status} onChange={this.handleStatus}>
                             {[0, 1, 9].map(v =>
-                                (<option key={v} value={v}>{ticketStatusToString(v)}</option>)
+                                (<option key={v} value={v}>{ticketStatusToString(v)}</option>),
                             )}
                         </Select>
                         }
@@ -151,7 +152,7 @@ class TicketPage extends React.Component<P, S> {
                     {(this.state.ticket.status !== TicketStatus.CLOSE && !this.state.errorMessage) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
                 </div>
-            </div>
+            </Page>
         )
     }
 }

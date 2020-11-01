@@ -1,5 +1,5 @@
-import {CommentStory} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentStory} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class StoryApi extends Api {
 

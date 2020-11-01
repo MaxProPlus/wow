@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 import styles from './Button.module.scss'
-import {Link} from "react-router-dom"
+import {Link} from 'react-router-dom'
 
 export default (props: any) => {
     let className = styles.btn

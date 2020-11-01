@@ -22,6 +22,10 @@ class RightModel {
     feedbackEdit = (id: number): Promise<boolean> => {
         return this.mapper.checkRight('FEEDBACK_EDIT', id)
     }
+
+    articleCrud = (id: number): Promise<boolean> => {
+        return this.mapper.checkRight('ARTICLE_CRUD', id)
+    }
 }
 
 export default RightModel

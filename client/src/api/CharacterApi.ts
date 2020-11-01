@@ -1,5 +1,5 @@
-import {CommentCharacter} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentCharacter} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class CharacterApi extends Api {
 

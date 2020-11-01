@@ -54,6 +54,10 @@ export class CommentForum extends Comment {
     idForum = 0
 }
 
+export class CommentArticle extends Comment {
+    idArticle = 0
+}
+
 export class Ticket {
     id = 0
     idUser = 0
@@ -123,20 +127,6 @@ export class Character {
 
     guilds: Guild[] = [] // Связанные гильдии
     stores: Story[] = [] // Связанные сюжеты
-    activeToString = () => {
-        switch (this.active) {
-            case 0:
-                return 'отыгрыш еще не начат'
-            case 1:
-                return 'в поиске отыгрыша'
-            case 2:
-                return 'персонаж отыгрывается'
-            case 3:
-                return 'отыгрыш завершен'
-            default:
-                return ''
-        }
-    }
 }
 
 export enum Sex {
@@ -356,8 +346,25 @@ export class Feedback extends User{
     role = ''
 }
 
+// Новость
+export class Article {
+    id = 0
+    idUser = 0
+    urlAvatar = ''
+    title = '' // Название новости
+    shortDescription = '' // Анонс новости
+    description = '' // Описание
+
+    // Прочее
+    style = '' // CSS-стили
+    closed = 0 // Закрыть(материал будет доступен только автору)
+    hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
+    comment = 0 // Запретить комментарии
+}
+
 export const defaultCharacterAvatar = '/characterAvatar/standard.png'
 export const defaultGuildAvatar = '/guildAvatar/standard.png'
 export const defaultStoryAvatar = '/storyAvatar/standard.png'
 export const defaultReportAvatar = '/reportAvatar/standard.png'
 export const defaultForumAvatar = '/forumAvatar/standard.png'
+export const defaultArticleAvatar = '/articleAvatar/standard.png'

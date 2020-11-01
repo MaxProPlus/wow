@@ -1,9 +1,9 @@
 import React, {Component, forwardRef} from 'react'
-import {Link} from "react-router-dom"
+import {Link} from 'react-router-dom'
 import styles from './HeaderLeft.module.scss'
 import logo from './logo.png'
-import history from "../../utils/history"
-import Accordion from "../../components/accordion/Accordion"
+import history from '../../utils/history'
+import Accordion from '../../components/accordion/Accordion'
 
 type P = {
     showMenu: boolean
@@ -34,7 +34,7 @@ class HeaderLeft extends Component<P, S> {
     componentDidMount() {
         this.removeListen = history.listen(location => {
             this.setState({
-                path: location.pathname
+                path: location.pathname,
             })
         })
     }
@@ -99,8 +99,8 @@ class HeaderLeft extends Component<P, S> {
                     </Accordion>
 
                     <Link onClick={this.props.hideMenu}
-                          className={`${styles.item}${this.state.path.includes('/news') ? ` ${styles.active}` : ''}`}
-                          to="/news">Новости</Link>
+                          className={`${styles.item}${this.state.path.includes('/article') ? ` ${styles.active}` : ''}`}
+                          to="/article">Новости</Link>
 
                     <div
                         className={`${styles.item}${this.state.path.includes('/material') ? ` ${styles.active}` : ''}`}

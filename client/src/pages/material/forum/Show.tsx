@@ -1,22 +1,23 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
-import {User, CommentForum, Forum} from "../../../../../server/src/common/entity/types"
-import UserContext from "../../../contexts/userContext"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import Comment from "../../../components/comment/Comment"
-import icon from "./img/forum.svg"
-import InfoBlock from "../../../components/show/InfoBlock"
-import Title from "../../../components/show/Title"
-import ConfirmationWindow from "../../../components/confirmationWindow/ConfirmationWindow"
-import history from "../../../utils/history"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import ControlButton from "../../../components/show/ControlButton"
-import Avatar from "../../../components/show/Avatar"
-import ForumApi from "../../../api/ForumApi"
-import SubTitle from "../../../components/show/SubTitle"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../../types/RouteProps"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
+import {CommentForum, Forum, User} from '../../../../../server/src/common/entity/types'
+import UserContext from '../../../contexts/userContext'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import Comment from '../../../components/comment/Comment'
+import icon from './img/forum.svg'
+import InfoBlock from '../../../components/show/InfoBlock'
+import Title from '../../../components/show/Title'
+import ConfirmationWindow from '../../../components/confirmationWindow/ConfirmationWindow'
+import history from '../../../utils/history'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import ControlButton from '../../../components/show/ControlButton'
+import Avatar from '../../../components/show/Avatar'
+import ForumApi from '../../../api/ForumApi'
+import SubTitle from '../../../components/show/SubTitle'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -54,7 +55,7 @@ class ForumPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
         return null
@@ -72,7 +73,7 @@ class ForumPage extends React.Component<P, S> {
             }) === -1) ? this.context.user.id === this.state.forum.idUser : true)
             if (isAdmin) {
                 this.setState({
-                    isAdmin
+                    isAdmin,
                 })
             }
         }
@@ -93,7 +94,7 @@ class ForumPage extends React.Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -129,7 +130,7 @@ class ForumPage extends React.Component<P, S> {
     handleRemove = () => {
         this.setState({
             modalShow: false,
-            isLoaded: false
+            isLoaded: false,
         })
         this.forumApi.remove(this.state.id).then(() => {
             history.push('/material/forum')
@@ -146,30 +147,30 @@ class ForumPage extends React.Component<P, S> {
 
     hideRemoveWindow = () => {
         this.setState({
-            modalShow: false
+            modalShow: false,
         })
     }
 
     showRemoveWindow = () => {
         this.setState({
-            modalShow: true
+            modalShow: true,
         })
     }
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
 
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить обсуждение?"/>
                 <div>
                     <PageTitle title="Обсуждение" icon={icon}>
                         <ControlButton show={this.state.isAdmin} id={this.state.id}
-                                       type="forum" nameRemove='обсуждение'
+                                       href="/material/forum" nameRemove="Удалить обсуждение"
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>
                     <Avatar src={this.state.forum.urlAvatar}/>
@@ -179,13 +180,13 @@ class ForumPage extends React.Component<P, S> {
 
                     <div className="comments">
                         {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>
+                            <Comment key={c.id} {...c}/>,
                         )}
                     </div>
                     {(!this.state.forum.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
                 </div>
-            </div>
+            </Page>
         )
     }
 }

@@ -1,8 +1,8 @@
-import React, {ChangeEvent, FC} from "react"
+import React, {ChangeEvent, FC} from 'react'
 import styles from './MyMultiSelect.module.scss'
 import closeSvg from './img/close.svg'
-import Spinner from "../spinner/Spinner"
-import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from "./types"
+import Spinner from '../spinner/Spinner'
+import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from './types'
 
 type P = {
     id: string,
@@ -32,14 +32,14 @@ class MyMultiSelect extends React.Component<P, S> {
     handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             inputValue: e.target.value,
-            isLoaded: false
+            isLoaded: false,
         })
         this.props.onChange({
             id: this.props.id,
             value: e.target.value,
         }).finally(() => {
             this.setState({
-                isLoaded: true
+                isLoaded: true,
             })
         })
 
@@ -49,7 +49,7 @@ class MyMultiSelect extends React.Component<P, S> {
         this.props.onRemove({
             id: this.props.id,
             value,
-            label: ''
+            label: '',
         })
     }
 
@@ -61,8 +61,8 @@ class MyMultiSelect extends React.Component<P, S> {
         })
         this.handleChange({
             target: {
-                value: ''
-            }
+                value: '',
+            },
         } as any)
     }
 
@@ -76,7 +76,7 @@ class MyMultiSelect extends React.Component<P, S> {
                     <div className={`d-flex flex-wrap ${styles.select__options} + ${styles.select__values}`}>
                         {this.props.value.map(el =>
                             <BlockValue key={el.value} value={el.value}
-                                        onClose={this.handleRemove}>{el.label}</BlockValue>
+                                        onClose={this.handleRemove}>{el.label}</BlockValue>,
                         )}
                     </div>}
 
@@ -92,7 +92,7 @@ class MyMultiSelect extends React.Component<P, S> {
                     <div className={'d-flex flex-column align-items-start ' + styles.select__options}>
                         {this.props.options.map(el =>
                             <BlockOptions key={el.value} value={el.value}
-                                          onClick={this.handleAdd}>{el.label}</BlockOptions>
+                                          onClick={this.handleAdd}>{el.label}</BlockOptions>,
                         )}
                     </div>}
                 </div>

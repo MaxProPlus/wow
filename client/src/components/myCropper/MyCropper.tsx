@@ -1,9 +1,9 @@
-import React, {createRef} from "react"
-import Cropper from "react-cropper"
-import "cropperjs/dist/cropper.css"
-import {Col, Row} from "react-bootstrap"
+import React, {createRef} from 'react'
+import Cropper from 'react-cropper'
+import 'cropperjs/dist/cropper.css'
+import {Col, Row} from 'react-bootstrap'
 import styles from './MyCropper.module.scss'
-import Button from "../button/Button"
+import Button from '../button/Button'
 
 type P = {
     src: string,
@@ -23,7 +23,7 @@ export class MyCropper extends React.Component<P, S> {
     constructor(props: P) {
         super(props)
         this.state = {
-            image: props.src
+            image: props.src,
         }
         this.imageRef = createRef()
 
@@ -32,7 +32,7 @@ export class MyCropper extends React.Component<P, S> {
     componentDidUpdate(prevProps: P, prevState: S) {
         if (prevProps.src !== this.props.src) {
             this.setState({
-                image: this.props.src
+                image: this.props.src,
             })
         }
     }
@@ -48,7 +48,7 @@ export class MyCropper extends React.Component<P, S> {
         const reader = new FileReader()
         reader.onload = () => {
             this.setState({
-                image: reader.result as any
+                image: reader.result as any,
             })
         }
         reader.readAsDataURL(files[0])
@@ -56,7 +56,7 @@ export class MyCropper extends React.Component<P, S> {
 
 
     handleCrop = () => {
-        if (typeof this.cropper !== "undefined") {
+        if (typeof this.cropper !== 'undefined') {
             this.props.onChange(this.cropper.getCroppedCanvas().toDataURL())
         }
     }

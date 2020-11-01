@@ -1,16 +1,17 @@
-import React, {Component} from "react"
-import {TicketType} from "../../../../../server/src/common/entity/types"
-import Spinner from "../../../components/spinner/Spinner"
-import icon from "./img/ticket.svg"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import styles from "../../../css/listTitle.module.scss"
-import BlockReport from "../../../components/list/BlockReport"
-import TicketApi from "../../../api/TicketApi"
-import UserContext from "../../../contexts/userContext"
-import {Redirect, RouteComponentProps} from "react-router-dom"
-import ButtonIcon from "../../../components/list/ButtonIcon"
-import penIcon from "../../../img/pen.svg"
+import React, {Component} from 'react'
+import {TicketType} from '../../../../../server/src/common/entity/types'
+import Spinner from '../../../components/spinner/Spinner'
+import icon from './img/ticket.svg'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import styles from '../../../css/listTitle.module.scss'
+import BlockReport from '../../../components/list/BlockReport'
+import TicketApi from '../../../api/TicketApi'
+import UserContext from '../../../contexts/userContext'
+import {Redirect, RouteComponentProps} from 'react-router-dom'
+import ButtonIcon from '../../../components/list/ButtonIcon'
+import penIcon from '../../../img/pen.svg'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -44,7 +45,7 @@ class TicketTypeList extends Component<P, S> {
             })
         }, (err) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -55,24 +56,24 @@ class TicketTypeList extends Component<P, S> {
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
-                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
+                <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
                 <PageTitle title="Тикеты" icon={icon} className={styles.header}>
                     <ButtonIcon href="/help/ticket/create" icon={penIcon}>Новый запрос</ButtonIcon>
                 </PageTitle>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
                         (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle={el.description}
-                                      urlAvatar={el.urlIcon} href="/help/ticket/type/"/>)
+                                      urlAvatar={el.urlIcon} href="/help/ticket/type/"/>),
                     )
                     :
                     'Нет категорий'}
-            </>
+            </Page>
         )
     }
 }

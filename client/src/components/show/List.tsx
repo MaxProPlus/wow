@@ -1,6 +1,6 @@
-import React, {FC} from "react"
+import React, {FC} from 'react'
 import styles from './List.module.scss'
-import {Link} from "react-router-dom"
+import {Link} from 'react-router-dom'
 
 type P = {
     title: string
@@ -17,7 +17,7 @@ const List = ({title, href, list}: P) => {
             <div className={styles.title}>{title}</div>
             <div className={styles.block}>
                 {list.map(el =>
-                    (<Value key={el.id} href={href + el.id}>{el.title}</Value>)
+                    (<Value key={el.id} href={href + el.id}>{el.title}</Value>),
                 )}
             </div>
         </>

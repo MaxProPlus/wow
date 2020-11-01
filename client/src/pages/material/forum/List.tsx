@@ -1,19 +1,20 @@
-import React, {ChangeEvent, Component} from "react"
-import {Forum} from "../../../../../server/src/common/entity/types"
-import {Col, Row} from "react-bootstrap"
-import Button from "../../../components/button/Button"
-import Spinner from "../../../components/spinner/Spinner"
-import icon from "./img/forum.svg"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import Search from "../../../components/list/Search"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import styles from "../../../css/listTitle.module.scss"
-import SearchBlock from "../../../components/list/SearchBlock"
-import Form from "../../../components/form/Form"
-import InputField from "../../../components/form/inputField/InputField"
-import BlockReport from "../../../components/list/BlockReport"
-import ForumApi from "../../../api/ForumApi"
-import {RouteComponentProps} from "react-router-dom"
+import React, {ChangeEvent, Component} from 'react'
+import {Forum} from '../../../../../server/src/common/entity/types'
+import {Col, Row} from 'react-bootstrap'
+import Button from '../../../components/button/Button'
+import Spinner from '../../../components/spinner/Spinner'
+import icon from './img/forum.svg'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import Search from '../../../components/list/Search'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import styles from '../../../css/listTitle.module.scss'
+import SearchBlock from '../../../components/list/SearchBlock'
+import Form from '../../../components/form/Form'
+import InputField from '../../../components/form/inputField/InputField'
+import BlockReport from '../../../components/list/BlockReport'
+import ForumApi from '../../../api/ForumApi'
+import {RouteComponentProps} from 'react-router-dom'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -70,7 +71,7 @@ class ForumList extends Component<P, S> {
             }
         }, (err) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -90,7 +91,7 @@ class ForumList extends Component<P, S> {
     toggle = () => {
         this.setState((state) => {
             return {
-                filterShow: !state.filterShow
+                filterShow: !state.filterShow,
             }
         })
 
@@ -99,13 +100,13 @@ class ForumList extends Component<P, S> {
     handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
-            [e.target.id]: e.target.value
+            [e.target.id]: e.target.value,
         } as any)
     }
 
     handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
         this.setState({
-            [e.target.id]: Number(e.target.value)
+            [e.target.id]: Number(e.target.value),
         } as any)
     }
 
@@ -113,19 +114,19 @@ class ForumList extends Component<P, S> {
         e.preventDefault()
         this.page = 1
         this.setState({
-            isLoaded: false
+            isLoaded: false,
         })
         this.updateData(true)
     }
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Последние обсуждения" icon={icon} className={styles.header}>
                     <Search href="/material/forum/create" id="title" text="Создать обсуждение"
@@ -151,12 +152,12 @@ class ForumList extends Component<P, S> {
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
                         (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle=""
-                                      urlAvatar={el.urlAvatar} href="/material/forum/"/>)
+                                      urlAvatar={el.urlAvatar} href="/material/forum/"/>),
                     )
                     :
                     'Форумы не найдены'}
                 {more}
-            </>
+            </Page>
         )
     }
 }

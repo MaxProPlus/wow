@@ -1,5 +1,5 @@
-import {Option} from "../../../components/myMultiSelect/types"
-import {Forum} from "../../../../../server/src/common/entity/types"
+import {Option} from '../../../components/myMultiSelect/types'
+import {Forum} from '../../../../../server/src/common/entity/types'
 
 // Общий state для создание и редактирование
 export type CommonS = {

@@ -1,5 +1,5 @@
-import React from "react"
-import Form from "../Form"
+import React from 'react'
+import Form from '../Form'
 
 const Textarea = ({label, value, id, onChange, placeholder, rows}: any) => {
     return (

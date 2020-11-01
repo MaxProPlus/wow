@@ -1,0 +1,127 @@
+import React, {ChangeEvent, Component} from 'react'
+import {RouteComponentProps} from 'react-router-dom'
+import {Article} from '../../../../server/src/common/entity/types'
+import AlertDanger from '../../components/alert-danger/AlertDanger'
+import Button from '../../components/button/Button'
+import Spinner from '../../components/spinner/Spinner'
+import PageTitle from '../../components/pageTitle/PageTitle'
+import BlockReport from '../../components/list/BlockReport'
+import styles from './List.module.scss'
+import stylesTitle from '../../css/listTitle.module.scss'
+import stylesButton from '../../components/list/Search.module.scss'
+import ArticleApi from '../../api/ArticleApi'
+import penIcon from '../../img/pen.svg'
+import UserContext from '../../contexts/userContext'
+
+type P = RouteComponentProps
+
+type S = {
+    isLoaded: boolean,
+    errorMessage: string,
+    count: number,
+    list: Article[],
+}
+
+class ArticleList extends Component<P, S> {
+    static contextType = UserContext
+    private articleApi = new ArticleApi()
+    private page = 1
+    private limit = 10
+
+    constructor(props: P) {
+        super(props)
+        this.state = {
+            isLoaded: false,
+            errorMessage: '',
+            count: 0,
+            list: [],
+        }
+    }
+
+    componentDidMount() {
+        this.updateData(false)
+    }
+
+    updateData = (reset: boolean) => {
+        this.articleApi.getAll({}, this.limit, this.page).then(r => {
+            if (reset) {
+                this.setState({
+                    list: r.data,
+                    count: r.count,
+                })
+            } else {
+                this.setState((prevState: S) => {
+                    return {
+                        list: prevState.list.concat(r.data),
+                        count: r.count,
+                    }
+                })
+            }
+        }, (err) => {
+            this.setState({
+                errorMessage: err,
+            })
+        }).finally(() => {
+            this.setState({
+                isLoaded: true,
+            })
+        })
+    }
+
+    handlePageClick = () => {
+        this.setState({
+            isLoaded: false,
+        })
+        this.page += 1
+        this.updateData(false)
+    }
+
+    handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            errorMessage: '',
+            [e.target.id]: e.target.value,
+        } as any)
+    }
+
+    handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+        this.setState({
+            [e.target.id]: Number(e.target.value),
+        } as any)
+    }
+
+    handleSubmit = (e: any) => {
+        e.preventDefault()
+        this.page = 1
+        this.setState({
+            isLoaded: false,
+        })
+        this.updateData(true)
+    }
+
+    render() {
+        if (!!this.state.errorMessage) {
+            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+        }
+        const more = this.limit * this.page < this.state.count ?
+            <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
+        return (
+            <div>
+                {!this.state.isLoaded && <Spinner/>}
+                <PageTitle title="Последние обновления" icon="" className={`${stylesTitle.header} ${styles.title}`}>
+                    {this.context.user.rights.includes('ARTICLE_CRUD') &&
+                    <Button to="/article/create"><img className={stylesButton.icon} src={penIcon} alt=""/><span
+                        className={stylesButton.text}>Создать новость</span></Button>}
+                </PageTitle>
+                {this.state.list.length > 0 ?
+                    this.state.list.map(el =>
+                        (<BlockReport className={styles.articleItem} key={el.id} id={el.id} title={el.title}
+                                      muteTitle=""
+                                      urlAvatar={el.urlAvatar} href="/article/"/>),
+                    ) : 'Новости не найдены'}
+                {more}
+            </div>
+        )
+    }
+}
+
+export default ArticleList

@@ -1,15 +1,16 @@
 import React, {Component} from 'react'
-import {Link, RouteComponentProps} from "react-router-dom"
-import UserApi from "../../../api/UserApi"
-import UserContext from "../../../contexts/userContext"
-import Spinner from "../../../components/spinner/Spinner"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import {User} from "../../../../../server/src/common/entity/types"
-import InputField from "../../../components/form/inputField/InputField"
-import Form from "../../../components/form/Form"
+import {Link, RouteComponentProps} from 'react-router-dom'
+import UserApi from '../../../api/UserApi'
+import UserContext from '../../../contexts/userContext'
+import Spinner from '../../../components/spinner/Spinner'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import {User} from '../../../../../server/src/common/entity/types'
+import InputField from '../../../components/form/inputField/InputField'
+import Form from '../../../components/form/Form'
 import './SignIn.scss'
-import Button from "../../../components/button/Button"
-import AlertAccept from "../../../components/alertAccept/AlertAccept"
+import Button from '../../../components/button/Button'
+import AlertAccept from '../../../components/alertAccept/AlertAccept'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<{}, {}, any>
 
@@ -38,13 +39,13 @@ class SignIn extends Component<P, S> {
 
     componentDidMount() {
         // Проверка, есть ли token в get параметрах
-        const token = (new URL('http://example.com'+this.props.location.search)).searchParams.get('token')
+        const token = (new URL('http://example.com' + this.props.location.search)).searchParams.get('token')
         if (!!token) {
             // Если есть, то запросить подтверждение почты
             this.setState({
-                isLoaded: false
+                isLoaded: false,
             })
-            this.userApi.acceptReg(token).then(()=>{
+            this.userApi.acceptReg(token).then(() => {
                 this.setState({
                     acceptMessage: 'Почта успешно подтверждена',
                     isLoaded: true,
@@ -54,7 +55,7 @@ class SignIn extends Component<P, S> {
                     errorMessage: err,
                     isLoaded: true,
                 })
-            }).finally(()=>{
+            }).finally(() => {
                 this.props.history.replace(this.props.location.pathname)
             })
         }
@@ -77,7 +78,7 @@ class SignIn extends Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -95,24 +96,26 @@ class SignIn extends Component<P, S> {
 
     render() {
         return (
-            <div className="page-signin">
-                <Form onSubmit={this.handleSubmit}>
-                    {!this.state.isLoaded && <Spinner/>}
-                    <div className="title">Вход</div>
-                    <AlertAccept>{this.state.acceptMessage}</AlertAccept>
-                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                    <InputField label="Имя пользователя" type="text" value={this.state.username}
-                                id="username" onChange={this.handleChange}/>
-                    <InputField label="Пароль" type="password" value={this.state.password}
-                                id="password" onChange={this.handleChange}/>
-                    <div className="form-group">
-                        <Button className="btn-block">Вход</Button>
-                    </div>
-                    <div className="suggest">
-                        Ещё нет аккаунта? <Link to="/signup">Зарегистрируйтесь</Link>
-                    </div>
-                </Form>
-            </div>
+            <Page>
+                <div className="page-signin">
+                    <Form onSubmit={this.handleSubmit}>
+                        {!this.state.isLoaded && <Spinner/>}
+                        <div className="title">Вход</div>
+                        <AlertAccept>{this.state.acceptMessage}</AlertAccept>
+                        <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                        <InputField label="Имя пользователя" type="text" value={this.state.username}
+                                    id="username" onChange={this.handleChange}/>
+                        <InputField label="Пароль" type="password" value={this.state.password}
+                                    id="password" onChange={this.handleChange}/>
+                        <div className="form-group">
+                            <Button className="btn-block">Вход</Button>
+                        </div>
+                        <div className="suggest">
+                            Ещё нет аккаунта? <Link to="/signup">Зарегистрируйтесь</Link>
+                        </div>
+                    </Form>
+                </div>
+            </Page>
         )
     }
 }

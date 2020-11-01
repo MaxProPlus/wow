@@ -1,6 +1,6 @@
-import React, {FC, FormEvent} from "react"
+import React, {FC, FormEvent} from 'react'
 import styles from './SearchBlock.module.scss'
-import Accordion from "../accordion/Accordion"
+import Accordion from '../accordion/Accordion'
 
 type P = {
     children: any

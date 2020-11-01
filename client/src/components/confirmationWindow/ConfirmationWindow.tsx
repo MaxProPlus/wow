@@ -1,7 +1,7 @@
-import React from "react"
+import React from 'react'
 import styles from './ConfirmationWindow.module.scss'
-import ModalWindow from "../modalWindow/ModalWindow"
-import Button from "../button/Button"
+import ModalWindow from '../modalWindow/ModalWindow'
+import Button from '../button/Button'
 
 type P = {
     title: string

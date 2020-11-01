@@ -1,19 +1,20 @@
-import React, {Component} from "react"
-import {Ticket, ticketStatusToString} from "../../../../../server/src/common/entity/types"
-import Button from "../../../components/button/Button"
-import Spinner from "../../../components/spinner/Spinner"
-import icon from "./img/ticket.svg"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import styles from "../../../css/listTitle.module.scss"
-import BlockReport from "../../../components/list/BlockReport"
-import TicketApi from "../../../api/TicketApi"
-import history from "../../../utils/history"
-import penIcon from "../../../img/pen.svg"
-import urlTicket from "./img/urlTicket.svg"
-import ButtonIcon from "../../../components/list/ButtonIcon"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../../types/RouteProps"
+import React, {Component} from 'react'
+import {Ticket, ticketStatusToString} from '../../../../../server/src/common/entity/types'
+import Button from '../../../components/button/Button'
+import Spinner from '../../../components/spinner/Spinner'
+import icon from './img/ticket.svg'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import styles from '../../../css/listTitle.module.scss'
+import BlockReport from '../../../components/list/BlockReport'
+import TicketApi from '../../../api/TicketApi'
+import history from '../../../utils/history'
+import penIcon from '../../../img/pen.svg'
+import urlTicket from './img/urlTicket.svg'
+import ButtonIcon from '../../../components/list/ButtonIcon'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -47,7 +48,7 @@ class TicketList extends Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
 
@@ -84,7 +85,7 @@ class TicketList extends Component<P, S> {
             }
         }, (err) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -103,26 +104,26 @@ class TicketList extends Component<P, S> {
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Тикеты" icon={icon} className={styles.header}>
                     <ButtonIcon href="/help/ticket/create" icon={penIcon}>Новый запрос</ButtonIcon>
                 </PageTitle>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<BlockReport key={el.id} id={el.id} title={ticketStatusToString(el.status) + " | " + el.title}
+                        (<BlockReport key={el.id} id={el.id} title={ticketStatusToString(el.status) + ' | ' + el.title}
                                       muteTitle={el.text}
-                                      urlAvatar={urlTicket} href="/help/ticket/"/>)
+                                      urlAvatar={urlTicket} href="/help/ticket/"/>),
                     )
                     :
                     'Заявки не найдены'}
                 {more}
-            </>
+            </Page>
         )
     }
 }

@@ -1,5 +1,5 @@
-import {CommentGuild} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentGuild} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class GuildApi extends Api {
 

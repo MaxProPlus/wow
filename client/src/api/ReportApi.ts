@@ -1,5 +1,5 @@
-import {CommentReport} from "../../../server/src/common/entity/types"
-import Api from "./BasicApi"
+import {CommentReport} from '../../../server/src/common/entity/types'
+import Api from './BasicApi'
 
 class ReportApi extends Api {
 

@@ -1,7 +1,7 @@
-import Api from "./BasicApi"
-import {Feedback} from "../../../server/src/common/entity/types"
+import Api from './BasicApi'
+import {Feedback} from '../../../server/src/common/entity/types'
 
-class FeedbackApi extends Api{
+class FeedbackApi extends Api {
 
     // Получить список администрации
     getAll = () => {

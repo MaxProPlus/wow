@@ -30,6 +30,7 @@ h3 {
   font-size: 1.5rem;
   text-transform: uppercase;
   margin-bottom: 7px;
+
   img {
     display: inline;
     min-width: auto;
@@ -56,6 +57,10 @@ hr {
 
 .color-1 {
   color: $color1;
+}
+
+.color-3 {
+  color: $color3;
 }
 
 .page-title {

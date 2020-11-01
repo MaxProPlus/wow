@@ -1,6 +1,6 @@
-import React from "react"
+import React from 'react'
 import './Input.scss'
-import Form from "../form/Form"
+import Form from '../form/Form'
 
 const Input = (props: any) => {
     return (

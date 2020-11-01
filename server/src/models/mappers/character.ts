@@ -373,7 +373,7 @@ class CharacterMapper extends BasicMaterialMapper {
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментай не найден')
+                return Promise.reject('Комментарий не найден')
             }
             return Promise.resolve(id)
         }, (err: any) => {

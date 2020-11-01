@@ -1,18 +1,19 @@
-import React, {ChangeEvent, Component} from "react"
-import {Guild} from "../../../../../server/src/common/entity/types"
-import GuildApi from "../../../api/GuildApi"
-import Button from "../../../components/button/Button"
-import {Col, Row} from "react-bootstrap"
-import styles from "../../../css/listTitle.module.scss"
-import icon from "./img/guild.svg"
-import Spinner from "../../../components/spinner/Spinner"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import Search from "../../../components/list/Search"
-import Block from "../../../components/list/Block"
-import SearchBlock from "../../../components/list/SearchBlock"
-import Form from "../../../components/form/Form"
-import InputField from "../../../components/form/inputField/InputField"
-import {RouteComponentProps} from "react-router-dom"
+import React, {ChangeEvent, Component} from 'react'
+import {Guild} from '../../../../../server/src/common/entity/types'
+import GuildApi from '../../../api/GuildApi'
+import Button from '../../../components/button/Button'
+import {Col, Row} from 'react-bootstrap'
+import styles from '../../../css/listTitle.module.scss'
+import icon from './img/guild.svg'
+import Spinner from '../../../components/spinner/Spinner'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import Search from '../../../components/list/Search'
+import Block from '../../../components/list/Block'
+import SearchBlock from '../../../components/list/SearchBlock'
+import Form from '../../../components/form/Form'
+import InputField from '../../../components/form/inputField/InputField'
+import {RouteComponentProps} from 'react-router-dom'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -64,7 +65,7 @@ class GuildList extends Component<P, S> {
             }
         }, (err) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -84,7 +85,7 @@ class GuildList extends Component<P, S> {
     toggle = () => {
         this.setState((state) => {
             return {
-                filterShow: !state.filterShow
+                filterShow: !state.filterShow,
             }
         })
     }
@@ -92,7 +93,7 @@ class GuildList extends Component<P, S> {
     handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
-            [e.target.id]: e.target.value
+            [e.target.id]: e.target.value,
         } as any)
     }
 
@@ -109,7 +110,7 @@ class GuildList extends Component<P, S> {
         this.data = data
         this.page = 1
         this.setState({
-            isLoaded: false
+            isLoaded: false,
         })
         this.updateData(true)
     }
@@ -118,7 +119,7 @@ class GuildList extends Component<P, S> {
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : undefined
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle className={styles.header} title="Гильдии" icon={icon}>
                     <Search href="/material/guild/create" id="title" text="Создать гильдию" placeholder="Поиск гильдии"
@@ -150,13 +151,13 @@ class GuildList extends Component<P, S> {
                     <Row>
                         {this.state.list.map(el =>
                             (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.gameTitle}
-                                    urlAvatar={el.urlAvatar} href="/material/guild/" size={4}/>)
+                                    urlAvatar={el.urlAvatar} href="/material/guild/" size={4}/>),
                         )}
                     </Row>
                     :
                     'Гильдии не найдены'}
                 {more}
-            </div>
+            </Page>
         )
     }
 }

@@ -1,13 +1,14 @@
-import React, {Component} from "react"
-import {Feedback} from "../../../../../server/src/common/entity/types"
-import Spinner from "../../../components/spinner/Spinner"
-import icon from "./img/icon.svg"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import styles from "../../../css/listTitle.module.scss"
-import {RouteComponentProps} from "react-router-dom"
-import FeedbackApi from "../../../api/FeedbackApi"
-import Block from "./Block"
+import React, {Component} from 'react'
+import {Feedback} from '../../../../../server/src/common/entity/types'
+import Spinner from '../../../components/spinner/Spinner'
+import icon from './img/icon.svg'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import styles from '../../../css/listTitle.module.scss'
+import {RouteComponentProps} from 'react-router-dom'
+import FeedbackApi from '../../../api/FeedbackApi'
+import Block from './Block'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -40,7 +41,7 @@ class FeedbackList extends Component<P, S> {
             })
         }, (err) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -54,16 +55,16 @@ class FeedbackList extends Component<P, S> {
             return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
         }
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Обратная связь" icon={icon} className={styles.header}/>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<Block key={el.id} {...el}/>)
+                        (<Block key={el.id} {...el}/>),
                     )
                     :
                     'Список пуст'}
-            </>
+            </Page>
         )
     }
 }

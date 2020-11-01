@@ -1,5 +1,5 @@
-import React, {FC} from "react"
-import PageTitle from "components/pageTitle/PageTitle"
+import React, {FC} from 'react'
+import PageTitle from 'components/pageTitle/PageTitle'
 import iconController from './img/controller.svg'
 import iconKnow from './img/knowledge.svg'
 import iconHero from './img/superhero.svg'
@@ -14,14 +14,15 @@ import iconComp2 from './img/comp2.png'
 import iconPlay1 from './img/play1.png'
 import iconPlay3 from './img/play3.png'
 import iconPlay4 from './img/play4.png'
-import Block from "./Block"
-import {Col, Row} from "react-bootstrap"
+import Block from './Block'
+import {Col, Row} from 'react-bootstrap'
+import Page from '../../../components/page/Page'
 
 // Страница "Как начать игру"
 const HowPage: FC = () => {
 
     return (
-        <>
+        <Page>
             <PageTitle icon={iconController} title="Как начать игру"/>
             <Block icon={iconController} title="Вход в игру">
                 <p>1) Как только запустился лаунчер нажмите кнопку “Обновить” чтобы загрузить все последние
@@ -105,7 +106,7 @@ const HowPage: FC = () => {
                 <Row><Col md={6}><p><img className="mw-100" src={iconPlay3} alt=""/></p></Col><Col md={6}><p><img
                     className="mw-100" src={iconPlay4} alt=""/></p></Col></Row>
             </Block>
-        </>
+        </Page>
     )
 }
 

@@ -1,10 +1,10 @@
-import React, {Component} from "react"
-import UserContext from "../../contexts/userContext"
-import UserApi from "../../api/UserApi"
-import history from "../../utils/history"
+import React, {Component} from 'react'
+import UserContext from '../../contexts/userContext'
+import UserApi from '../../api/UserApi'
+import history from '../../utils/history'
 import './Dropdown.scss'
-import Profile from "../profile/Profile"
-import {Link} from "react-router-dom"
+import Profile from '../profile/Profile'
+import {Link} from 'react-router-dom'
 
 type stateTypes = {
     visible: boolean
@@ -59,8 +59,8 @@ class Dropdown extends Component<{}, stateTypes> {
 
     renderMenu = () => {
         return (<div className="dropdown">
-                <Link className="item" to={"/profile/" + this.context.user.id}>Мой профиль</Link>
-                <Link className="item" to={"/setting"}>Настройки</Link>
+                <Link className="item" to={'/profile/' + this.context.user.id}>Мой профиль</Link>
+                <Link className="item" to={'/setting'}>Настройки</Link>
                 <div className="item" onClick={this.logout}>Выйти</div>
             </div>
         )

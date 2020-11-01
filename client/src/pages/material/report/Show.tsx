@@ -1,25 +1,26 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
-import {User, CommentReport, Report} from "../../../../../server/src/common/entity/types"
-import UserContext from "../../../contexts/userContext"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import Comment from "../../../components/comment/Comment"
-import {Col, Row} from "react-bootstrap"
-import icon from "./img/report.svg"
-import InfoBlock from "../../../components/show/InfoBlock"
-import Title from "../../../components/show/Title"
-import Motto from "../../../components/show/Motto"
-import ConfirmationWindow from "../../../components/confirmationWindow/ConfirmationWindow"
-import history from "../../../utils/history"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import ControlButton from "../../../components/show/ControlButton"
-import Avatar from "../../../components/show/Avatar"
-import Card from "../../../components/show/Card"
-import ReportApi from "../../../api/ReportApi"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../../types/RouteProps"
-import List from "../../../components/show/List"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
+import {CommentReport, Report, User} from '../../../../../server/src/common/entity/types'
+import UserContext from '../../../contexts/userContext'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import Comment from '../../../components/comment/Comment'
+import {Col, Row} from 'react-bootstrap'
+import icon from './img/report.svg'
+import InfoBlock from '../../../components/show/InfoBlock'
+import Title from '../../../components/show/Title'
+import Motto from '../../../components/show/Motto'
+import ConfirmationWindow from '../../../components/confirmationWindow/ConfirmationWindow'
+import history from '../../../utils/history'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import ControlButton from '../../../components/show/ControlButton'
+import Avatar from '../../../components/show/Avatar'
+import Card from '../../../components/show/Card'
+import ReportApi from '../../../api/ReportApi'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../../types/RouteProps'
+import List from '../../../components/show/List'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -57,7 +58,7 @@ class ReportPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
         return null
@@ -75,7 +76,7 @@ class ReportPage extends React.Component<P, S> {
             }) === -1) ? this.context.user.id === this.state.report.idUser : true)
             if (isAdmin) {
                 this.setState({
-                    isAdmin
+                    isAdmin,
                 })
             }
         }
@@ -96,7 +97,7 @@ class ReportPage extends React.Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -132,7 +133,7 @@ class ReportPage extends React.Component<P, S> {
     handleRemove = () => {
         this.setState({
             modalShow: false,
-            isLoaded: false
+            isLoaded: false,
         })
         this.reportApi.remove(this.state.id).then(() => {
             history.push('/material/report')
@@ -149,29 +150,29 @@ class ReportPage extends React.Component<P, S> {
 
     hideRemoveWindow = () => {
         this.setState({
-            modalShow: false
+            modalShow: false,
         })
     }
 
     showRemoveWindow = () => {
         this.setState({
-            modalShow: true
+            modalShow: true,
         })
     }
 
     render() {
         if (!!this.state.errorMessage) {
-            return (<AlertDanger>{this.state.errorMessage}</AlertDanger>)
+            return (<Page><AlertDanger>{this.state.errorMessage}</AlertDanger></Page>)
         }
 
         return (
-            <>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить отчет / лог?"/>
                 <PageTitle title="Отчет / лог" icon={icon}>
                     <ControlButton show={this.state.isAdmin} id={this.state.id}
-                                   type='report' nameRemove='отчет / лог'
+                                   href="/material/report" nameRemove="Удалить отчет / лог"
                                    showRemoveWindow={this.showRemoveWindow}/>
                 </PageTitle>
                 <Row>
@@ -192,12 +193,12 @@ class ReportPage extends React.Component<P, S> {
 
                 <div className="comments">
                     {this.state.comments.map((c) =>
-                        <Comment key={c.id} {...c}/>
+                        <Comment key={c.id} {...c}/>,
                     )}
                 </div>
                 {(!this.state.report.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-            </>
+            </Page>
         )
     }
 }

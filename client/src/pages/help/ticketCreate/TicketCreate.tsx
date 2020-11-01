@@ -1,18 +1,19 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
-import Button from "../../../components/button/Button"
-import InputField from "../../../components/form/inputField/InputField"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import TicketApi from "../../../api/TicketApi"
-import {Ticket, TicketType} from "../../../../../server/src/common/entity/types"
-import Validator from "../../../../../server/src/common/validator"
-import history from "../../../utils/history"
-import UserContext from "../../../contexts/userContext"
-import {Redirect, RouteComponentProps} from "react-router-dom"
-import Form from "../../../components/form/Form"
-import Select from "../../../components/form/select/Select"
-import Textarea from "../../../components/form/textarea/Textarea"
-import {RouteProps} from "../../../types/RouteProps"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
+import Button from '../../../components/button/Button'
+import InputField from '../../../components/form/inputField/InputField'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import TicketApi from '../../../api/TicketApi'
+import {Ticket, TicketType} from '../../../../../server/src/common/entity/types'
+import Validator from '../../../../../server/src/common/validator'
+import history from '../../../utils/history'
+import UserContext from '../../../contexts/userContext'
+import {Redirect, RouteComponentProps} from 'react-router-dom'
+import Form from '../../../components/form/Form'
+import Select from '../../../components/form/select/Select'
+import Textarea from '../../../components/form/textarea/Textarea'
+import {RouteProps} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps & RouteProps
 
@@ -50,11 +51,11 @@ class TicketCreate extends React.Component<P, S> {
         this.ticketApi.getTicketsTypeList().then(r => {
             this.setState({
                 listType: r,
-                idTicketType: r[0].id
+                idTicketType: r[0].id,
             })
         }, err => {
             this.setState({
-                error: err
+                error: err,
             })
         }).finally(() => {
             this.setState({
@@ -65,13 +66,13 @@ class TicketCreate extends React.Component<P, S> {
 
     handleChangeSelect = (e: any) => {
         this.setState({
-            idTicketType: Number(e.target.value)
+            idTicketType: Number(e.target.value),
         } as S)
     }
 
     handleChange = (e: any) => {
         this.setState({
-            [e.target.id]: e.target.value
+            [e.target.id]: e.target.value,
         } as { [K in keyof S]: S[K] })
     }
 
@@ -99,21 +100,21 @@ class TicketCreate extends React.Component<P, S> {
         }, err => {
             this.props.scrollTop()
             this.setState({
-                error: err
+                error: err,
             })
         }).finally(() => {
             this.setState({
-                isLoaded: true
+                isLoaded: true,
             })
         })
     }
 
     render() {
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 {this.context.user.id === -1 &&
-                <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
+                <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
                 <div className="page-ticket-create">
                     <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.error}</AlertDanger>
@@ -123,7 +124,7 @@ class TicketCreate extends React.Component<P, S> {
                         <Select label="Тип" id="type" value={this.state.idTicketType}
                                 onChange={this.handleChangeSelect}>
                             {this.state.listType.map(tt =>
-                                <option key={tt.id} value={tt.id}>{tt.title}</option>
+                                <option key={tt.id} value={tt.id}>{tt.title}</option>,
                             )}
                         </Select>
                         <Textarea label="Текст заявки" id="text" value={this.state.text}
@@ -134,7 +135,7 @@ class TicketCreate extends React.Component<P, S> {
                         </Form.Group>
                     </Form>
                 </div>
-            </div>
+            </Page>
         )
     }
 }

@@ -1,20 +1,20 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
 import {
-    User,
     Character,
     characterActiveToString,
     characterStatusToString,
     CommentCharacter,
-    sexToString
-} from "../../../../../server/src/common/entity/types"
-import UserContext from "../../../contexts/userContext"
-import CharacterApi from "../../../api/CharacterApi"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import Comment from "../../../components/comment/Comment"
-import {Col, Row} from "react-bootstrap"
-import icon from "./img/char.svg"
+    sexToString,
+    User,
+} from '../../../../../server/src/common/entity/types'
+import UserContext from '../../../contexts/userContext'
+import CharacterApi from '../../../api/CharacterApi'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import Comment from '../../../components/comment/Comment'
+import {Col, Row} from 'react-bootstrap'
+import icon from './img/char.svg'
 import raceIcon from './img/race.svg'
 import sexIcon from './img/sex.svg'
 import ageIcon from './img/age.svg'
@@ -26,20 +26,21 @@ import religionIcon from './img/religion.svg'
 import languagesIcon from './img/languages.svg'
 import statusIcon from './img/status.svg'
 import activeIcon from '../../../img/status.svg'
-import InfoBlockInline from "../../../components/show/InfoBlockInline"
-import InfoBlock from "../../../components/show/InfoBlock"
-import Title from "../../../components/show/Title"
-import SubTitle from "../../../components/show/SubTitle"
-import Motto from "../../../components/show/Motto"
-import ConfirmationWindow from "../../../components/confirmationWindow/ConfirmationWindow"
-import history from "../../../utils/history"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import ControlButton from "../../../components/show/ControlButton"
-import Avatar from "../../../components/show/Avatar"
-import Card from "../../../components/show/Card"
-import List from "../../../components/show/List"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../../types/RouteProps"
+import InfoBlockInline from '../../../components/show/InfoBlockInline'
+import InfoBlock from '../../../components/show/InfoBlock'
+import Title from '../../../components/show/Title'
+import SubTitle from '../../../components/show/SubTitle'
+import Motto from '../../../components/show/Motto'
+import ConfirmationWindow from '../../../components/confirmationWindow/ConfirmationWindow'
+import history from '../../../utils/history'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import ControlButton from '../../../components/show/ControlButton'
+import Avatar from '../../../components/show/Avatar'
+import Card from '../../../components/show/Card'
+import List from '../../../components/show/List'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../../types/RouteProps'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -77,7 +78,7 @@ class CharacterPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
         return null
@@ -95,7 +96,7 @@ class CharacterPage extends React.Component<P, S> {
             }) === -1) ? this.context.user.id === this.state.character.idUser : true)
             if (isAdmin) {
                 this.setState({
-                    isAdmin
+                    isAdmin,
                 })
             }
         }
@@ -103,7 +104,7 @@ class CharacterPage extends React.Component<P, S> {
         if (prevProps.match.params.id !== this.state.id) {
             this.setState({
                 isLoaded: false,
-                isAdmin: false
+                isAdmin: false,
             })
             this.updateData()
         }
@@ -117,7 +118,7 @@ class CharacterPage extends React.Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -153,7 +154,7 @@ class CharacterPage extends React.Component<P, S> {
     handleRemove = () => {
         this.setState({
             modalShow: false,
-            isLoaded: false
+            isLoaded: false,
         })
         this.characterApi.remove(this.state.id).then(() => {
             history.push('/material/character')
@@ -170,13 +171,13 @@ class CharacterPage extends React.Component<P, S> {
 
     hideRemoveWindow = () => {
         this.setState({
-            modalShow: false
+            modalShow: false,
         })
     }
 
     showRemoveWindow = () => {
         this.setState({
-            modalShow: true
+            modalShow: true,
         })
     }
 
@@ -186,14 +187,14 @@ class CharacterPage extends React.Component<P, S> {
         }
 
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить персонажа?"/>
                 <div className="page-character">
                     <PageTitle title="Персонаж" icon={icon}>
                         <ControlButton show={this.state.isAdmin} id={this.state.id}
-                                       type='character' nameRemove='персонажа'
+                                       href="/material/character" nameRemove="Удалить персонажа"
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>
                     <Row>
@@ -231,13 +232,13 @@ class CharacterPage extends React.Component<P, S> {
 
                     <div className="comments">
                         {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>
+                            <Comment key={c.id} {...c}/>,
                         )}
                     </div>
                     {(!this.state.character.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
                 </div>
-            </div>
+            </Page>
         )
     }
 }

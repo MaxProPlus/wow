@@ -9,11 +9,11 @@
     color: #5B87EF;
   }
 
-  >div:first-child {
+  > div:first-child {
     padding-left: 0;
   }
 
-  >div:last-child {
+  > div:last-child {
     padding-right: 0;
   }
 
@@ -49,6 +49,7 @@
   padding: .375rem .75rem;
   display: flex;
   align-items: center;
+
   img {
     display: inline-block;
     min-width: auto;

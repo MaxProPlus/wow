@@ -1,9 +1,9 @@
-import React, {ChangeEvent, FormEvent, MouseEvent} from "react"
-import Button from "components/button/Button"
+import React, {ChangeEvent, FormEvent, MouseEvent} from 'react'
+import Button from 'components/button/Button'
 import styles from './Search.module.scss'
-import penIcon from "../../img/pen.svg"
-import searchIcon from "../../img/search.svg"
-import filterIcon from "../../img/filter.svg"
+import penIcon from '../../img/pen.svg'
+import searchIcon from '../../img/search.svg'
+import filterIcon from '../../img/filter.svg'
 
 type P = {
     href: string

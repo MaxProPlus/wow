@@ -1,6 +1,7 @@
 @import "~bootstrap/scss/bootstrap-grid";
 @import '~normalize.css';
 @import '../css/variables';
+@import '../css/common';
 
 html, body, #root {
   height: 100%;
@@ -54,43 +55,43 @@ img {
   }
 }
 
-.my-container {
+.app__body {
   width: 100%;
   overflow-y: auto;
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
 
+.app-body__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: rgba(128, 128, 128, 0.65);
+  padding: 9px 0;
+}
 
-  .container-inner {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    background-color: rgba(128, 128, 128, 0.5);
-    padding: 9px 0;
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin: 0 auto;
+  width: 95%;
+  max-width: 1200px;
+}
 
-    > .page {
-      //display: flex;
-      //flex-direction: column;
-      flex-grow: 1;
-      margin: 0 auto;
-      padding: 15px 15px 0;
-      max-width: 1200px;
-      width: 95%;
-      background-color: transparentize($border-color, .55);
-      border: 2px solid $border-color;
-    }
-  }
+.content__area {
+  @extend %border-2;
+  flex-grow: 1;
+  width: 100%;
+  padding: 15px 15px 0;
 }
 
 @media screen and (min-width: 798px) {
-  .my-container {
-    .container-inner {
-      padding: 38px 0;
-
-      > .page {
-        width: 90%;
-      }
-    }
+  .app-body__content {
+    padding: 30px 0;
+  }
+  .content {
+    width: 90%;
   }
 }

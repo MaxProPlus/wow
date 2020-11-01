@@ -7,12 +7,12 @@ class Api {
             body: JSON.stringify(body),
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
         }).then(r => {
             if (!r.ok) {
                 return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
+                    status: 'ERROR_SERVER',
+                    errorMessage: `${r.status} ${r.statusText}`,
                 }
             }
             return r.json()
@@ -27,8 +27,8 @@ class Api {
         }).then(r => {
             if (!r.ok) {
                 return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
+                    status: 'ERROR_SERVER',
+                    errorMessage: `${r.status} ${r.statusText}`,
                 }
             }
             return r.json()
@@ -43,8 +43,8 @@ class Api {
         }).then(r => {
             if (!r.ok) {
                 return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
+                    status: 'ERROR_SERVER',
+                    errorMessage: `${r.status} ${r.statusText}`,
                 }
             }
             return r.json()
@@ -57,12 +57,12 @@ class Api {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
         }).then(r => {
             if (!r.ok) {
                 return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
+                    status: 'ERROR_SERVER',
+                    errorMessage: `${r.status} ${r.statusText}`,
                 }
             }
             return r.json()
@@ -75,12 +75,12 @@ class Api {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
         }).then(r => {
             if (!r.ok) {
                 return {
-                    status: "ERROR_SERVER",
-                    errorMessage: `${r.status} ${r.statusText}`
+                    status: 'ERROR_SERVER',
+                    errorMessage: `${r.status} ${r.statusText}`,
                 }
             }
             return r.json()

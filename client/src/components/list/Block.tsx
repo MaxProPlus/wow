@@ -1,6 +1,6 @@
-import React from "react"
-import {Col} from "react-bootstrap"
-import {Link} from "react-router-dom"
+import React from 'react'
+import {Col} from 'react-bootstrap'
+import {Link} from 'react-router-dom'
 import styles from './Block.module.scss'
 
 

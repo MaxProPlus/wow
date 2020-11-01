@@ -1,16 +1,17 @@
 import React, {Component} from 'react'
-import {Link, RouteComponentProps} from "react-router-dom"
-import UserApi from "../../../api/UserApi"
-import UserContext from "../../../contexts/userContext"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import Validator from "../../../../../server/src/common/validator"
-import {User} from "../../../../../server/src/common/entity/types"
-import InputField from "../../../components/form/inputField/InputField"
-import Form from "../../../components/form/Form"
-import Button from "../../../components/button/Button"
+import {Link, RouteComponentProps} from 'react-router-dom'
+import UserApi from '../../../api/UserApi'
+import UserContext from '../../../contexts/userContext'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import Validator from '../../../../../server/src/common/validator'
+import {User} from '../../../../../server/src/common/entity/types'
+import InputField from '../../../components/form/inputField/InputField'
+import Form from '../../../components/form/Form'
+import Button from '../../../components/button/Button'
 import './SignUp.scss'
-import AlertAccept from "../../../components/alertAccept/AlertAccept"
-import Spinner from "../../../components/spinner/Spinner"
+import AlertAccept from '../../../components/alertAccept/AlertAccept'
+import Spinner from '../../../components/spinner/Spinner'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -55,7 +56,7 @@ class SignUp extends Component<P, S> {
         const err = this.validator.validateSignup(user)
         if (!!err) {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
             return
         }
@@ -82,28 +83,30 @@ class SignUp extends Component<P, S> {
 
     render() {
         return (
-            <div className="page-signup">
-                {!this.state.isLoaded && <Spinner/>}
-                <Form onSubmit={this.handleSubmit}>
-                    <div className="title">Регистрация</div>
-                    <AlertAccept>{this.state.acceptMessage}</AlertAccept>
-                    <AlertDanger>{this.state.errorMessage}</AlertDanger>
-                    <InputField label="E-mail" type="text" value={this.state.email}
-                                id="email" onChange={this.handleChange}/>
-                    <InputField label="Имя пользователя" type="text" value={this.state.login}
-                                id="login" onChange={this.handleChange}/>
-                    <InputField label="Пароль" type="password" value={this.state.password}
-                                id="password" onChange={this.handleChange}/>
-                    <InputField label="Повторите пароль" type="password" value={this.state.passwordRepeat}
-                                id="passwordRepeat" onChange={this.handleChange}/>
-                    <div className="form-group">
-                        <Button className="btn-block">Регистрация</Button>
-                    </div>
-                    <div className="suggest">
-                        Уже зарегистрированы? <Link to="/login">Войдите</Link>
-                    </div>
-                </Form>
-            </div>
+            <Page>
+                <div className="page-signup">
+                    {!this.state.isLoaded && <Spinner/>}
+                    <Form onSubmit={this.handleSubmit}>
+                        <div className="title">Регистрация</div>
+                        <AlertAccept>{this.state.acceptMessage}</AlertAccept>
+                        <AlertDanger>{this.state.errorMessage}</AlertDanger>
+                        <InputField label="E-mail" type="text" value={this.state.email}
+                                    id="email" onChange={this.handleChange}/>
+                        <InputField label="Имя пользователя" type="text" value={this.state.login}
+                                    id="login" onChange={this.handleChange}/>
+                        <InputField label="Пароль" type="password" value={this.state.password}
+                                    id="password" onChange={this.handleChange}/>
+                        <InputField label="Повторите пароль" type="password" value={this.state.passwordRepeat}
+                                    id="passwordRepeat" onChange={this.handleChange}/>
+                        <div className="form-group">
+                            <Button className="btn-block">Регистрация</Button>
+                        </div>
+                        <div className="suggest">
+                            Уже зарегистрированы? <Link to="/login">Войдите</Link>
+                        </div>
+                    </Form>
+                </div>
+            </Page>
         )
     }
 }

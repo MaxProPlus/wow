@@ -1,4 +1,4 @@
-import {User, Character, Comment, Forum, Guild, Report, Story, Ticket, UserPassword} from '../entity/types'
+import {User, Character, Comment, Forum, Guild, Report, Story, Ticket, UserPassword, Article} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 
 class Validator {
@@ -302,6 +302,29 @@ class Validator {
             err += 'Ошибка hidden.\n'
         }
         if (forum.comment < 0 || forum.comment > 1) {
+            err += 'Ошибка comment.\n'
+        }
+        return err
+    }
+
+    // Валидация новости
+    validateArticle(article: Article) {
+        let err = ''
+        this.trimObject(article, ['title', 'shortDescription', 'description'])
+        // this.normalize(article, ['coauthors'])
+        if (article.title.length < 3 || article.title.length > 35) {
+            err += 'Длина имени новости должна быть от 3 до 35 символов.\n'
+        }
+        if (article.description.length < 1) {
+            err += 'Описание обязательно для заполнения.\n'
+        }
+        if (article.closed < 0 || article.closed > 1) {
+            err += 'Ошибка closed.\n'
+        }
+        if (article.hidden < 0 || article.hidden > 1) {
+            err += 'Ошибка hidden.\n'
+        }
+        if (article.comment < 0 || article.comment > 1) {
             err += 'Ошибка comment.\n'
         }
         return err

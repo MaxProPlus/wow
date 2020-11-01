@@ -1,18 +1,19 @@
-import React, {FC} from "react"
-import InfoBlock from "../../../components/show/InfoBlock"
-import PageTitle from "../../../components/pageTitle/PageTitle"
+import React, {FC} from 'react'
+import InfoBlock from '../../../components/show/InfoBlock'
+import PageTitle from '../../../components/pageTitle/PageTitle'
 import icon from './img/icon.svg'
 import iconAbout from './img/about.svg'
 import iconChat from './img/chat.svg'
 import iconComm from './img/comm.svg'
 import iconPurpose from './img/purpose.svg'
 import iconRole from './img/role.svg'
+import Page from '../../../components/page/Page'
 
 // Страница правил
 const RulePage: FC = () => {
 
     return (
-        <>
+        <Page>
             <PageTitle title="ПРАВИЛА И СОГЛАШЕНИЯ" icon={icon}/>
             <div>
                 <InfoBlock icon={iconAbout} title="О проекте"><span
@@ -354,7 +355,7 @@ const RulePage: FC = () => {
                     </div>
                 </InfoBlock>
             </div>
-        </>
+        </Page>
     )
 }
 

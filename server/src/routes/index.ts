@@ -7,6 +7,7 @@ import StoryController from '../controllers/StoryController'
 import ReportController from '../controllers/ReportController'
 import ForumController from '../controllers/ForumController'
 import FeedbackController from '../controllers/FeedbackController'
+import ArticleController from '../controllers/ArticleController'
 
 // Инициализация роутов
 export default (app: Express) => {
@@ -14,6 +15,7 @@ export default (app: Express) => {
 
     // Инициализация контроллеров
     const userController = new UserController(app)
+    const articleController = new ArticleController(app)
     const ticketController = new TicketController(app)
     const characterController = new CharacterController(app)
     const guildController = new GuildController(app)
@@ -35,6 +37,16 @@ export default (app: Express) => {
     router.get('/users/general', userController.getGeneral)
     router.get('/users/:id', userController.getUser)
     router.get('/users', userController.getAll)
+
+    // Новости
+    router.post('/articles', articleController.create)
+    router.get('/articles', articleController.getAll)
+    router.get('/articles/:id', articleController.getById)
+    router.put('/articles/:id', articleController.update)
+    router.delete('/articles/:id', articleController.remove)
+    router.post('/articles/comments', articleController.createComment)
+    router.get('/articles/:id/comments', articleController.getComments)
+    // router.delete('/articles/:idCharacter/comments/:idComment', articleController.removeComment)
 
     // Тикеты
     router.post('/tickets', ticketController.create)

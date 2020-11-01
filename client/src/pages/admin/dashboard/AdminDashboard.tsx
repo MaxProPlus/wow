@@ -1,8 +1,8 @@
-import React from "react"
+import React from 'react'
 import './AdminDashboard.scss'
-import Spinner from "../../../components/spinner/Spinner"
-import UserContext from "../../../contexts/userContext"
-import {Link} from "react-router-dom"
+import Spinner from '../../../components/spinner/Spinner'
+import UserContext from '../../../contexts/userContext'
+import {Link} from 'react-router-dom'
 
 type S = {
     isLoaded: true
@@ -14,7 +14,7 @@ class AdminDashboard extends React.Component<{}, S> {
     constructor(props: any) {
         super(props)
         this.state = {
-            isLoaded: true
+            isLoaded: true,
         }
     }
 

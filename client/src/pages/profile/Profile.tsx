@@ -1,13 +1,14 @@
-import React from "react"
+import React from 'react'
 import './Profile.scss'
-import UserContext from "../../contexts/userContext"
-import UserApi from "../../api/UserApi"
-import history from "../../utils/history"
-import Spinner from "../../components/spinner/Spinner"
-import Profile from "../../components/profile/Profile"
-import {User} from "../../../../server/src/common/entity/types"
-import {RouteComponentProps} from "react-router-dom"
-import {MatchId} from "../../types/RouteProps"
+import UserContext from '../../contexts/userContext'
+import UserApi from '../../api/UserApi'
+import history from '../../utils/history'
+import Spinner from '../../components/spinner/Spinner'
+import Profile from '../../components/profile/Profile'
+import {User} from '../../../../server/src/common/entity/types'
+import {RouteComponentProps} from 'react-router-dom'
+import {MatchId} from '../../types/RouteProps'
+import Page from '../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -35,8 +36,8 @@ class ProfilePage extends React.Component<P, S> {
             }
             return {
                 user: {
-                    id: Number(nextProps.match.params.id)
-                }
+                    id: Number(nextProps.match.params.id),
+                },
             }
         }
         return null
@@ -74,17 +75,19 @@ class ProfilePage extends React.Component<P, S> {
         let videoRender = (<div>Страница пользователя</div>)
 
         return (
-            <div className="profile-page">
-                {!this.state.isLoaded && <Spinner/>}
-                <div className="fsb header-avatar">
-                    <Profile
-                        {...this.state.user}
-                        onClick={() => {
-                        }}
-                    />
+            <Page>
+                <div className="profile-page">
+                    {!this.state.isLoaded && <Spinner/>}
+                    <div className="fsb header-avatar">
+                        <Profile
+                            {...this.state.user}
+                            onClick={() => {
+                            }}
+                        />
+                    </div>
+                    {videoRender}
                 </div>
-                {videoRender}
-            </div>
+            </Page>
         )
     }
 }

@@ -1,36 +1,37 @@
-import React from "react"
-import Spinner from "../../../components/spinner/Spinner"
+import React from 'react'
+import Spinner from '../../../components/spinner/Spinner'
 import {
-    User,
     CommentGuild,
     Guild,
     guildKitToString,
-    guildStatusToString
-} from "../../../../../server/src/common/entity/types"
-import UserContext from "../../../contexts/userContext"
-import AlertDanger from "../../../components/alert-danger/AlertDanger"
-import CommentForm from "../../../components/commentFrom/CommentForm"
-import Comment from "../../../components/comment/Comment"
-import {Col, Row} from "react-bootstrap"
-import GuildApi from "../../../api/GuildApi"
-import InfoBlockInline from "../../../components/show/InfoBlockInline"
-import InfoBlock from "../../../components/show/InfoBlock"
-import Title from "../../../components/show/Title"
-import SubTitle from "../../../components/show/SubTitle"
-import Motto from "../../../components/show/Motto"
+    guildStatusToString,
+    User,
+} from '../../../../../server/src/common/entity/types'
+import UserContext from '../../../contexts/userContext'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import Comment from '../../../components/comment/Comment'
+import {Col, Row} from 'react-bootstrap'
+import GuildApi from '../../../api/GuildApi'
+import InfoBlockInline from '../../../components/show/InfoBlockInline'
+import InfoBlock from '../../../components/show/InfoBlock'
+import Title from '../../../components/show/Title'
+import SubTitle from '../../../components/show/SubTitle'
+import Motto from '../../../components/show/Motto'
 import icon from './img/guild.svg'
 import ideologyIcon from './img/ideology.svg'
 import kitIcon from './img/kit.svg'
 import statusIcon from '../../../img/status.svg'
-import history from "../../../utils/history"
-import PageTitle from "../../../components/pageTitle/PageTitle"
-import ControlButton from "../../../components/show/ControlButton"
-import ConfirmationWindow from "../../../components/confirmationWindow/ConfirmationWindow"
-import Avatar from "../../../components/show/Avatar"
-import Card from "../../../components/show/Card"
-import List from "../../../components/show/List"
-import {MatchId} from "../../../types/RouteProps"
-import {RouteComponentProps} from "react-router-dom"
+import history from '../../../utils/history'
+import PageTitle from '../../../components/pageTitle/PageTitle'
+import ControlButton from '../../../components/show/ControlButton'
+import ConfirmationWindow from '../../../components/confirmationWindow/ConfirmationWindow'
+import Avatar from '../../../components/show/Avatar'
+import Card from '../../../components/show/Card'
+import List from '../../../components/show/List'
+import {MatchId} from '../../../types/RouteProps'
+import {RouteComponentProps} from 'react-router-dom'
+import Page from '../../../components/page/Page'
 
 type P = RouteComponentProps<MatchId>
 
@@ -68,7 +69,7 @@ class GuildPage extends React.Component<P, S> {
                 history.push('/')
             }
             return {
-                id: nextProps.match.params.id
+                id: nextProps.match.params.id,
             }
         }
         return null
@@ -86,7 +87,7 @@ class GuildPage extends React.Component<P, S> {
             }) === -1) ? this.context.user.id === this.state.guild.idUser : true)
             if (isAdmin) {
                 this.setState({
-                    isAdmin
+                    isAdmin,
                 })
             }
         }
@@ -107,7 +108,7 @@ class GuildPage extends React.Component<P, S> {
             })
         }, err => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({
@@ -143,7 +144,7 @@ class GuildPage extends React.Component<P, S> {
     handleRemove = () => {
         this.setState({
             modalShow: false,
-            isLoaded: false
+            isLoaded: false,
         })
         this.guildApi.remove(this.state.id).then(() => {
             history.push('/material/guild')
@@ -160,13 +161,13 @@ class GuildPage extends React.Component<P, S> {
 
     hideRemoveWindow = () => {
         this.setState({
-            modalShow: false
+            modalShow: false,
         })
     }
 
     showRemoveWindow = () => {
         this.setState({
-            modalShow: true
+            modalShow: true,
         })
     }
 
@@ -176,13 +177,13 @@ class GuildPage extends React.Component<P, S> {
         }
 
         return (
-            <div className="page-guild">
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите удалить гильдию?"/>
                 <PageTitle title="Гильдия" icon={icon}>
                     <ControlButton show={this.state.isAdmin} id={this.state.id}
-                                   type='guild' nameRemove='гильдию'
+                                   href="/material/guild" nameRemove="Удалить гильдию"
                                    showRemoveWindow={this.showRemoveWindow}/>
                 </PageTitle>
                 <Row>
@@ -208,12 +209,12 @@ class GuildPage extends React.Component<P, S> {
                 <List title="Сюжеты" href="/material/story/" list={this.state.guild.stores}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
-                        <Comment key={c.id} {...c}/>
+                        <Comment key={c.id} {...c}/>,
                     )}
                 </div>
                 {(!this.state.guild.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
-            </div>
+            </Page>
         )
     }
 }

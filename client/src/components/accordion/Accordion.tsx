@@ -1,4 +1,4 @@
-import React, {Component, createRef, RefObject} from "react"
+import React, {Component, createRef, RefObject} from 'react'
 import styles from './Accordion.module.scss'
 
 type P = {
@@ -27,7 +27,7 @@ class Accordion extends Component<P, S> {
     componentDidMount() {
         document.addEventListener('resize', this.handleResize)
         this.setState({
-            scrollHeight: this.content.current!.scrollHeight
+            scrollHeight: this.content.current!.scrollHeight,
         })
     }
 
@@ -37,7 +37,7 @@ class Accordion extends Component<P, S> {
 
     handleResize = () => {
         this.setState({
-            scrollHeight: this.content.current!.scrollHeight
+            scrollHeight: this.content.current!.scrollHeight,
         })
     }
 

@@ -1,17 +1,18 @@
-import React from "react"
-import UserApi from "../../api/UserApi"
-import userContext from "../../contexts/userContext"
-import Spinner from "../../components/spinner/Spinner"
-import history from "../../utils/history"
-import Validator from "../../../../server/src/common/validator"
-import {User, UserPassword} from "../../../../server/src/common/entity/types"
-import InputField from "../../components/form/inputField/InputField"
-import AlertDanger from "../../components/alert-danger/AlertDanger"
-import {Redirect, RouteComponentProps} from "react-router-dom"
-import Form from "../../components/form/Form"
-import Button from "../../components/button/Button"
+import React from 'react'
+import UserApi from '../../api/UserApi'
+import userContext from '../../contexts/userContext'
+import Spinner from '../../components/spinner/Spinner'
+import history from '../../utils/history'
+import Validator from '../../../../server/src/common/validator'
+import {User, UserPassword} from '../../../../server/src/common/entity/types'
+import InputField from '../../components/form/inputField/InputField'
+import AlertDanger from '../../components/alert-danger/AlertDanger'
+import {Redirect, RouteComponentProps} from 'react-router-dom'
+import Form from '../../components/form/Form'
+import Button from '../../components/button/Button'
 import './Setting.scss'
-import AlertAccept from "../../components/alertAccept/AlertAccept"
+import AlertAccept from '../../components/alertAccept/AlertAccept'
+import Page from '../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -67,13 +68,13 @@ class Setting extends React.Component<P, S> {
 
     componentDidMount() {
         // Проверка, есть ли token в get параметрах
-        const token = (new URL('http://example.com'+this.props.location.search)).searchParams.get('token')
+        const token = (new URL('http://example.com' + this.props.location.search)).searchParams.get('token')
         if (!!token) {
             // Если есть, то запросить подтверждение почты
             this.setState({
-                isLoaded: false
+                isLoaded: false,
             })
-            this.userApi.acceptEmail(token).then(()=>{
+            this.userApi.acceptEmail(token).then(() => {
                 this.setState({
                     acceptSecure: 'Почта успешно подтверждена',
                     isLoaded: true,
@@ -83,7 +84,7 @@ class Setting extends React.Component<P, S> {
                     errorSecure: err,
                     isLoaded: true,
                 })
-            }).finally(()=>{
+            }).finally(() => {
                 this.props.history.replace(this.props.location.pathname)
             })
         }
@@ -113,14 +114,14 @@ class Setting extends React.Component<P, S> {
         if (!!err) {
             this.setState({
                 errorAvatar: err,
-                avatar: ''
+                avatar: '',
             })
             e.target.value = ''
             return
         }
         this.setState({
             errorAvatar: '',
-            avatar: e.target.files[0]
+            avatar: e.target.files[0],
         })
     }
 
@@ -188,7 +189,7 @@ class Setting extends React.Component<P, S> {
         const err = this.validator.validateEmail(user)
         if (!!err) {
             this.setState({
-                errorSecure: err
+                errorSecure: err,
             })
             return
         }
@@ -197,7 +198,7 @@ class Setting extends React.Component<P, S> {
             acceptSecure: '',
             errorSecure: '',
         })
-        this.userApi.updateSecure(user).then(()=>{
+        this.userApi.updateSecure(user).then(() => {
             this.setState({
                 acceptSecure: 'Подтверждение отправлено на почту',
             })
@@ -242,11 +243,11 @@ class Setting extends React.Component<P, S> {
 
     render() {
         return (
-            <div>
+            <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <div className="page-setting">
                     {this.context.user.id === -1 &&
-                    <Redirect to={{pathname: "/login", state: {from: this.props.location}}}/>}
+                    <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
                     <Form onSubmit={this.handleSubmitProfileAvatar}>
                         <div className="title">Загрузка аватара</div>
                         <AlertDanger>{this.state.errorAvatar}</AlertDanger>
@@ -262,7 +263,8 @@ class Setting extends React.Component<P, S> {
                                     id="nickname" onChange={this.handleChange}/>
                         <InputField label="Дискорд" placeholder="Example#1234" type="text" value={this.state.linkDs}
                                     id="linkDs" onChange={this.handleChange}/>
-                        <InputField label="Почта" placeholder="example@example.com" type="text" value={this.state.linkMail}
+                        <InputField label="Почта" placeholder="example@example.com" type="text"
+                                    value={this.state.linkMail}
                                     id="linkMail" onChange={this.handleChange}/>
                         <InputField label="Вконтакте" placeholder="id1234" type="text" value={this.state.linkVk}
                                     id="linkVk" onChange={this.handleChange}/>
@@ -299,7 +301,7 @@ class Setting extends React.Component<P, S> {
                         </Form.Group>
                     </Form>
                 </div>
-            </div>
+            </Page>
         )
     }
 }

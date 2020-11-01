@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 import './CommentForm.scss'
-import userContext from "../../contexts/userContext"
-import AvatarImg from "../../components/avatar-img/AvatarImg"
-import Button from "../../components/button/Button"
-import Input from "../../components/input/Input"
-import Spinner from "../../components/spinner/Spinner"
-import AlertDanger from "../../components/alert-danger/AlertDanger"
-import Validator from "../../../../server/src/common/validator"
-import {Comment} from "../../../../server/src/common/entity/types"
+import userContext from '../../contexts/userContext'
+import AvatarImg from '../../components/avatar-img/AvatarImg'
+import Button from '../../components/button/Button'
+import Input from '../../components/input/Input'
+import Spinner from '../../components/spinner/Spinner'
+import AlertDanger from '../../components/alert-danger/AlertDanger'
+import Validator from '../../../../server/src/common/validator'
+import {Comment} from '../../../../server/src/common/entity/types'
 
 type P = {
     onCommentUpdate: any
@@ -52,7 +52,7 @@ class CommentForm extends Component<P, S> {
             this.props.onCommentUpdate()
         }, (err: string) => {
             this.setState({
-                errorMessage: err
+                errorMessage: err,
             })
         }).finally(() => {
             this.setState({

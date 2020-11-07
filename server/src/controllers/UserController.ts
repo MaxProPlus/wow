@@ -17,6 +17,7 @@ class UserController {
         const db = app.get('db')
         this.smtp = app.get('smtp')
         this.userModel = new UserModel(db)
+        this.userModel.setSmtp(this.smtp)
         this.auth = new Auth(db)
     }
 
@@ -30,21 +31,14 @@ class UserController {
                 errorMessage: err,
             })
         }
-        return this.userModel.signUp(user).then((token: string) => {
-            this.smtp.sendConfirmation(user.email, user.nickname, token).then(() => {
-                return res.json({
-                    status: 'OK',
-                })
-            }, () => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: 'Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией'
-                })
+        return this.userModel.signUp(user).then(() => {
+            res.json({
+                status: 'OK'
             })
-        }, () => {
+        }, (err) => {
             return res.json({
                 status: 'ERROR',
-                errorMessage: 'Ошибка регистрации, возможно логин или email уже занят',
+                errorMessage: err,
             })
         })
     }
@@ -64,14 +58,14 @@ class UserController {
         })
     }
 
-    // Подтверждение email
+    // Подтверждение смены email
     acceptEmail = (req: Request, res: Response) => {
         const token = req.query.token as string
         return this.userModel.acceptEmail(token).then(() => {
             return res.json({
                 status: 'OK',
             })
-        }, (err) => {
+        }, () => {
             return res.json({
                 status: 'ERROR',
                 errorMessage: 'Ошибка, неверный токен',
@@ -239,16 +233,9 @@ class UserController {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.userModel.updateSecure(user).then((token) => {
-            this.smtp.sendChangeEmail(user.email, token).then(() => {
-                return res.json({
-                    status: 'OK',
-                })
-            }, () => {
-                return res.json({
-                    status: 'ERROR',
-                    errorMessage: 'Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией'
-                })
+        return this.userModel.updateSecure(user).then(() => {
+            return res.json({
+                status: 'OK',
             })
         }, (err: any) => {
             return res.json({

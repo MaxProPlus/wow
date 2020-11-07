@@ -4,16 +4,22 @@ import Uploader from '../../services/uploader'
 import {User, UserPassword} from '../../common/entity/types'
 import {About, defaultAvatar, Token, UserAuth} from '../../entity/types'
 import RightModel from '../right/model'
+import {Smtp} from '../../services/smtp'
 
 class UserModel {
     private mapper: Mapper
     private hash = new Hash()
     private uploader = new Uploader()
     private rightModel: RightModel
+    private smtp: Smtp| null = null
 
     constructor(connection: any) {
         this.mapper = new Mapper(connection.getPoolPromise())
         this.rightModel = new RightModel(connection)
+    }
+
+    setSmtp = (smtp: Smtp) => {
+        this.smtp = smtp
     }
 
     // Регистрация
@@ -28,11 +34,14 @@ class UserModel {
                 username: user.username,
                 email: user.email
             })
-            return Promise.reject()
+            return Promise.reject('Ошибка регистрации, возможно логин или email уже занят')
         } catch (e) {
         }
-        await this.mapper.insertUserReg(user)
-        return user.token
+        return this.smtp!.sendConfirmation(user.email, user.nickname, user.token).then(() => {
+            return this.mapper.insertUserReg(user)
+        }, () => {
+            return Promise.reject('Ошибка при отправке сообщения. Если ошибка повторится, то свяжитесь с администрацией')
+        })
     }
 
     // Подтверждение регистрации
@@ -153,8 +162,11 @@ class UserModel {
         } catch (e) {
         }
 
-        await this.mapper.insertAccountEmail(user)
-        return user.token
+        return this.smtp!.sendChangeEmail(user.email, user.token).then(() => {
+            return this.mapper.insertAccountEmail(user)
+        }, () => {
+            return Promise.reject('Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией')
+        })
     }
 
     // Редактирование пароля

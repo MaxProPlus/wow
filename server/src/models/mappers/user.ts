@@ -155,7 +155,7 @@ class UserMapper extends BasicMapper {
             // tslint:disable-next-line:forin
             for (const key in data) {
                 if (i++ !== 0) {
-                    sql += ` and`
+                    sql += ` or`
                 }
                 if (typeof data[key] === 'string') {
                     sql += ` ${key} like ?`
@@ -177,11 +177,13 @@ class UserMapper extends BasicMapper {
         })
     }
 
-    // Получить пользователя по токену
+    // Получить пользователя по токену регистрации
     selectUserRegByToken = (token: string) => {
+        // select name from test_table where created_at > ADDDATE(now(), INTERVAL '-02:00' HOUR_MINUTE);
         const sql = `select nickname, username, password, email
                      from user_reg
                      where is_remove = 0
+                       and created_at > ADDDATE(now(), INTERVAL -2 HOUR)
                        and token = ?`
         return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
             if (!r.length) {
@@ -199,6 +201,7 @@ class UserMapper extends BasicMapper {
         const sql = `select id_user as id, email
                      from user_email
                      where is_remove = 0
+                       and created_at > ADDDATE(now(), INTERVAL -2 HOUR)
                        and token = ?`
         return this.pool.query(sql, [token]).then(([r]: [User[]]) => {
             if (!r.length) {

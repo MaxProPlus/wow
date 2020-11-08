@@ -43,16 +43,17 @@ class UserMapper extends BasicMapper {
 
     // Авторизация
     login = (user: User) => {
-        const sql = `select u.id
+        const sql = `select u.id,
+                            a.id as idAccount
                      from user u
-                              join account a on u.id_account = a.id
+                              right join account a on u.id_account = a.id
                      where a.username = ?
                        and a.sha_pass_hash = ?`
         return this.pool.query(sql, [user.username, user.password]).then(([r]: any) => {
             if (!r.length) {
                 return Promise.reject('Неверный логин или пароль')
             }
-            return Promise.resolve(r[0].id)
+            return Promise.resolve(r[0])
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
             return Promise.reject('Ошибка запроса к бд')

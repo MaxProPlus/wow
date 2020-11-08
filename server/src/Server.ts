@@ -11,7 +11,6 @@ import BaseRouter from './routes'
 import logger from './services/logger'
 import connection from './services/mysql'
 import smtp from './services/smtp'
-import Hash from './services/hash'
 
 // Init express
 const app = express()

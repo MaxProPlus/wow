@@ -79,9 +79,16 @@ class UserModel {
         user.username = user.username.toUpperCase()
         user.password = user.password.toUpperCase()
         user.password = this.hash.getHash(user.username, user.password)
-        const id = await this.mapper.login(user)
+        const lUser = await this.mapper.login(user)
+
+        // Если есть аккаунт в игре, но не зарегистрирован на сайте, то регистрируем
+        if (!lUser.id) {
+            user.nickname = user.username
+            lUser.id = await this.mapper.insertUser(user, lUser.idAccount)
+        }
+
         return this.mapper.saveToken({
-            idUser: id,
+            idUser: lUser.id,
             text: this.hash.getToken(),
             ip: about.ip
         } as Token)

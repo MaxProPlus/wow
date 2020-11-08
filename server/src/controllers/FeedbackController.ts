@@ -4,6 +4,7 @@ import {DB} from '../services/mysql'
 import Auth from '../services/auth'
 import RightModel from '../models/right/model'
 import {Feedback} from '../common/entity/types'
+import TokenStorage from '../services/token'
 
 class FeedbackController {
     private model: FeedbackModel
@@ -33,7 +34,7 @@ class FeedbackController {
     update = async (req: Request, res: Response) => {
         const list = req.body as Feedback[]
         try {
-            const idUser = await this.auth.checkAuth(req.cookies.token)
+            const idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const flagTicketRead = await this.rightModel.ticketUpdateStatus(idUser)
             if (!flagTicketRead) {
                 return res.json({

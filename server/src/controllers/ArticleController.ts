@@ -6,6 +6,7 @@ import RightModel from '../models/right/model'
 import ArticleModel from '../models/article/model'
 import {ArticleUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
+import TokenStorage from '../services/token'
 
 class ArticleController {
     private articleModel: ArticleModel
@@ -39,7 +40,7 @@ class ArticleController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -78,7 +79,7 @@ class ArticleController {
         }
         let idUser = 0
         try {
-            idUser = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
         }
         return this.articleModel.getById(id).then(([article, comments]) => {
@@ -157,7 +158,7 @@ class ArticleController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -196,7 +197,7 @@ class ArticleController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -227,7 +228,7 @@ class ArticleController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentArticle = req.body
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({

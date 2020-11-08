@@ -6,6 +6,7 @@ import RightModel from '../models/right/model'
 import {StoryUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import StoryModel from '../models/story/model'
+import TokenStorage from '../services/token'
 
 class StoryController {
     private storyModel: StoryModel
@@ -39,7 +40,7 @@ class StoryController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -70,7 +71,7 @@ class StoryController {
         }
         let idUser = 0
         try {
-            idUser = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
         }
         return this.storyModel.getById(id).then(([story, comments]) => {
@@ -137,7 +138,7 @@ class StoryController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -168,7 +169,7 @@ class StoryController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -191,7 +192,7 @@ class StoryController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentStory = req.body
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({

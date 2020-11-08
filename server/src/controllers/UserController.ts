@@ -6,6 +6,7 @@ import Validator from '../common/validator'
 import {UploadedFile} from 'express-fileupload'
 import {About} from '../entity/types'
 import {Smtp} from '../services/smtp'
+import TokenStorage from '../services/token'
 
 class UserController {
     validator = new Validator()
@@ -79,6 +80,7 @@ class UserController {
         const about = new About()
         about.ip = req.ip
         return this.userModel.login(user, about).then((r: any) => {
+            TokenStorage.setToken(res, r)
             res.cookie('token', r)
             return res.json({
                 status: 'OK',
@@ -94,7 +96,7 @@ class UserController {
     // Выход
     logout = (req: Request, res: Response) => {
         res.clearCookie('token')
-        this.userModel.logout(req.cookies.token)
+        this.userModel.logout(TokenStorage.getToken(req))
         return res.json({
             status: 'OK',
         })
@@ -102,7 +104,7 @@ class UserController {
 
     // Получить контекст
     getContext = (req: Request, res: Response) => {
-        return this.userModel.getContext(req.cookies.token).then((r: any) => {
+        return this.userModel.getContext(TokenStorage.getToken(req)).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -142,7 +144,7 @@ class UserController {
     getGeneral = async (req: Request, res: Response) => {
         let id
         try {
-            id = await this.auth.checkAuth(req.cookies.token)
+            id = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -187,7 +189,7 @@ class UserController {
     updateGeneral = async (req: Request, res: Response) => {
         const user: User = req.body
         try {
-            user.id = await this.auth.checkAuth(req.cookies.token)
+            user.id = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -225,7 +227,7 @@ class UserController {
             })
         }
         try {
-            const {id} = await this.auth.checkAuthWithPassword(req.cookies.token, user.password)
+            const {id} = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.password)
             user.id = id
         } catch (e) {
             return res.json({
@@ -249,7 +251,7 @@ class UserController {
     updatePassword = async (req: Request, res: Response) => {
         const user: UserPassword = req.body
         try {
-            const {id, username} = await this.auth.checkAuthWithPassword(req.cookies.token, user.passwordAccept)
+            const {id, username} = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.passwordAccept)
             user.id = id
             user.username = username
         } catch (err) {
@@ -294,7 +296,7 @@ class UserController {
         }
         let id
         try {
-            id = await this.auth.checkAuth(req.cookies.token)
+            id = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',

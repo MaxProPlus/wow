@@ -6,6 +6,7 @@ import RightModel from '../models/right/model'
 import CharacterModel from '../models/character/model'
 import {CharacterUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
+import TokenStorage from '../services/token'
 
 class CharacterController {
     private characterModel: CharacterModel
@@ -39,7 +40,7 @@ class CharacterController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -70,7 +71,7 @@ class CharacterController {
         }
         let idUser = 0
         try {
-            idUser = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
         }
         return this.characterModel.getById(id).then(([character, comments]) => {
@@ -149,7 +150,7 @@ class CharacterController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -180,7 +181,7 @@ class CharacterController {
             })
         }
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
         } catch (err) {
             return res.json({
                 status: 'INVALID_AUTH',
@@ -203,7 +204,7 @@ class CharacterController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentCharacter = req.body
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({

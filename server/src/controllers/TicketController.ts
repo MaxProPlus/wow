@@ -4,6 +4,7 @@ import {CommentTicket, Ticket, TicketType} from '../common/entity/types'
 import Validator from '../common/validator'
 import TicketModel from '../models/ticket/model'
 import RightModel from '../models/right/model'
+import TokenStorage from '../services/token'
 
 class TicketController {
     private ticketModel: TicketModel
@@ -22,7 +23,7 @@ class TicketController {
     create = async (req: Request, res: Response) => {
         const c: Ticket = req.body
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const {ok, err} = this.validator.validateTicket(c)
             if (!ok) {
                 return res.json({
@@ -53,7 +54,7 @@ class TicketController {
     createComment = async (req: Request, res: Response) => {
         const c: CommentTicket = req.body
         try {
-            c.idUser = await this.auth.checkAuth(req.cookies.token)
+            c.idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             const {ok, err} = this.validator.validateComment(c)
             if (!ok) {
                 return res.json({
@@ -92,7 +93,7 @@ class TicketController {
         let idUser = 0
         let flagTicketRead = false
         try {
-            idUser = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             flagTicketRead = await this.rightModel.ticketUpdateStatus(idUser)
         } catch (err) {
             return res.json({
@@ -130,7 +131,7 @@ class TicketController {
         let idUser = 0
         let flagTicketUpdateStatus = false
         try {
-            idUser = await this.auth.checkAuth(req.cookies.token)
+            idUser = await this.auth.checkAuth(TokenStorage.getToken(req))
             flagTicketUpdateStatus = await this.rightModel.ticketUpdateStatus(idUser)
         } catch (err) {
             return res.json({

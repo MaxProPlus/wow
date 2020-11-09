@@ -1,6 +1,6 @@
 import {Character, CommentStory, Guild, Story} from '../../common/entity/types'
 import logger from '../../services/logger'
-import BasicMaterialMapper from './material'
+import BasicMaterialMapper from './basicMaterial'
 
 class StoryMapper extends BasicMaterialMapper {
     constructor(pool: any) {

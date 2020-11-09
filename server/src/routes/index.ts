@@ -8,6 +8,7 @@ import ReportController from '../controllers/ReportController'
 import ForumController from '../controllers/ForumController'
 import FeedbackController from '../controllers/FeedbackController'
 import ArticleController from '../controllers/ArticleController'
+import MaterialController from '../controllers/MaterialController'
 
 // Инициализация роутов
 export default (app: Express) => {
@@ -23,6 +24,7 @@ export default (app: Express) => {
     const reportController = new ReportController(app)
     const forumController = new ForumController(app)
     const feedbackController = new FeedbackController(app)
+    const materialController = new MaterialController(app)
 
     router.post('/users/general', userController.updateGeneral)
     router.post('/users/avatar', userController.updateAvatar)
@@ -106,6 +108,9 @@ export default (app: Express) => {
     router.post('/forums/comments', forumController.createComment)
     router.get('/forums/:id/comments', forumController.getComments)
     // router.delete('/forums/:idCharacter/comments/:idComment', forumController.removeComment)
+
+    // Выборка по всем мартериалам
+    router.get('/materials', materialController.getAll)
 
     // Обратная связь
     router.get('/feedback', feedbackController.getAll)

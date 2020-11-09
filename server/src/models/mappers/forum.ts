@@ -1,6 +1,6 @@
 import {CommentForum, Forum} from '../../common/entity/types'
 import logger from '../../services/logger'
-import BasicMaterialMapper from './material'
+import BasicMaterialMapper from './basicMaterial'
 
 class ForumMapper extends BasicMaterialMapper {
     constructor(pool: any) {

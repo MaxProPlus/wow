@@ -7,9 +7,9 @@ import styles from '../../../css/listTitle.module.scss'
 import icon from './img/guild.svg'
 import Spinner from '../../../components/spinner/Spinner'
 import PageTitle from '../../../components/pageTitle/PageTitle'
-import Search from '../../../components/list/Search'
-import Block from '../../../components/list/Block'
 import SearchBlock from '../../../components/list/SearchBlock'
+import Block from '../../../components/list/Block'
+import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
 import {RouteComponentProps} from 'react-router-dom'
@@ -122,11 +122,11 @@ class GuildList extends Component<P, S> {
             <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle className={styles.header} title="Гильдии" icon={icon}>
-                    <Search href="/material/guild/create" id="title" text="Создать гильдию" placeholder="Поиск гильдии"
-                            value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}/>
+                    <SearchBlock href="/material/guild/create" id="title" text="Создать гильдию" placeholder="Поиск гильдии"
+                                 value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
+                                 onSubmit={this.handleSubmit}/>
                 </PageTitle>
-                <SearchBlock show={this.state.filterShow} onSubmit={this.handleSubmit}>
+                <SearchFilter show={this.state.filterShow} onSubmit={this.handleSubmit}>
                     <Row>
                         <Col md={6}>
                             <Form.Group>
@@ -146,7 +146,7 @@ class GuildList extends Component<P, S> {
                             </Row>
                         </Col>
                     </Row>
-                </SearchBlock>
+                </SearchFilter>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

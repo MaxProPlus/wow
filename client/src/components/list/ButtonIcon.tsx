@@ -1,6 +1,6 @@
 import React from 'react'
 import Button from 'components/button/Button'
-import styles from './Search.module.scss'
+import styles from './SearchBlock.module.scss'
 
 type P = {
     href: string

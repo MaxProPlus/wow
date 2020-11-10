@@ -1,8 +1,9 @@
 .dropdown {
   position: absolute;
   z-index: 1;
-  top: 2.5rem;
-  left: -1.5rem;
+  top: 2.2rem;
+  left: auto;
+  right: 0.5rem;
   width: 9rem;
   color: #000;
   background-color: #fff;
@@ -18,10 +19,14 @@
     }
   }
 }
-
-@media screen and (max-width: 960px) {
+@media (min-width: 576px) {
   .dropdown {
-    left: auto;
-    right: 0.5rem;
+    top: 3.4rem;
+  }
+
+}
+@media screen and (min-width: 992px) {
+  .dropdown {
+    left: -1.5rem;
   }
 }

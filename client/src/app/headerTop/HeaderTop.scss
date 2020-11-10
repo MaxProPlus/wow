@@ -1,61 +1,112 @@
 @import '../../css/variables';
 
 .header-top {
+  display: flex;
+  justify-content: center;
   background-color: rgba(195, 206, 212, 0.8);
   color: $border-color;
   padding: .25rem 0;
+}
 
-  > .header-inner {
-    width: 95%;
-    justify-content: flex-end;
+.header-top__inner {
+  display: flex;
+  width: 95%;
+  justify-content: space-between;
+  align-items: center;
 
-    > .menu {
+  .search-form {
+    flex-grow: 1;
+    margin: 0 7px;
+    max-width: 768px;
+  }
+  .search-form__filter {
+    display: none;
+  }
+  .search-form__input {
+    padding-left: 7px;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    > .nickname {
       display: none;
+      order: 1;
+      margin: 15px .5rem 15px 0;
     }
 
+    > .avatar_img {
+      order: 2;
+      margin-right: 0;
+    }
+  }
+}
 
-    .profile {
-      display: flex;
-      align-items: center;
-      position: relative;
+.header-top__menu {
+  display: flex;
+  justify-content: center;
 
-      > .nickname {
-        order: 1;
-        margin-right: .5rem;
-      }
+  > img {
+    height: 1.5rem;
+  }
+}
 
-      > .avatar_img {
-        order: 2;
+.header-top__sign {
+  display: flex;
+  a {
+    display: block;
+  }
+  span {
+    display: none;
+    padding: 15px 0;
+  }
+  img {
+    display: inline-block;
+    height: 1rem;
+    min-width: auto;
+    margin-bottom: -4px;
+    margin-left: 7px;
+  }
+}
+
+@media (min-width: 576px) {
+  .header-top__sign {
+    span {
+      display: inline-block;
+    }
+    a {
+      margin-right: 15px;
+      &:last-child {
         margin-right: 0;
       }
     }
   }
-}
 
-@media screen and (max-width: 960px) {
-  .header-top {
-    > .header-inner {
-      width: 98%;
-      justify-content: space-between;
-      align-items: center;
-
-      > .menu {
-        display: flex;
-        justify-content: center;
-
-        > img {
-          height: 1.5rem;
-        }
-      }
-
-      .profile {
-        margin-right: .2rem;
-
-        > .nickname {
-          //display: none;
-        }
+  .header-top__inner {
+    .profile {
+      >.nickname {
+        display: block;
       }
     }
   }
 }
 
+@media (min-width: 798px) {
+  .header-top__inner {
+    width: 90%;
+    max-width: 1200px;
+  }
+}
+
+@media (min-width: 960px) {
+  .header-top__menu {
+    display: none;
+  }
+  .header-top__inner{
+    >.search-form {
+      margin-left: 0;
+    }
+  }
+}

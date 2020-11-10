@@ -7,10 +7,10 @@ import icon from './img/icon.svg'
 import StoryApi from '../../../api/StoryApi'
 import Spinner from '../../../components/spinner/Spinner'
 import PageTitle from '../../../components/pageTitle/PageTitle'
-import Search from '../../../components/list/Search'
+import SearchBlock from '../../../components/list/SearchBlock'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import Block from '../../../components/list/Block'
-import SearchBlock from '../../../components/list/SearchBlock'
+import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
 import {RouteComponentProps} from 'react-router-dom'
@@ -127,11 +127,11 @@ class StoryList extends Component<P, S> {
             <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle className={styles.header} title="Сюжеты" icon={icon}>
-                    <Search href="/material/story/create" id="title" text="Создать сюжет" placeholder="Поиск сюжета"
-                            value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}/>
+                    <SearchBlock href="/material/story/create" id="title" text="Создать сюжет" placeholder="Поиск сюжета"
+                                 value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
+                                 onSubmit={this.handleSubmit}/>
                 </PageTitle>
-                <SearchBlock show={this.state.filterShow} onSubmit={this.handleSubmit}>
+                <SearchFilter show={this.state.filterShow} onSubmit={this.handleSubmit}>
                     <Row>
                         <Col md={6}>
                             <Form.Group>
@@ -151,7 +151,7 @@ class StoryList extends Component<P, S> {
                             </Row>
                         </Col>
                     </Row>
-                </SearchBlock>
+                </SearchFilter>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

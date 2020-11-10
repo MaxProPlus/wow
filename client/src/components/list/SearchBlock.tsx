@@ -1,20 +1,29 @@
-import React, {FC, FormEvent} from 'react'
+import React, {ChangeEvent, FormEvent, MouseEvent} from 'react'
+import Button from 'components/button/Button'
+import penIcon from '../../img/pen.svg'
+import SearchInput from './SearchInput'
 import styles from './SearchBlock.module.scss'
-import Accordion from '../accordion/Accordion'
 
 type P = {
-    children: any
-    show: boolean
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void
+    href: string
+    text: string
+    placeholder: string
+    value: string
+    id: string
+    toggle: () => void
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void
+    onSubmit: (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => void
 }
 
-const SearchBlock: FC<P> = ({children, show, onSubmit}) => {
+const SearchBlock = ({href, text, placeholder, value, id, toggle, onChange, onSubmit}: P) => {
+
     return (
-        <Accordion isActive={show} className={styles.blockAccordion}>
-            <form className={styles.block} onSubmit={onSubmit}>
-                {children}
-            </form>
-        </Accordion>
+        <>
+            <SearchInput id={id} placeholder={placeholder} value={value} onChange={onChange} onSubmit={onSubmit}
+                         toggle={toggle}/>
+            <Button to={href}><img className={styles.icon} src={penIcon} alt=""/><span
+                className={styles.text}>{text}</span></Button>
+        </>
     )
 }
 

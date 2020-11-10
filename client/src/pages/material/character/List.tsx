@@ -6,11 +6,11 @@ import Button from '../../../components/button/Button'
 import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/char.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
-import Search from '../../../components/list/Search'
+import SearchBlock from '../../../components/list/SearchBlock'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import styles from '../../../css/listTitle.module.scss'
 import Block from '../../../components/list/Block'
-import SearchBlock from '../../../components/list/SearchBlock'
+import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
 import Select from '../../../components/form/select/Select'
@@ -155,12 +155,12 @@ class CharacterList extends Component<P, S> {
             <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Персонажи" icon={icon} className={styles.header}>
-                    <Search href="/material/character/create" id="title" text="Создать персонажа"
-                            placeholder="Поиск персонажа"
-                            value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}/>
+                    <SearchBlock href="/material/character/create" id="title" text="Создать персонажа"
+                                 placeholder="Поиск персонажа"
+                                 value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
+                                 onSubmit={this.handleSubmit}/>
                 </PageTitle>
-                <SearchBlock show={this.state.filterShow} onSubmit={this.handleSubmit}>
+                <SearchFilter show={this.state.filterShow} onSubmit={this.handleSubmit}>
                     <Row>
                         <Col md={6}>
                             <Form.Group>
@@ -205,7 +205,7 @@ class CharacterList extends Component<P, S> {
                             </Row>
                         </Col>
                     </Row>
-                </SearchBlock>
+                </SearchFilter>
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>

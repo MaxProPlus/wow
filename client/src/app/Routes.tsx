@@ -39,6 +39,7 @@ import ArticleCreate from '../pages/article/Create'
 import ArticleEdit from '../pages/article/Edit'
 import ArticlePage from '../pages/article/Show'
 import NotFound from '../pages/notFound/NotFound'
+import SearchPage from '../pages/material/search/Search'
 
 type P = {
     scrollTop: () => void
@@ -109,6 +110,7 @@ const Routes = ({scrollTop}: P) => {
                        <ForumEdit {...props} scrollTop={scrollTop}/>)}/>
             <Route path="/material/forum/:id" component={ForumPage}/>
 
+            <Route path="/material/search" component={SearchPage}/>
 
             <Route exact path="/help/feedback" component={FeedbackList}/>
 

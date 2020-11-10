@@ -5,10 +5,10 @@ import Button from '../../../components/button/Button'
 import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/forum.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
-import Search from '../../../components/list/Search'
+import SearchBlock from '../../../components/list/SearchBlock'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import styles from '../../../css/listTitle.module.scss'
-import SearchBlock from '../../../components/list/SearchBlock'
+import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
 import BlockReport from '../../../components/list/BlockReport'
@@ -129,12 +129,12 @@ class ForumList extends Component<P, S> {
             <Page>
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Последние обсуждения" icon={icon} className={styles.header}>
-                    <Search href="/material/forum/create" id="title" text="Создать обсуждение"
-                            placeholder="Поиск обсуждений"
-                            value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}/>
+                    <SearchBlock href="/material/forum/create" id="title" text="Создать обсуждение"
+                                 placeholder="Поиск обсуждений"
+                                 value={this.state.title} toggle={this.toggle} onChange={this.handleChange}
+                                 onSubmit={this.handleSubmit}/>
                 </PageTitle>
-                <SearchBlock show={this.state.filterShow} onSubmit={this.handleSubmit}>
+                <SearchFilter show={this.state.filterShow} onSubmit={this.handleSubmit}>
                     <Row>
                         <Col md={6}>
                             <Form.Group>
@@ -148,7 +148,7 @@ class ForumList extends Component<P, S> {
                             <Button block className="mb-3">Найти</Button>
                         </Col>
                     </Row>
-                </SearchBlock>
+                </SearchFilter>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
                         (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle=""

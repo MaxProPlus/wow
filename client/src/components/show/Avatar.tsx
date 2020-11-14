@@ -10,4 +10,10 @@ const Avatar = ({src}: P) => {
     )
 }
 
+export const AvatarWidthAuto = ({src}: P) => {
+    return (
+        <img className={styles.imgWAuto} src={src} alt=""/>
+    )
+}
+
 export default Avatar

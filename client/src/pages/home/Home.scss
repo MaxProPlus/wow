@@ -9,8 +9,15 @@
   margin: -15px -15px 0;
 }
 
+.home__info {
+  flex-shrink: 0;
+  border-bottom: 2px solid $border-color;
+  padding-bottom: 5px;
+}
+
 .slider {
   display: flex;
+  justify-content: flex-start;
   flex-direction: column-reverse;
   overflow: hidden;
 }
@@ -23,7 +30,6 @@ $max-height: 380px;
 
   overflow-x: auto;
   overflow-y: hidden;
-  max-height: $max-height;
   border-bottom: 2px solid $border-color;
 
   .slider__item {
@@ -34,12 +40,10 @@ $max-height: 380px;
 .slider__item-active {
 
   .slider-item {
-    //display: inline-block;
     border-bottom: 2px solid $border-color;
 
     .slider-item__img {
-      //min-width: auto;
-      //min-height: $max-height - 2px;
+      width: 100%;
     }
 
     .slider-item__bg {
@@ -67,8 +71,6 @@ $max-height: 380px;
 }
 
 .slider__item {
-  //text-align: center;
-  //height: 100%;
 
   &:hover .slider-item__title {
     color: #5B87EF;
@@ -83,9 +85,8 @@ $max-height: 380px;
 
 .slider-item__img {
   display: block;
-  max-width: 100%;
+  width: 100%;
   min-height: 100%;
-  //max-height: $max-height-list;
 }
 
 .slider-item__title {
@@ -122,12 +123,42 @@ $max-height: 380px;
   }
 }
 
+.widget {
+  background-color: $color3;
+  padding: 8px 23px;
+  margin: 5px 5px 0;
+  display: block;
+  img {
+    width: 24px;
+  }
+  span {
+    text-transform: uppercase;
+    margin-left: 14px;
+  }
+}
+
+.widget_about {
+  img {
+    margin-bottom: -2px;
+  }
+}
+
+.widget_online {
+  img {
+    margin-bottom: -4px;
+  }
+}
+
+.widget_vk {
+  img {
+    margin-bottom: -6px;
+  }
+}
+
 @media (min-width: 768px) {
   .slider {
     flex-direction: row;
     align-items: flex-start;
-    padding-right: 8px;
-    max-height: $max-height;
   }
   .slider__list {
     display: block;
@@ -137,18 +168,12 @@ $max-height: 380px;
   }
   .slider__item-active {
     flex-basis: 70%;
-
+    border-right: 2px solid $border-color;
+    border-bottom: 2px solid $border-color;
+    overflow: hidden;
     .slider-item {
       display: inline-block;
-
-      .slider-item__img {
-        max-height: $max-height - 2px;
-        min-height: $max-height - 2px;
-      }
-
-      .slider-item__bg {
-        border-right: 2px solid $border-color;
-      }
+      width: 100%;
     }
   }
   .slider-item__img {
@@ -158,4 +183,11 @@ $max-height: 380px;
     border-right: none;
     border-bottom: 2px solid $border-color;
   }
+  .home__top {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media (min-width: 992px) {
 }

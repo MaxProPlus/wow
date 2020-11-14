@@ -9,7 +9,7 @@ import Spinner from '../../components/spinner/Spinner'
 import ConfirmationWindow from '../../components/confirmationWindow/ConfirmationWindow'
 import PageTitle from '../../components/pageTitle/PageTitle'
 import ControlButton from '../../components/show/ControlButton'
-import Avatar from '../../components/show/Avatar'
+import {AvatarWidthAuto} from '../../components/show/Avatar'
 import Title from '../../components/show/Title'
 import SubTitle from '../../components/show/SubTitle'
 import InfoBlock from '../../components/show/InfoBlock'
@@ -170,7 +170,7 @@ class ArticlePage extends React.Component<P, S> {
                                        href="/article" nameRemove="Удалить новость"
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>
-                    <Avatar src={this.state.article.urlAvatar}/>
+                    <AvatarWidthAuto src={this.state.article.urlAvatar}/>
                     <Title className="text-center">{this.state.article.title}</Title>
                     <SubTitle className="text-center">{this.state.article.shortDescription}</SubTitle>
                     <InfoBlock title="">{this.state.article.description}</InfoBlock>

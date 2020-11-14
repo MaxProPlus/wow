@@ -12,7 +12,7 @@ import ConfirmationWindow from '../../../components/confirmationWindow/Confirmat
 import history from '../../../utils/history'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import ControlButton from '../../../components/show/ControlButton'
-import Avatar from '../../../components/show/Avatar'
+import {AvatarWidthAuto} from '../../../components/show/Avatar'
 import ForumApi from '../../../api/ForumApi'
 import SubTitle from '../../../components/show/SubTitle'
 import {RouteComponentProps} from 'react-router-dom'
@@ -173,7 +173,7 @@ class ForumPage extends React.Component<P, S> {
                                        href="/material/forum" nameRemove="Удалить обсуждение"
                                        showRemoveWindow={this.showRemoveWindow}/>
                     </PageTitle>
-                    <Avatar src={this.state.forum.urlAvatar}/>
+                    <AvatarWidthAuto src={this.state.forum.urlAvatar}/>
                     <Title className="text-center">{this.state.forum.title}</Title>
                     <SubTitle className="text-center">{this.state.forum.shortDescription}</SubTitle>
                     <InfoBlock title={this.state.forum.description}>{this.state.forum.rule}</InfoBlock>

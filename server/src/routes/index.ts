@@ -1,14 +1,14 @@
 import {Express, Router} from 'express'
-import UserController from '../controllers/UserController'
-import TicketController from '../controllers/TicketController'
-import CharacterController from '../controllers/CharacterController'
-import GuildController from '../controllers/GuildController'
-import StoryController from '../controllers/StoryController'
-import ReportController from '../controllers/ReportController'
-import ForumController from '../controllers/ForumController'
-import FeedbackController from '../controllers/FeedbackController'
-import ArticleController from '../controllers/ArticleController'
-import MaterialController from '../controllers/MaterialController'
+import UserController from '../controllers/userController'
+import TicketController from '../controllers/ticketController'
+import CharacterController from '../controllers/characterController'
+import GuildController from '../controllers/guildController'
+import StoryController from '../controllers/storyController'
+import ReportController from '../controllers/reportController'
+import ForumController from '../controllers/forumController'
+import FeedbackController from '../controllers/feedbackController'
+import ArticleController from '../controllers/articleController'
+import MaterialController from '../controllers/materialController'
 
 // Инициализация роутов
 export default (app: Express) => {
@@ -66,7 +66,7 @@ export default (app: Express) => {
     router.put('/characters/:id', characterController.update)
     router.delete('/characters/:id', characterController.remove)
     router.post('/characters/comments', characterController.createComment)
-    router.get('/characters/:idCharacter/comments', characterController.getComments)
+    router.get('/characters/:id/comments', characterController.getComments)
     // router.delete('/characters/:idCharacter/comments/:idComment', characterController.removeComment)
 
     // Гильдии
@@ -76,8 +76,8 @@ export default (app: Express) => {
     router.put('/guilds/:id', guildController.update)
     router.delete('/guilds/:id', guildController.remove)
     router.post('/guilds/comments', guildController.createComment)
-    router.get('/guilds/:idCharacter/comments', guildController.getComments)
-    // router.delete('/guilds/:idCharacter/comments/:idComment', guildController.removeComment)
+    router.get('/guilds/:id/comments', guildController.getComments)
+    // router.delete('/guilds/:idGuild/comments/:idComment', guildController.removeComment)
 
     // Сюжеты
     router.post('/stories', storyController.create)

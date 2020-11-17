@@ -1,20 +1,34 @@
-import UserModel from '../../models/account/model'
+import UserProvider from '../../providers/account'
+import UserRepository from '../../repositories/user'
+import {UserAuth} from '../../entity/types'
+import Hash from '../hash'
 
 class Auth {
-    private userModel: UserModel
+    private userModel: UserProvider
+    private repository: UserRepository
+    private hash: Hash
 
     constructor(connection: any) {
-        this.userModel = new UserModel(connection)
+        this.userModel = new UserProvider(connection)
+        this.repository = new UserRepository(connection.getPoolPromise())
+        this.hash = new Hash()
     }
 
     // Проверка авторизации по токену
     checkAuth = (data: string) => {
-        return this.userModel.checkAuthByToken(data)
+        return this.repository.getIdByToken(data)
     }
 
     // Проверка авторизации по токену и паролю
-    checkAuthWithPassword = (token: string, pass: string) => {
-        return this.userModel.checkAuthByTokenWithPassword(token, pass)
+    checkAuthWithPassword = async (token: string, pass: string) => {
+        try {
+            const username = await this.repository.getUsernameByToken(token)
+            pass = this.hash.getHash(username, pass)
+            const id = await this.repository.getIdByTokenWithPassword(token, pass)
+            return {id, username} as UserAuth
+        } catch (e) {
+            return Promise.reject(e)
+        }
     }
 }
 

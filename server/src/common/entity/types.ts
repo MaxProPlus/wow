@@ -11,7 +11,7 @@ export class User {
     password = ''
     passwordRepeat = ''
     token = ''
-    rights = []
+    rights: string[] = []
 }
 
 export class UserPassword {
@@ -26,6 +26,9 @@ export class Comment {
     id = 0
     text = ''
     idUser = 0
+    createdAt = new Date()
+    updatedAt = new Date()
+
     authorNickname = ''
     authorUrlAvatar = ''
 }
@@ -61,6 +64,9 @@ export class CommentArticle extends Comment {
 export class Ticket {
     id = 0
     idUser = 0
+    createdAt = new Date()
+    updatedAt = new Date()
+
     title = ''
     text = ''
     status = TicketStatus.START
@@ -99,6 +105,10 @@ export class Character {
     id = 0
     idUser = 0
     urlAvatar = ''
+    createdAt = new Date()
+    updatedAt = new Date()
+    userNickname = ''
+
     title = '' // Полное имя персонажа
     nickname = '' // Игровое имя
     shortDescription = '' // Девиз персонажа
@@ -127,6 +137,7 @@ export class Character {
 
     guilds: Guild[] = [] // Связанные гильдии
     stores: Story[] = [] // Связанные сюжеты
+    reports: Report[] = [] // Связанные отчеты
 }
 
 export enum Sex {
@@ -201,6 +212,8 @@ export class Guild {
     id = 0
     idUser = 0
     urlAvatar = '' // avatar
+    createdAt = new Date()
+    updatedAt = new Date()
 
     // Главное
     title = '' // Название гильдии
@@ -224,6 +237,7 @@ export class Guild {
     hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
     comment = 0 // Запретить комментарии
     stores: Story[] = [] // Связанные сюжеты
+    reports: Report[] = [] // Связанные отчеты
 }
 
 export function guildStatusToString(active: number) {
@@ -257,6 +271,9 @@ export class Story {
     id = 0
     idUser = 0
     urlAvatar = '' // avatar
+    createdAt = new Date()
+    updatedAt = new Date()
+    userNickname = ''
 
     // Главное
     title = '' // Название гильдии
@@ -278,6 +295,7 @@ export class Story {
     closed = 0 // Закрыть(материал будет доступен только автору)
     hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
     comment = 0 // Запретить комментарии
+    reports: Report[] = [] // Связанные отчеты
 }
 
 export function storyStatusToString(status: number) {
@@ -299,6 +317,9 @@ export class Report {
     id = 0
     idUser = 0
     urlAvatar = ''
+    createdAt = new Date()
+    updatedAt = new Date()
+    userNickname = ''
 
     // Главное
     title = '' // Заголовок отчета / лога
@@ -323,6 +344,9 @@ export class Forum {
     id = 0
     idUser = 0
     urlAvatar = ''
+    createdAt = new Date()
+    updatedAt = new Date()
+    userNickname = ''
 
     // Главное
     title = '' // Заголовок форума
@@ -340,7 +364,7 @@ export class Forum {
     comment = 0 // Запретить комментарии
 }
 
-export class Feedback extends User{
+export class Feedback extends User {
     id = 0
     idUser = 0
     role = ''
@@ -351,6 +375,9 @@ export class Article {
     id = 0
     idUser = 0
     urlAvatar = ''
+    createdAt = new Date()
+    updatedAt = new Date()
+
     title = '' // Название новости
     shortDescription = '' // Анонс новости
     description = '' // Описание

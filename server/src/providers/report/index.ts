@@ -2,13 +2,16 @@ import ReportRepository from '../../repositories/report'
 import {Character, CommentReport, CommentStory, Guild, Report, Story, User} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class ReportProvider {
     private repository: ReportRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new ReportRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать отчет
@@ -185,8 +188,15 @@ class ReportProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentReport) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const report = await this.repository.selectById(oldComment.idReport)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === report.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

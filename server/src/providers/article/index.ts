@@ -2,13 +2,16 @@ import ArticleRepository from '../../repositories/article'
 import {Article, CommentArticle} from '../../common/entity/types'
 import {ArticleUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class ArticleProvider {
     private repository: ArticleRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new ArticleRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать новость
@@ -93,8 +96,15 @@ class ArticleProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentArticle) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const article = await this.repository.selectById(oldComment.idArticle)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === article.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

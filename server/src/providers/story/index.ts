@@ -2,13 +2,16 @@ import StoryRepository from '../../repositories/story'
 import {Character, CommentStory, Guild, Report, Story, User} from '../../common/entity/types'
 import {defaultAvatar, StoryUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class StoryProvider {
     private repository: StoryRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new StoryRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать сюжет
@@ -166,8 +169,15 @@ class StoryProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentStory) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const story = await this.repository.selectById(oldComment.idStory)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === story.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

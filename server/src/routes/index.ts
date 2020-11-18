@@ -48,7 +48,7 @@ export default (app: Express) => {
     router.delete('/articles/:id', articleController.remove)
     router.post('/articles/comments', articleController.createComment)
     router.get('/articles/:id/comments', articleController.getComments)
-    // router.delete('/articles/:idCharacter/comments/:idComment', articleController.removeComment)
+    router.delete('/articles/:idArticle/comments/:idComment', articleController.removeComment)
 
     // Тикеты
     router.post('/tickets', ticketController.create)
@@ -67,7 +67,7 @@ export default (app: Express) => {
     router.delete('/characters/:id', characterController.remove)
     router.post('/characters/comments', characterController.createComment)
     router.get('/characters/:id/comments', characterController.getComments)
-    // router.delete('/characters/:idCharacter/comments/:idComment', characterController.removeComment)
+    router.delete('/characters/:idCharacter/comments/:idComment', characterController.removeComment)
 
     // Гильдии
     router.post('/guilds', guildController.create)
@@ -77,7 +77,7 @@ export default (app: Express) => {
     router.delete('/guilds/:id', guildController.remove)
     router.post('/guilds/comments', guildController.createComment)
     router.get('/guilds/:id/comments', guildController.getComments)
-    // router.delete('/guilds/:idGuild/comments/:idComment', guildController.removeComment)
+    router.delete('/guilds/:idGuild/comments/:idComment', guildController.removeComment)
 
     // Сюжеты
     router.post('/stories', storyController.create)
@@ -87,7 +87,7 @@ export default (app: Express) => {
     router.delete('/stories/:id', storyController.remove)
     router.post('/stories/comments', storyController.createComment)
     router.get('/stories/:id/comments', storyController.getComments)
-    // router.delete('/stories/:idCharacter/comments/:idComment', storyController.removeComment)
+    router.delete('/stories/:idStory/comments/:idComment', storyController.removeComment)
 
     // Отчеты
     router.post('/reports', reportController.create)
@@ -97,7 +97,7 @@ export default (app: Express) => {
     router.delete('/reports/:id', reportController.remove)
     router.post('/reports/comments', reportController.createComment)
     router.get('/reports/:id/comments', reportController.getComments)
-    // router.delete('/reports/:idCharacter/comments/:idComment', reportController.removeComment)
+    router.delete('/reports/:idReport/comments/:idComment', reportController.removeComment)
 
     // форумы
     router.post('/forums', forumController.create)
@@ -107,7 +107,7 @@ export default (app: Express) => {
     router.delete('/forums/:id', forumController.remove)
     router.post('/forums/comments', forumController.createComment)
     router.get('/forums/:id/comments', forumController.getComments)
-    // router.delete('/forums/:idCharacter/comments/:idComment', forumController.removeComment)
+    router.delete('/forums/:idForum/comments/:idComment', forumController.removeComment)
 
     // Выборка по всем мартериалам
     router.get('/materials', materialController.getAll)

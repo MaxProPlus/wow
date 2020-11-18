@@ -241,6 +241,31 @@ class StoryController extends Controller {
 
     // Удалить комментарий
     removeComment = async (req: Request, res: Response) => {
+        const c = new CommentStory()
+        c.id = parseInt(req.params.idComment)
+        if (isNaN(c.id)) {
+            return res.json({
+                status: 'INVALID_PARSE',
+                errorMessage: 'Ошибка парсинга id',
+            })
+        }
+        c.idUser = await this.getUserId(req)
+        if (!c.idUser) {
+            return res.json({
+                status: 'INVALID_AUTH',
+                errorMessage: 'Ошибка авторизации',
+            })
+        }
+        this.storyProvider.removeComment(c).then(() => {
+            return res.json({
+                status: 'OK',
+            })
+        }, err => {
+            return res.json({
+                status: 'ERROR',
+                errorMessage: err,
+            })
+        })
     }
 }
 

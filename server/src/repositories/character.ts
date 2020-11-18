@@ -302,6 +302,26 @@ class CharacterRepository extends BasicMaterialRepository {
         })
     }
 
+    // Получить комментарий по id
+    selectCommentById = (id: number): Promise<CommentCharacter> => {
+        const sql = `select c.id,
+                            c.text,
+                            c.id_user      as idUser,
+                            c.id_character as idCharacter
+                     from character_comment c
+                     where c.id = ?
+                       and c.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {
+            if (!r.length) {
+                return Promise.reject('Комментарий не найден')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить комментарии к персонажу
     selectCommentsByIdCharacter = (id: number): Promise<CommentCharacter[]> => {
         const sql = `select c.id,

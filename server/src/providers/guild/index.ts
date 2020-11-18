@@ -2,13 +2,16 @@ import GuildRepository from '../../repositories/guild'
 import {Character, CommentGuild, Guild, Report, Story, User} from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class GuildProvider {
     private repository: GuildRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new GuildRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать гильдию
@@ -148,8 +151,15 @@ class GuildProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentGuild) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const guild = await this.repository.selectById(oldComment.idGuild)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === guild.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

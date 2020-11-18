@@ -2,13 +2,16 @@ import ForumRepository from '../../repositories/forum'
 import {CommentForum, CommentStory, Forum, User} from '../../common/entity/types'
 import {defaultAvatar, ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class ForumProvider {
     private repository: ForumRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new ForumRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать форум
@@ -122,8 +125,15 @@ class ForumProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentForum) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const forum = await this.repository.selectById(oldComment.idForum)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === forum.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

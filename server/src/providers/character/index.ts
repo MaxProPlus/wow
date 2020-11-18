@@ -2,13 +2,16 @@ import CharacterRepository from '../../repositories/character'
 import {Character, CommentCharacter, Guild, Report, Story, User} from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
+import RightProvider from '../right'
 
 class CharacterProvider {
     private repository: CharacterRepository
     private uploader = new Uploader()
+    private rightProvider: RightProvider
 
     constructor(connection: any) {
         this.repository = new CharacterRepository(connection.getPoolPromise())
+        this.rightProvider = new RightProvider(connection)
     }
 
     // Создать персонажа
@@ -151,8 +154,15 @@ class CharacterProvider {
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
-        return this.repository.removeComment(id)
+    removeComment = async (comment: CommentCharacter) => {
+        const oldComment = await this.repository.selectCommentById(comment.id)
+        const character = await this.repository.selectById(oldComment.idCharacter)
+        if (oldComment.idUser === comment.idUser
+            || comment.idUser === character.idUser
+            || await this.rightProvider.moderateComment(comment.idUser)) {
+            return this.repository.removeComment(comment.id)
+        }
+        return Promise.reject('Нет прав')
     }
 }
 

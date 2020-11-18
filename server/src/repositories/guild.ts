@@ -262,6 +262,26 @@ class GuildRepository extends BasicMaterialRepository {
         })
     }
 
+    // Получить комментарий по id
+    selectCommentById = (id: number): Promise<CommentGuild> => {
+        const sql = `select c.id,
+                            c.text,
+                            c.id_user  as idUser,
+                            c.id_guild as idGuild
+                     from guild_comment c
+                     where c.id = ?
+                       and c.is_remove = 0`
+        return this.pool.query(sql, [id]).then(([r]: [CommentGuild[]]) => {
+            if (!r.length) {
+                return Promise.reject('Комментарий не найден')
+            }
+            return Promise.resolve(r[0])
+        }, (err: any) => {
+            logger.error('Ошибка запроса к бд: ', err)
+            return Promise.reject('Ошибка запроса к бд')
+        })
+    }
+
     // Получить комментарии
     selectCommentsByIdGuild = (id: number) => {
         const sql = `select c.id,

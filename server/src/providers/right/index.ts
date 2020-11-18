@@ -26,6 +26,10 @@ class RightProvider {
     articleCrud = (id: number): Promise<boolean> => {
         return this.repository.checkRight('ARTICLE_CRUD', id).then(r => r, () => false)
     }
+
+    moderateComment = (id: number): Promise<boolean> => {
+        return this.repository.checkRight('MODERATE_COMMENT', id).then(r => r, () => false)
+    }
 }
 
 export default RightProvider

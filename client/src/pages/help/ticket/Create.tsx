@@ -26,7 +26,7 @@ type S = {
     error: string
 }
 
-class TicketCreate extends React.Component<P, S> {
+class Create extends React.Component<P, S> {
     static contextType = UserContext
     private ticketApi = new TicketApi()
     private validator = new Validator()
@@ -86,8 +86,8 @@ class TicketCreate extends React.Component<P, S> {
         ticket.title = this.state.title
         ticket.text = this.state.text
         ticket.idTicketType = this.state.idTicketType
-        const {ok, err} = this.validator.validateTicket(ticket)
-        if (!ok) {
+        const err = this.validator.validateTicket(ticket)
+        if (err) {
             this.props.scrollTop()
             this.setState({
                 error: err,
@@ -140,4 +140,4 @@ class TicketCreate extends React.Component<P, S> {
     }
 }
 
-export default TicketCreate
+export default Create

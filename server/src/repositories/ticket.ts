@@ -1,4 +1,4 @@
-import {CommentTicket, Ticket, TicketStatus, TicketType, User} from '../common/entity/types'
+import {CommentTicket, Ticket, TicketStatus, TicketType} from '../common/entity/types'
 import logger from '../services/logger'
 import Repository from '../core/repository'
 
@@ -28,7 +28,6 @@ class TicketRepository extends Repository {
         })
     }
 
-
     // Получить количество тикетов
     selectCountTicketByType = (id: number): Promise<number> => {
         const sql = `select count(id) as count
@@ -46,7 +45,7 @@ class TicketRepository extends Repository {
     }
 
     // Получить тикет по id
-    selectById = (id: number) => {
+    selectById = (id: number): Ticket => {
         const sql = `select t.id,
                             t.title,
                             t.id_ticket_type as idTicketType,
@@ -56,13 +55,13 @@ class TicketRepository extends Repository {
                             t.created_at     as createdAt,
                             t.id_user        as idUser,
                             t.id_user_moder  as idUserModer,
-                            aUser.nickname   as userNickname,
-                            aModer.nickname  as moderNickname
+                            user.nickname    as userNickname,
+                            moder.nickname   as moderNickname
                      from ticket t
-                              join user aUser on t.id_user = aUser.id
-                              left join user aModer on t.id_user_moder = aModer.id
+                              join user on t.id_user = user.id
+                              left join user moder on t.id_user_moder = moder.id
                      where t.id = ?`
-        return this.pool.query(sql, [id]).then(([r]: [User[]]) => {
+        return this.pool.query(sql, [id]).then(([r]: [Ticket[]]) => {
             if (!r.length) {
                 return Promise.reject('Тикет не найден')
             }
@@ -73,7 +72,7 @@ class TicketRepository extends Repository {
         })
     }
 
-    // Получить тикет по id
+    // Получить комментарии тикетов по id
     selectCommentsByIdTicket = (id: number) => {
         const sql = `select c.id,
                             c.text,
@@ -92,12 +91,12 @@ class TicketRepository extends Repository {
         })
     }
 
-    // Получить тип тикета
+    // Получить тип тикета по id
     selectTypeOfTicketById = (idType: number) => {
         const sql = `select t.id,
                             t.title,
                             t.description,
-                            t.url_icon as urlIcon
+                            t.url_avatar as urlAvatar
                      from ticket_type t
                      where t.id = ?`
         return this.pool.query(sql, [idType]).then(([r]: [TicketType[]]) => {
@@ -113,7 +112,7 @@ class TicketRepository extends Repository {
 
     // Получить все типы тикетов
     selectTypesOfTicket = () => {
-        const sql = `select t.id, t.title, t.description, t.url_icon as urlIcon
+        const sql = `select t.id, t.title, t.description, t.url_avatar as urlAvatar
                      from ticket_type t`
         return this.pool.query(sql).then(([r]: [TicketType[]]) => {
             if (!r.length) {
@@ -131,13 +130,13 @@ class TicketRepository extends Repository {
         const sql = `select t.id,
                             t.title,
                             t.id_ticket_type as idTicketType,
-                            t.text,
                             t.status,
-                            t.updated_at     as updatedAt,
                             t.created_at     as createdAt,
-                            t.id_user        as idUser,
-                            t.id_user_moder  as idUserModer
+                            user.nickname    as userNickname,
+                            moder.nickname   as moderNickname
                      from ticket t
+                              join user on t.id_user = user.id
+                              left join user moder on t.id_user_moder = moder.id
                      where t.id_ticket_type = ?
                      limit ? offset ?`
         return this.pool.query(sql, [id, limit, limit * (page - 1)]).then(([r]: [Ticket[]]) => {
@@ -148,11 +147,13 @@ class TicketRepository extends Repository {
         })
     }
 
-    updateStatus = (idTicket: number, status: TicketStatus) => {
+    updateStatus = (idTicket: number, status: TicketStatus, idUser: number) => {
         const sql = `UPDATE ticket
-                     SET status = ?
+                     SET status        = ?,
+                         updated_at    = current_timestamp(),
+                         id_user_moder = ?
                      where id = ?`
-        return this.pool.query(sql, [status, idTicket]).then((r: any) => {
+        return this.pool.query(sql, [status, idUser, idTicket]).then((r: any) => {
             if (!r[0].affectedRows) {
                 return Promise.reject('Тикет не найден')
             }

@@ -1,20 +1,21 @@
 import React, {Component} from 'react'
-import {Ticket, ticketStatusToString} from '../../../../../server/src/common/entity/types'
-import Button from '../../../components/button/Button'
-import Spinner from '../../../components/spinner/Spinner'
+import {Ticket, ticketStatusToString} from '../../../../../../server/src/common/entity/types'
+import Button from '../../../../components/button/Button'
+import Spinner from '../../../../components/spinner/Spinner'
 import icon from './img/ticket.svg'
-import PageTitle from '../../../components/pageTitle/PageTitle'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
-import BlockReport from '../../../components/list/BlockReport'
-import TicketApi from '../../../api/TicketApi'
-import history from '../../../utils/history'
-import penIcon from '../../../img/pen.svg'
+import PageTitle from '../../../../components/pageTitle/PageTitle'
+import AlertDanger from '../../../../components/alert-danger/AlertDanger'
+import styles from '../../../../css/listTitle.module.scss'
+import BlockReport from '../../../../components/list/BlockReport'
+import TicketApi from '../../../../api/TicketApi'
+import history from '../../../../utils/history'
+import penIcon from '../../../../img/pen.svg'
 import urlTicket from './img/urlTicket.svg'
-import ButtonIcon from '../../../components/list/ButtonIcon'
+import ButtonIcon from '../../../../components/list/ButtonIcon'
 import {RouteComponentProps} from 'react-router-dom'
-import {MatchId} from '../../../types/RouteProps'
-import Page from '../../../components/page/Page'
+import {MatchId} from '../../../../types/RouteProps'
+import Page from '../../../../components/page/Page'
+import './List.scss'
 
 type P = RouteComponentProps<MatchId>
 
@@ -116,9 +117,19 @@ class TicketList extends Component<P, S> {
                 </PageTitle>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<BlockReport key={el.id} id={el.id} title={ticketStatusToString(el.status) + ' | ' + el.title}
+                        (<BlockReport key={el.id} id={el.id} title={<><span
+                            className={'status-' + el.status}>{ticketStatusToString(el.status)} | </span>{el.title}</>}
                                       muteTitle={el.text}
-                                      urlAvatar={urlTicket} href="/help/ticket/"/>),
+                                      urlAvatar={urlTicket}
+                                      href="/help/ticket/"
+                                      bottomText={'by ' + el.userNickname}
+                                      bottomRightText={<><span className={'status-' + el.status}>
+                                          {el.moderNickname ? el.moderNickname + ' | ' : ''}
+                                      </span>
+                                      <span className="text-muted">
+                                          {(new Date(el.createdAt)).toLocaleString()}
+                                      </span></>}
+                        />),
                     )
                     :
                     'Заявки не найдены'}

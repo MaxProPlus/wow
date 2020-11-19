@@ -35,8 +35,8 @@ class FeedbackController extends Controller {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        const flagTicketRead = await this.rightProvider.ticketUpdateStatus(idUser)
-        if (!flagTicketRead) {
+        const flagFeedbackModerator = await this.rightProvider.feedbackModerator(idUser)
+        if (!flagFeedbackModerator) {
             return res.json({
                 status: 'ERROR_RIGHT',
                 errorMessage: 'Нет прав',

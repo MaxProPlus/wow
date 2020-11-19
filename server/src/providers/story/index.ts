@@ -174,7 +174,7 @@ class StoryProvider {
         const story = await this.repository.selectById(oldComment.idStory)
         if (oldComment.idUser === comment.idUser
             || comment.idUser === story.idUser
-            || await this.rightProvider.moderateComment(comment.idUser)) {
+            || await this.rightProvider.commentModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
         return Promise.reject('Нет прав')

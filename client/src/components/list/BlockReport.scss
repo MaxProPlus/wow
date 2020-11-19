@@ -1,20 +1,21 @@
 @import '../../css/variables';
 
-.block {
+.material-fluid {
   margin: 0 15px 15px;
   background-color: transparentize($border-color, .65);
   border: 1px solid $border-color;
 
-  &:hover .title {
+  &:hover .material-fluid__title {
     color: #5B87EF;
   }
 
-  > div:first-child {
+  > .col-md-3 {
     padding-left: 0;
+    padding-right: 0;
   }
 
-  > div:last-child {
-    padding-right: 0;
+  a {
+    display: block;
   }
 
   img {
@@ -23,14 +24,25 @@
   }
 }
 
-.title {
+.material-fluid__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.material-fluid__body-bottom {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 15px;
+}
+.material-fluid__title {
   font-size: 1rem;
   transition: color .3s ease;
   margin-top: 7px;
   margin-bottom: 7px;
 }
 
-.muteTitle {
+.material-fluid__muteTitle {
   font-size: .625rem;
   color: #A0A2A6;
   margin-bottom: 7px;

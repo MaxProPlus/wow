@@ -57,6 +57,14 @@ hr {
   color: $color3;
 }
 
+.text-muted {
+  color: $color2;
+}
+
+.text-center {
+  text-align: center;
+}
+
 .page-title {
   display: flex;
   justify-content: space-between;
@@ -79,10 +87,6 @@ hr {
     }
 
   }
-}
-
-.text-center {
-  text-align: center;
 }
 
 .page-edit {

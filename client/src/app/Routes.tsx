@@ -5,8 +5,8 @@ import SignIn from '../pages/auth/signIn/SignIn'
 import SignUp from '../pages/auth/singUp/SignUp'
 import Profile from '../pages/profile/Profile'
 import Setting from '../pages/setting/Setting'
-import TicketCreate from '../pages/help/ticketCreate/TicketCreate'
-import TicketPage from '../pages/help/ticketPage/TicketPage'
+import Create from '../pages/help/ticket/Create'
+import TicketPage from '../pages/help/ticket/Show'
 import CharacterList from '../pages/material/character/List'
 import CharacterCreate from '../pages/material/character/Create'
 import CharacterEdit from '../pages/material/character/Edit'
@@ -29,8 +29,8 @@ import ForumCreate from '../pages/material/forum/Create'
 import ForumEdit from '../pages/material/forum/Edit'
 import ForumList from '../pages/material/forum/List'
 import ForumPage from '../pages/material/forum/Show'
-import TicketTypeList from '../pages/help/ticket/TypeList'
-import TicketList from '../pages/help/ticket/List'
+import TicketTypeList from '../pages/help/ticket/list/TypeList'
+import TicketList from '../pages/help/ticket/list/List'
 import FeedbackList from '../pages/help/feedback/List'
 import RulePage from '../pages/start/rule/Rule'
 import HowPage from '../pages/start/how/How'
@@ -120,7 +120,7 @@ const Routes = ({scrollTop}: P) => {
                    component={TicketList}/> {/*тикеты конкретной категории*/}
             <Route path="/help/ticket/create"
                    render={(props) => (
-                       <TicketCreate {...props} scrollTop={scrollTop}/>)}/>{/*создание тикета*/}
+                       <Create {...props} scrollTop={scrollTop}/>)}/>{/*создание тикета*/}
             <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
 
             <Route exact path="/admin" component={AdminDashboard}/>

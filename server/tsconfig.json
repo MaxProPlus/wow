@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "outDir": "dist",
     "removeComments": true,
     "sourceMap": true,
@@ -16,10 +16,11 @@
       "node"
     ],
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "src/@types"
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src"
   ]
 }

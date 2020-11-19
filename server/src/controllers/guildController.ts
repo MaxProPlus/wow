@@ -197,8 +197,8 @@ class GuildController extends Controller {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        const {ok, err} = this.validator.validateComment(c)
-        if (!ok) {
+        const err = this.validator.validateComment(c)
+        if (err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,

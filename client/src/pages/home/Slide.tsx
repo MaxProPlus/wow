@@ -19,7 +19,6 @@ class Slide extends React.Component<P> {
 
     componentDidMount() {
         if (this.props.updateHeight) {
-            console.log('resize')
             window.addEventListener('resize', this.handleResize)
         }
     }

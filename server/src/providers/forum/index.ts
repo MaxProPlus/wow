@@ -130,7 +130,7 @@ class ForumProvider {
         const forum = await this.repository.selectById(oldComment.idForum)
         if (oldComment.idUser === comment.idUser
             || comment.idUser === forum.idUser
-            || await this.rightProvider.moderateComment(comment.idUser)) {
+            || await this.rightProvider.commentModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
         return Promise.reject('Нет прав')

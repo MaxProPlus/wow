@@ -1,17 +1,22 @@
 import React from 'react'
 import Spinner from '../../../components/spinner/Spinner'
 import TicketApi from '../../../api/TicketApi'
-import {CommentTicket, Ticket, TicketStatus, ticketStatusToString} from '../../../../../server/src/common/entity/types'
+import {
+    CommentTicket,
+    Ticket,
+    TicketStatus,
+    ticketStatusToString,
+} from '../../../../../server/src/common/entity/types'
 import history from '../../../utils/history'
-import './TicketPage.scss'
-import CommentForm from '../../../components/commentFrom/CommentForm'
-import CommentC from '../../../components/comment/Comment'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import UserContext from '../../../contexts/userContext'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
-import Select from '../../../components/form/select/Select'
-import {MatchId} from '../../../types/RouteProps'
 import Page from '../../../components/page/Page'
+import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import Select from '../../../components/form/select/Select'
+import CommentForm from '../../../components/commentFrom/CommentForm'
+import {MatchId} from '../../../types/RouteProps'
+import UserContext from '../../../contexts/userContext'
+import CommentComponent from '../../../components/comment/Comment'
+import './Show.scss'
 
 type P = RouteComponentProps<MatchId>
 
@@ -146,7 +151,7 @@ class TicketPage extends React.Component<P, S> {
                         }
                     </div>
                     <div className="comments">
-                        {this.state.comments.map((c: any) => <CommentC key={c.id}
+                        {this.state.comments.map((c: any) => <CommentComponent key={c.id}
                                                                        {...c}/>)}
                     </div>
                     {(this.state.ticket.status !== TicketStatus.CLOSE && !this.state.errorMessage) &&

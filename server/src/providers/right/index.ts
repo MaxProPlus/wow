@@ -11,24 +11,20 @@ class RightProvider {
         return this.repository.selectRights(id).then(r => r, () => [])
     }
 
-    ticketRead = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('TICKET_READ', id).then(r => r, () => false)
+    ticketModerator = (id: number): Promise<boolean> => {
+        return this.repository.checkRight('TICKET_MODERATOR', id).then(r => r, () => false)
     }
 
-    ticketUpdateStatus = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('TICKET_UPDATE_STATUS', id).then(r => r, () => false)
+    feedbackModerator = (id: number): Promise<boolean> => {
+        return this.repository.checkRight('FEEDBACK_MODERATOR', id).then(r => r, () => false)
     }
 
-    feedbackEdit = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('FEEDBACK_EDIT', id).then(r => r, () => false)
+    articleModerator = (id: number): Promise<boolean> => {
+        return this.repository.checkRight('ARTICLE_MODERATOR', id).then(r => r, () => false)
     }
 
-    articleCrud = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('ARTICLE_CRUD', id).then(r => r, () => false)
-    }
-
-    moderateComment = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('MODERATE_COMMENT', id).then(r => r, () => false)
+    commentModerator = (id: number): Promise<boolean> => {
+        return this.repository.checkRight('COMMENT_MODERATOR', id).then(r => r, () => false)
     }
 }
 

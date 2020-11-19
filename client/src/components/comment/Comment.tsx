@@ -4,11 +4,11 @@ import {Comment as CommentType} from '../../../../server/src/common/entity/types
 import AvatarImg from '../avatar-img/AvatarImg'
 import './Comment.scss'
 
-type propsTypes = CommentType & {
+type P = CommentType & {
     onClickRemove?: any
 }
 
-export default function Comment(props: propsTypes) {
+export default function CommentComponent(props: P) {
     return (
         <div className="comment-item">
             <div className="d-flex justify-content-between">

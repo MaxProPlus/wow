@@ -12,7 +12,7 @@ import UserContext from '../../../contexts/userContext'
 import CharacterApi from '../../../api/CharacterApi'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import CommentForm from '../../../components/commentFrom/CommentForm'
-import Comment from '../../../components/comment/Comment'
+import CommentComponent from '../../../components/comment/Comment'
 import {Col, Row} from 'react-bootstrap'
 import icon from './img/char.svg'
 import raceIcon from './img/race.svg'
@@ -232,7 +232,7 @@ class CharacterPage extends React.Component<P, S> {
 
                     <div className="comments">
                         {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>,
+                            <CommentComponent key={c.id} {...c}/>,
                         )}
                     </div>
                     {(!this.state.character.comment && this.context.user.id !== -1) &&

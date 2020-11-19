@@ -4,7 +4,7 @@ import {CommentReport, Report, User} from '../../../../../server/src/common/enti
 import UserContext from '../../../contexts/userContext'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import CommentForm from '../../../components/commentFrom/CommentForm'
-import Comment from '../../../components/comment/Comment'
+import CommentComponent from '../../../components/comment/Comment'
 import {Col, Row} from 'react-bootstrap'
 import icon from './img/report.svg'
 import InfoBlock from '../../../components/show/InfoBlock'
@@ -193,7 +193,7 @@ class ReportPage extends React.Component<P, S> {
 
                 <div className="comments">
                     {this.state.comments.map((c) =>
-                        <Comment key={c.id} {...c}/>,
+                        <CommentComponent key={c.id} {...c}/>,
                     )}
                 </div>
                 {(!this.state.report.comment && this.context.user.id !== -1) &&

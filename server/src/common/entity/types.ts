@@ -79,7 +79,7 @@ export class TicketType {
     id = 0
     title = ''
     description = ''
-    urlIcon = ''
+    urlAvatar = ''
 }
 
 export enum TicketStatus {

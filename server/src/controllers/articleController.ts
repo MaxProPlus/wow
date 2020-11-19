@@ -44,7 +44,7 @@ class ArticleController extends Controller {
         }
 
         // Проверка прав на управление новостью
-        if (!(await this.rightProvider.articleCrud(c.idUser))) {
+        if (!(await this.rightProvider.articleModerator(c.idUser))) {
             return res.json({
                 status: 'ERROR_RIGHT',
                 errorMessage: 'Нет прав',
@@ -155,7 +155,7 @@ class ArticleController extends Controller {
         }
 
         // Проверка прав на управление новостью
-        if (!(await this.rightProvider.articleCrud(c.idUser))) {
+        if (!(await this.rightProvider.articleModerator(c.idUser))) {
             return res.json({
                 status: 'ERROR_RIGHT',
                 errorMessage: 'Нет прав',
@@ -193,7 +193,7 @@ class ArticleController extends Controller {
         }
 
         // Проверка прав на управление новостью
-        if (!(await this.rightProvider.articleCrud(c.idUser))) {
+        if (!(await this.rightProvider.articleModerator(c.idUser))) {
             return res.json({
                 status: 'ERROR_RIGHT',
                 errorMessage: 'Нет прав',
@@ -221,8 +221,8 @@ class ArticleController extends Controller {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        const {ok, err} = this.validator.validateComment(c)
-        if (!ok) {
+        const err = this.validator.validateComment(c)
+        if (err) {
             return res.json({
                 status: 'INVALID_DATA',
                 errorMessage: err,

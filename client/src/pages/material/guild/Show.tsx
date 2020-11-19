@@ -10,7 +10,7 @@ import {
 import UserContext from '../../../contexts/userContext'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import CommentForm from '../../../components/commentFrom/CommentForm'
-import Comment from '../../../components/comment/Comment'
+import CommentComponent from '../../../components/comment/Comment'
 import {Col, Row} from 'react-bootstrap'
 import GuildApi from '../../../api/GuildApi'
 import InfoBlockInline from '../../../components/show/InfoBlockInline'
@@ -209,7 +209,7 @@ class GuildPage extends React.Component<P, S> {
                 <List title="Сюжеты" href="/material/story/" list={this.state.guild.stores}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
-                        <Comment key={c.id} {...c}/>,
+                        <CommentComponent key={c.id} {...c}/>,
                     )}
                 </div>
                 {(!this.state.guild.comment && this.context.user.id !== -1) &&

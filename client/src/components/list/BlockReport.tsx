@@ -1,7 +1,7 @@
 import React from 'react'
 import {Col, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import styles from './BlockReport.module.scss'
+import './BlockReport.scss'
 
 
 type P = {
@@ -9,24 +9,28 @@ type P = {
     href: string,
     id: number,
     urlAvatar: string,
-    title: string,
+    title: React.ReactNode,
     muteTitle: string,
+    bottomText?: string,
+    bottomRightText?: React.ReactNode,
 }
 
-const BlockReport = ({className, id, title, muteTitle, urlAvatar, href}: P) => {
+const BlockReport = ({className = '', id, title, muteTitle, bottomText, bottomRightText, urlAvatar, href}: P) => {
 
     return (
-        <Row className={`${styles.block} ${className || ''}`}>
-            <Col xs={3}>
+        <Row className={`material-fluid ${className}`}>
+            <Col md={3}>
                 <Link to={href + id}>
                     <img src={urlAvatar} alt=""/>
                 </Link>
             </Col>
-            <Col xs={9}>
-                <Link to={href + id}>
-                    <div className={styles.title}>{title}</div>
-                    <div className={styles.muteTitle}>{muteTitle}</div>
-                </Link>
+            <Col className="material-fluid__body" md={9}>
+                <Link className="material-fluid__title" to={href + id}>{title}</Link>
+                <div className="material-fluid__muteTitle">{muteTitle}</div>
+                <div className="material-fluid__body-bottom">
+                    <div className="material-fluid__bottom-text">{bottomText}</div>
+                    <div className="material-fluid__bottom-right-text">{bottomRightText}</div>
+                </div>
             </Col>
         </Row>
     )

@@ -1,17 +1,17 @@
 import React, {Component} from 'react'
-import {TicketType} from '../../../../../server/src/common/entity/types'
-import Spinner from '../../../components/spinner/Spinner'
+import {TicketType} from '../../../../../../server/src/common/entity/types'
+import Spinner from '../../../../components/spinner/Spinner'
 import icon from './img/ticket.svg'
-import PageTitle from '../../../components/pageTitle/PageTitle'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
-import BlockReport from '../../../components/list/BlockReport'
-import TicketApi from '../../../api/TicketApi'
-import UserContext from '../../../contexts/userContext'
+import PageTitle from '../../../../components/pageTitle/PageTitle'
+import AlertDanger from '../../../../components/alert-danger/AlertDanger'
+import styles from '../../../../css/listTitle.module.scss'
+import BlockReport from '../../../../components/list/BlockReport'
+import TicketApi from '../../../../api/TicketApi'
+import UserContext from '../../../../contexts/userContext'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
-import ButtonIcon from '../../../components/list/ButtonIcon'
-import penIcon from '../../../img/pen.svg'
-import Page from '../../../components/page/Page'
+import ButtonIcon from '../../../../components/list/ButtonIcon'
+import penIcon from '../../../../img/pen.svg'
+import Page from '../../../../components/page/Page'
 
 type P = RouteComponentProps
 
@@ -69,10 +69,10 @@ class TicketTypeList extends Component<P, S> {
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
                         (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle={el.description}
-                                      urlAvatar={el.urlIcon} href="/help/ticket/type/"/>),
+                                      urlAvatar={el.urlAvatar} href="/help/ticket/type/"/>),
                     )
                     :
-                    'Нет категорий'}
+                    'Категории не найдены'}
             </Page>
         )
     }

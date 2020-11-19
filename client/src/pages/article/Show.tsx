@@ -14,7 +14,7 @@ import Title from '../../components/show/Title'
 import SubTitle from '../../components/show/SubTitle'
 import InfoBlock from '../../components/show/InfoBlock'
 import CommentForm from 'components/commentFrom/CommentForm'
-import Comment from '../../components/comment/Comment'
+import CommentComponent from '../../components/comment/Comment'
 import ArticleApi from '../../api/ArticleApi'
 import Page from '../../components/page/Page'
 
@@ -177,7 +177,7 @@ class ArticlePage extends React.Component<P, S> {
 
                     <div className="comments">
                         {this.state.comments.map((c) =>
-                            <Comment key={c.id} {...c}/>,
+                            <CommentComponent key={c.id} {...c}/>,
                         )}
                     </div>
                     {(!this.state.article.comment && this.context.user.id !== -1) &&

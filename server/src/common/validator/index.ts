@@ -35,13 +35,11 @@ class Validator {
 
     // Валидация комментария
     validateComment(comment: Comment) {
-        let ok = true
         let err = ''
         if (comment.text.length < 3) {
-            ok = false
             err += 'Длина комментария не должна быть меньше 3 символов'
         }
-        return {ok, err}
+        return err
     }
 
     // Валидация настроек безопасности
@@ -111,20 +109,26 @@ class Validator {
         return err
     }
 
-    // Валидация комментария
+    // Валидация тикета
     validateTicket = (ticket: Ticket) => {
-        let ok = true
         let err = ''
         ticket.text = this.trim(ticket.text)
         if (ticket.title.length < 3 || ticket.title.length > 100) {
-            ok = false
             err += 'Длина названия заявки в должна быть от 3 до 100 символов.\n'
         }
         if (ticket.text.length < 3 || ticket.text.length > 150) {
-            ok = false
             err += 'Длина текста заявки должна быть от 3 до 150 символов.\n'
         }
-        return {ok, err}
+        return err
+    }
+
+    // Валидация статуса тикета
+    validateTicketStatus = (status: number) => {
+        let err = ''
+        if (status !== 0 && status !== 1 && status !== 9) {
+            err += 'Ошибка валидации статуса'
+        }
+        return err
     }
 
     // Валидация персонажа

@@ -37,8 +37,8 @@ class CommentForm extends Component<P, S> {
         e.preventDefault()
         let comment = new Comment()
         comment.text = this.state.comment
-        const {ok, err} = this.validator.validateComment(comment)
-        if (!ok) {
+        const err = this.validator.validateComment(comment)
+        if (err) {
             this.setState({
                 errorMessage: err,
             })

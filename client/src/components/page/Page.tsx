@@ -1,8 +1,12 @@
 import React from 'react'
 
-const Page: React.FC = ({children}) => {
+type P = {
+    children: React.ReactNode
+    className?: string
+}
+const Page: React.FC<P> = ({children, className=''}) => {
     return (
-        <div className="content__area">
+        <div className={`content__area ${className}`}>
             {children}
         </div>)
 }

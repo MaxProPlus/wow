@@ -17,7 +17,7 @@ const List = ({title, href, list}: P) => {
             <div className={styles.title}>{title}</div>
             <div className={styles.block}>
                 {list.map(el =>
-                    (<Value key={el.id} href={href + el.id}>{el.title}</Value>),
+                    (<Value key={el.id} href={href + el.id} hidden={el.hidden}>{el.title}</Value>),
                 )}
             </div>
         </>
@@ -26,12 +26,14 @@ const List = ({title, href, list}: P) => {
 
 type ValueP = {
     href: string
+    hidden: number
     children: string
 }
 
-const Value: FC<ValueP> = ({href, children}) => {
+const Value: FC<ValueP> = ({href, hidden, children}) => {
     return (
         <Link className={styles.value} to={href}>
+            {!!hidden && <span className={styles.hidden}>СКРЫТО </span>}
             {children}
         </Link>
     )

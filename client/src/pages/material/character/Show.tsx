@@ -41,6 +41,7 @@ import List from '../../../components/show/List'
 import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../../types/RouteProps'
 import Page from '../../../components/page/Page'
+import About from '../../../components/show/About'
 
 type P = RouteComponentProps<MatchId>
 
@@ -229,6 +230,7 @@ class CharacterPage extends React.Component<P, S> {
                     <Card title="Друзья и знакомые" href="/material/character/" list={this.state.character.friends}/>
                     <List title="Гильдии" href="/material/guild/" list={this.state.character.guilds}/>
                     <List title="Сюжеты" href="/material/story/" list={this.state.character.stores}/>
+                    <List title="Отчеты" href="/material/report/" list={this.state.character.reports}/>
 
                     <div className="comments">
                         {this.state.comments.map((c) =>
@@ -237,6 +239,9 @@ class CharacterPage extends React.Component<P, S> {
                     </div>
                     {(!this.state.character.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                    <About author={this.state.character.userNickname} coauthors={this.state.character.coauthors}
+                           createdAt={this.state.character.createdAt}
+                           updatedAt={this.state.character.updatedAt}/>
                 </div>
             </Page>
         )

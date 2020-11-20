@@ -1,0 +1,21 @@
+.page-article-list__title {
+  border-bottom: none;
+  margin: 0 0 30px;
+}
+
+.material-fluid_article {
+  img {
+    padding: 7px 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .material-fluid_article {
+    img {
+      padding: 15px 20px;
+    }
+    .material-fluid__title {
+      margin-top: 12px;
+    }
+  }
+}

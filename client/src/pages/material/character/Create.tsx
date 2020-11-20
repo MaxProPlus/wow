@@ -87,7 +87,7 @@ class CharacterCreate extends React.Component<P, CommonS> {
         }
         switch (e.id) {
             case 'friends':
-                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
+                return this.characterApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         friendsOptions: r.data.filter((el: Character) => {

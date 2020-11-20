@@ -7,7 +7,6 @@ import icon from './img/forum.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import SearchBlock from '../../../components/list/SearchBlock'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
 import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
@@ -15,6 +14,8 @@ import BlockReport from '../../../components/list/BlockReport'
 import ForumApi from '../../../api/ForumApi'
 import {RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'
+import DateFormatter from '../../../utils/date'
+import styles from '../../../css/listTitle.module.scss'
 
 type P = RouteComponentProps
 
@@ -151,7 +152,8 @@ class ForumList extends Component<P, S> {
                 </SearchFilter>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle=""
+                        (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle={el.shortDescription} bottomText={<><span
+                            className="text-muted">{DateFormatter.withoutYear(el.createdAt)} | </span>by {el.userNickname}</>}
                                       urlAvatar={el.urlAvatar} href="/material/forum/"/>),
                     )
                     :

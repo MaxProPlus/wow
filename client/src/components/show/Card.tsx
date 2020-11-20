@@ -18,7 +18,7 @@ const Card = ({title, href, list}: P) => {
             <div className={styles.title}>{title}</div>
             <Row>
                 {list.map(el =>
-                    (<Block key={el.id} id={el.id} title='' muteTitle=''
+                    (<Block key={el.id} id={el.id}
                             urlAvatar={el.urlAvatar} href={href} size={2}/>),
                 )}
             </Row>

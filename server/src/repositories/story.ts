@@ -49,9 +49,10 @@ class StoryRepository extends BasicMaterialRepository {
 
     // Получить сюжет по id
     selectById = (id: number): Promise<Story> => {
-        const sql = `select id,
+        const sql = `select s.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            s.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
@@ -66,8 +67,9 @@ class StoryRepository extends BasicMaterialRepository {
                             hidden,
                             comment,
                             style
-                     from story
-                     where id = ?
+                     from story s
+                              join user u on s.id_user = u.id
+                     where s.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             if (!r.length) {

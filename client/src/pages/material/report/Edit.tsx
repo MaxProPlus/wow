@@ -158,13 +158,51 @@ class ReportEdit extends React.Component<P, S> {
         }
         switch (e.id) {
             case 'members':
-                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
+                return this.characterApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         membersOptions: r.data.filter((el: Character) => {
                             return this.state.members.findIndex((e: Option) => e.value === el.id,
                             ) === -1
                         }).map((el: Character) => {
+                            return {
+                                label: el.title,
+                                value: el.id,
+                            }
+                        }),
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'guilds':
+                return this.guildApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        guildsOptions: r.data.filter((el: Character) => {
+                            return this.state.guilds.findIndex((e: Option) => e.value === el.id,
+                            ) === -1
+                        }).map((el: Guild) => {
+                            return {
+                                label: el.title,
+                                value: el.id,
+                            }
+                        }),
+                    })
+                }, err => {
+                    this.setState({
+                        errorMessage: err,
+                    })
+                })
+            case 'stores':
+                return this.storyApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
+                    this.setState({
+                        // Отсечь элементы, которые уже были выбранны
+                        storesOptions: r.data.filter((el: Character) => {
+                            return this.state.stores.findIndex((e: Option) => e.value === el.id,
+                            ) === -1
+                        }).map((el: Story) => {
                             return {
                                 label: el.title,
                                 value: el.id,
@@ -186,44 +224,6 @@ class ReportEdit extends React.Component<P, S> {
                         }).map((el: User) => {
                             return {
                                 label: el.nickname,
-                                value: el.id,
-                            }
-                        }),
-                    })
-                }, err => {
-                    this.setState({
-                        errorMessage: err,
-                    })
-                })
-            case 'guilds':
-                return this.guildApi.getAll(3, 1, {title: e.value}).then(r => {
-                    this.setState({
-                        // Отсечь элементы, которые уже были выбранны
-                        guildsOptions: r.data.filter((el: Character) => {
-                            return this.state.guilds.findIndex((e: Option) => e.value === el.id,
-                            ) === -1
-                        }).map((el: Guild) => {
-                            return {
-                                label: el.title,
-                                value: el.id,
-                            }
-                        }),
-                    })
-                }, err => {
-                    this.setState({
-                        errorMessage: err,
-                    })
-                })
-            case 'stores':
-                return this.storyApi.getAll(3, 1, {title: e.value}).then(r => {
-                    this.setState({
-                        // Отсечь элементы, которые уже были выбранны
-                        storesOptions: r.data.filter((el: Character) => {
-                            return this.state.stores.findIndex((e: Option) => e.value === el.id,
-                            ) === -1
-                        }).map((el: Story) => {
-                            return {
-                                label: el.title,
                                 value: el.id,
                             }
                         }),

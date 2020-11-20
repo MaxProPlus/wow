@@ -3,19 +3,18 @@ import {Col, Row} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 import './BlockReport.scss'
 
-
 type P = {
     className?: string,
     href: string,
     id: number,
     urlAvatar: string,
     title: React.ReactNode,
-    muteTitle: string,
-    bottomText?: string,
+    muteTitle?: string,
+    bottomText?: React.ReactNode,
     bottomRightText?: React.ReactNode,
 }
 
-const BlockReport = ({className = '', id, title, muteTitle, bottomText, bottomRightText, urlAvatar, href}: P) => {
+const BlockReport = ({className = '', id, title, muteTitle = '', bottomText, bottomRightText, urlAvatar, href}: P) => {
 
     return (
         <Row className={`material-fluid ${className}`}>

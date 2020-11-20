@@ -24,6 +24,8 @@ import List from '../../../components/show/List'
 import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../../types/RouteProps'
 import Page from '../../../components/page/Page'
+import About from '../../../components/show/About'
+import DateFormatter from '../../../utils/date'
 
 type P = RouteComponentProps<MatchId>
 
@@ -187,7 +189,7 @@ class StoryPage extends React.Component<P, S> {
                         <Title>{this.state.story.title}</Title>
                         <Motto>{this.state.story.shortDescription}</Motto>
                         <InfoBlockInline icon={dateIcon} title="Дата начала"
-                                         value={(new Date(this.state.story.dateStart)).toDateString()}/>
+                                         value={DateFormatter.onlyDate(this.state.story.dateStart)}/>
                         <InfoBlockInline icon={statusIcon} title="Статус"
                                          value={storyStatusToString(this.state.story.status)}/>
                     </Col>
@@ -197,6 +199,7 @@ class StoryPage extends React.Component<P, S> {
                 <InfoBlock title="Дополнительные сведения">{this.state.story.more}</InfoBlock>
                 <Card title="Участники" href="/material/character/" list={this.state.story.members}/>
                 <List title="Гильдии" href="/material/guild/" list={this.state.story.guilds}/>
+                <List title="Отчеты" href="/material/report/" list={this.state.story.reports}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
                         <CommentComponent key={c.id} {...c}/>,
@@ -204,6 +207,9 @@ class StoryPage extends React.Component<P, S> {
                 </div>
                 {(!this.state.story.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                <About author={this.state.story.userNickname} coauthors={this.state.story.coauthors}
+                       createdAt={this.state.story.createdAt}
+                       updatedAt={this.state.story.updatedAt}/>
             </Page>
         )
     }

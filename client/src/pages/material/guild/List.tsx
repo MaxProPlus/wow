@@ -150,7 +150,7 @@ class GuildList extends Component<P, S> {
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
-                            (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.gameTitle}
+                            (<Block key={el.id} id={el.id} title={el.title} textBottom={el.shortDescription}
                                     urlAvatar={el.urlAvatar} href="/material/guild/" size={4}/>),
                         )}
                     </Row>

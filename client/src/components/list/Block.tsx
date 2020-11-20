@@ -1,7 +1,7 @@
 import React from 'react'
 import {Col} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
-import styles from './Block.module.scss'
+import './Block.scss'
 
 
 type P = {
@@ -9,19 +9,25 @@ type P = {
     size: number,
     id: number,
     urlAvatar: string,
-    title: string,
-    muteTitle: string,
+    textTop?: string,
+    title?: string,
+    textBottom?: string,
+    textBottomRight?: string,
 }
 
-const Block = ({id, title, muteTitle, urlAvatar, size, href}: P) => {
+const Block = ({id, textTop = '', title = '', textBottom = '', textBottomRight = '', urlAvatar, size, href}: P) => {
 
     return (
-        <Col className={styles.block} lg={size}>
+        <Col className="material" lg={size}>
             <Link to={href + id}>
                 <img src={urlAvatar} alt=""/>
-                <div className={styles.background}/>
-                <div className={styles.title}>{title}</div>
-                <div className={styles.muteTitle}>{muteTitle}</div>
+                <div className="material__background"/>
+                <div className="material__top">{textTop}</div>
+                <div className="material__title">{title}</div>
+                <div className="material__bottom">
+                    <div className="material__bottom-left">{textBottom}</div>
+                    <div className="material__bottom-right">{textBottomRight}</div>
+                </div>
             </Link>
         </Col>
     )

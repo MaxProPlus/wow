@@ -19,9 +19,10 @@ class ArticleRepository extends Repository {
 
     // Получить новость по id
     selectById = (id: number): Promise<Article> => {
-        const sql = `select id,
+        const sql = `select a.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            a.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
@@ -31,8 +32,9 @@ class ArticleRepository extends Repository {
                             hidden,
                             comment,
                             style
-                     from article
-                     where id = ?
+                     from article a
+                              join user u on a.id_user = u.id
+                     where a.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Article[]]) => {
             if (!r.length) {

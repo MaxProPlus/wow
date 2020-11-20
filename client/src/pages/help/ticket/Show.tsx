@@ -142,7 +142,7 @@ class TicketPage extends React.Component<P, S> {
                         <div className="status">Автор: <span
                             className="author_title">{this.state.ticket.userNickname}</span> Статус
                             заявки: {ticketStatusToString(this.state.ticket.status)}</div>
-                        {this.context.user.rights.includes('TICKET_UPDATE_STATUS') &&
+                        {this.context.user.rights.includes('TICKET_MODERATOR') &&
                         <Select label="Статус заявки:" value={this.state.status} onChange={this.handleStatus}>
                             {[0, 1, 9].map(v =>
                                 (<option key={v} value={v}>{ticketStatusToString(v)}</option>),

@@ -17,6 +17,7 @@ import CommentForm from 'components/commentFrom/CommentForm'
 import CommentComponent from '../../components/comment/Comment'
 import ArticleApi from '../../api/ArticleApi'
 import Page from '../../components/page/Page'
+import About from '../../components/show/About'
 
 type P = RouteComponentProps<MatchId>
 
@@ -182,6 +183,9 @@ class ArticlePage extends React.Component<P, S> {
                     </div>
                     {(!this.state.article.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                    <About author={this.state.article.userNickname}
+                           createdAt={this.state.article.createdAt}
+                           updatedAt={this.state.article.updatedAt}/>
                 </div>
             </Page>
         )

@@ -24,9 +24,10 @@ class ForumRepository extends BasicMaterialRepository {
 
     // Получить форум по id
     selectById = (id: number): Promise<Forum> => {
-        const sql = `select id,
+        const sql = `select f.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            f.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
@@ -37,8 +38,9 @@ class ForumRepository extends BasicMaterialRepository {
                             hidden,
                             comment,
                             style
-                     from forum
-                     where id = ?
+                     from forum f
+                              join user u on f.id_user = u.id
+                     where f.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Forum[]]) => {
             if (!r.length) {

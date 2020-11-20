@@ -209,7 +209,7 @@ class CharacterList extends Component<P, S> {
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
-                            (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.nickname}
+                            (<Block key={el.id} id={el.id} textTop={el.userNickname} title={el.title} textBottom={el.shortDescription}
                                     urlAvatar={el.urlAvatar} href="/material/character/" size={3}/>),
                         )}
                     </Row>

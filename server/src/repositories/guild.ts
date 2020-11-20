@@ -38,9 +38,10 @@ class GuildRepository extends BasicMaterialRepository {
 
     // Получить гильдию по id
     selectById = (id: number): Promise<Guild> => {
-        const sql = `select id,
+        const sql = `select g.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            g.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
@@ -56,8 +57,9 @@ class GuildRepository extends BasicMaterialRepository {
                             hidden,
                             comment,
                             style
-                     from guild
-                     where id = ?
+                     from guild g
+                              join user u on g.id_user = u.id
+                     where g.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
             if (!r.length) {

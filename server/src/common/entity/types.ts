@@ -211,6 +211,7 @@ export function characterActiveToString(active: number) {
 export class Guild {
     id = 0
     idUser = 0
+    userNickname = ''
     urlAvatar = '' // avatar
     createdAt = new Date()
     updatedAt = new Date()
@@ -374,6 +375,7 @@ export class Feedback extends User {
 export class Article {
     id = 0
     idUser = 0
+    userNickname = ''
     urlAvatar = ''
     createdAt = new Date()
     updatedAt = new Date()

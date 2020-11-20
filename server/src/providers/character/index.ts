@@ -69,7 +69,6 @@ class CharacterProvider {
     // Редактировать персонажа
     update = async (c: CharacterUpload) => {
         const oldCharacter = await this.repository.selectById(c.id)
-        // console.log('old: ', oldCharacter, 'new: ', c)
 
         oldCharacter.coauthors = await this.repository.selectCoauthorById(c.id)
         if (oldCharacter.idUser !== c.idUser && (oldCharacter.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {

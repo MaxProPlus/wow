@@ -1,6 +1,6 @@
 @import '../../css/variables';
 
-.block {
+.material {
   margin-bottom: 15px;
   text-align: center;
 
@@ -17,12 +17,12 @@
     min-height: 100%;
   }
 
-  &:hover .title {
+  &:hover .material__title {
     color: #5B87EF;
   }
 }
 
-.title {
+.material__title {
   font-size: 1rem;
   position: absolute;
   bottom: 2rem;
@@ -30,15 +30,26 @@
   transition: color .3s ease;
 }
 
-.muteTitle {
+.material__top {
+  position: absolute;
+  top: .5rem;
+  right: 15px;
+  color: #949494;
   font-size: .625rem;
-  color: #A0A2A6;
+}
+
+.material__bottom {
   position: absolute;
   bottom: 1rem;
   left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: .625rem;
+  color: #AAB4BB;
 }
 
-.background {
+.material__background {
   position: absolute;
   left: 0;
   right: 0;

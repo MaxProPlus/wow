@@ -32,6 +32,7 @@ import List from '../../../components/show/List'
 import {MatchId} from '../../../types/RouteProps'
 import {RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'
+import About from '../../../components/show/About'
 
 type P = RouteComponentProps<MatchId>
 
@@ -207,6 +208,7 @@ class GuildPage extends React.Component<P, S> {
                 <InfoBlock title="Дополнительные сведения">{this.state.guild.more}</InfoBlock>
                 <Card title="Участники" href="/material/character/" list={this.state.guild.members}/>
                 <List title="Сюжеты" href="/material/story/" list={this.state.guild.stores}/>
+                <List title="Отчеты" href="/material/report/" list={this.state.guild.reports}/>
                 <div className="comments">
                     {this.state.comments.map((c) =>
                         <CommentComponent key={c.id} {...c}/>,
@@ -214,6 +216,9 @@ class GuildPage extends React.Component<P, S> {
                 </div>
                 {(!this.state.guild.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                <About author={this.state.guild.userNickname} coauthors={this.state.guild.coauthors}
+                       createdAt={this.state.guild.createdAt}
+                       updatedAt={this.state.guild.updatedAt}/>
             </Page>
         )
     }

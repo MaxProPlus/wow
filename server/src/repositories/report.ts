@@ -61,9 +61,10 @@ class ReportRepository extends BasicMaterialRepository {
 
     // Получить отчет по id
     selectById = (id: number): Promise<Report> => {
-        const sql = `select id,
+        const sql = `select r.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            r.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
@@ -74,8 +75,9 @@ class ReportRepository extends BasicMaterialRepository {
                             hidden,
                             comment,
                             style
-                     from report
-                     where id = ?
+                     from report r
+                              join user u on r.id_user = u.id
+                     where r.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
             if (!r.length) {

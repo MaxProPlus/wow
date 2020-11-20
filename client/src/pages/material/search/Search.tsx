@@ -109,7 +109,7 @@ class SearchPage extends Component<P, S> {
                 {/*<PageTitle title="Последние обсуждения" icon={icon} className={styles.header}></PageTitle>*/}
                 {this.state.list.length > 0 && this.state.title ?
                     this.state.list.map(el =>
-                        (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle=""
+                        (<BlockReport key={el.id} id={el.id} title={el.title}
                                       urlAvatar={el.urlAvatar} href={`/material/${el.href}/`}/>),
                     )
                     :

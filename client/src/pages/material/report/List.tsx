@@ -15,6 +15,7 @@ import BlockReport from '../../../components/list/BlockReport'
 import ReportApi from '../../../api/ReportApi'
 import {RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'
+import './List.scss'
 
 type P = RouteComponentProps
 
@@ -126,7 +127,7 @@ class ReportList extends Component<P, S> {
         const more = this.limit * this.page < this.state.count ?
             <Button onClick={this.handlePageClick} className="more-btn">Загрузить еще</Button> : ''
         return (
-            <Page>
+            <Page className="page-list-report">
                 {!this.state.isLoaded && <Spinner/>}
                 <PageTitle title="Отчеты и логи" icon={icon} className={styles.header}>
                     <SearchBlock href="/material/report/create" id="title" text="Создать лог / отчет"
@@ -151,7 +152,7 @@ class ReportList extends Component<P, S> {
                 </SearchFilter>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<BlockReport key={el.id} id={el.id} title={el.title} muteTitle=""
+                        (<BlockReport key={el.id} id={el.id} title={el.title} bottomText={'by ' + el.userNickname}
                                       urlAvatar={el.urlAvatar} href="/material/report/"/>),
                     )
                     :

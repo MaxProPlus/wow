@@ -41,13 +41,14 @@ class CharacterRepository extends BasicMaterialRepository {
 
     // Получить персонажа по id
     selectById = (id: number): Promise<Character> => {
-        const sql = `select id,
+        const sql = `select c.id,
                             id_user           as idUser,
-                            url_avatar        as urlAvatar,
+                            u.nickname        as userNickname,
+                            c.url_avatar      as urlAvatar,
                             created_at        as createdAt,
                             updated_at        as updatedAt,
                             title,
-                            nickname,
+                            c.nickname,
                             short_description as shortDescription,
                             race,
                             nation,
@@ -68,6 +69,7 @@ class CharacterRepository extends BasicMaterialRepository {
                             comment,
                             style
                      from \`character\` c
+                              join user u on c.id_user = u.id
                      where c.id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {

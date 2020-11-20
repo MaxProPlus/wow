@@ -15,6 +15,7 @@ import ButtonIcon from '../../../../components/list/ButtonIcon'
 import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../../../types/RouteProps'
 import Page from '../../../../components/page/Page'
+import DateFormatter from '../../../../utils/date'
 import './List.scss'
 
 type P = RouteComponentProps<MatchId>
@@ -127,7 +128,7 @@ class TicketList extends Component<P, S> {
                                           {el.moderNickname ? el.moderNickname + ' | ' : ''}
                                       </span>
                                       <span className="text-muted">
-                                          {(new Date(el.createdAt)).toLocaleString()}
+                                          {DateFormatter.withoutYear(el.createdAt)}
                                       </span></>}
                         />),
                     )

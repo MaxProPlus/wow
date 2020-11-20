@@ -18,6 +18,7 @@ import SubTitle from '../../../components/show/SubTitle'
 import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../../types/RouteProps'
 import Page from '../../../components/page/Page'
+import About from '../../../components/show/About'
 
 type P = RouteComponentProps<MatchId>
 
@@ -185,6 +186,9 @@ class ForumPage extends React.Component<P, S> {
                     </div>
                     {(!this.state.forum.comment && this.context.user.id !== -1) &&
                     <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                    <About author={this.state.forum.userNickname} coauthors={this.state.forum.coauthors}
+                           createdAt={this.state.forum.createdAt}
+                           updatedAt={this.state.forum.updatedAt}/>
                 </div>
             </Page>
         )

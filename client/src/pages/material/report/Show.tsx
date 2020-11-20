@@ -21,6 +21,7 @@ import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../../types/RouteProps'
 import List from '../../../components/show/List'
 import Page from '../../../components/page/Page'
+import About from '../../../components/show/About'
 
 type P = RouteComponentProps<MatchId>
 
@@ -181,7 +182,6 @@ class ReportPage extends React.Component<P, S> {
                     </Col>
                     <Col md={8}>
                         <Title>{this.state.report.title}</Title>
-                        {/*<SubTitle>{this.state.report.nickname}</SubTitle>*/}{/*для имени автора*/}
                         <Motto>{this.state.report.shortDescription}</Motto>
                     </Col>
                 </Row>
@@ -198,6 +198,9 @@ class ReportPage extends React.Component<P, S> {
                 </div>
                 {(!this.state.report.comment && this.context.user.id !== -1) &&
                 <CommentForm onCommentUpdate={this.updateComment} onSendComment={this.handleSendComment}/>}
+                <About author={this.state.report.userNickname} coauthors={this.state.report.coauthors}
+                       createdAt={this.state.report.createdAt}
+                       updatedAt={this.state.report.updatedAt}/>
             </Page>
         )
     }

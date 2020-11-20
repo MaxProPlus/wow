@@ -6,12 +6,13 @@ import Button from '../../components/button/Button'
 import Spinner from '../../components/spinner/Spinner'
 import PageTitle from '../../components/pageTitle/PageTitle'
 import BlockReport from '../../components/list/BlockReport'
-import styles from './List.module.scss'
-import stylesTitle from '../../css/listTitle.module.scss'
-import stylesButton from '../../components/list/SearchBlock.module.scss'
 import ArticleApi from '../../api/ArticleApi'
 import penIcon from '../../img/pen.svg'
 import UserContext from '../../contexts/userContext'
+import './List.scss'
+import stylesTitle from '../../css/listTitle.module.scss'
+import stylesButton from '../../components/list/SearchBlock.module.scss'
+import DateFormatter from '../../utils/date'
 
 type P = RouteComponentProps
 
@@ -107,15 +108,14 @@ class ArticleList extends Component<P, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-                <PageTitle title="Последние обновления" icon="" className={`${stylesTitle.header} ${styles.title}`}>
+                <PageTitle title="Последние обновления" icon="" className={`${stylesTitle.header} page-article-list__title`}>
                     {this.context.user.rights.includes('ARTICLE_CRUD') &&
                     <Button to="/article/create"><img className={stylesButton.icon} src={penIcon} alt=""/><span
                         className={stylesButton.text}>Создать новость</span></Button>}
                 </PageTitle>
                 {this.state.list.length > 0 ?
                     this.state.list.map(el =>
-                        (<BlockReport className={styles.articleItem} key={el.id} id={el.id} title={el.title}
-                                      muteTitle=""
+                        (<BlockReport className="material-fluid_article" key={el.id} id={el.id} title={el.title} muteTitle={el.shortDescription} bottomText={DateFormatter.format(el.createdAt)}
                                       urlAvatar={el.urlAvatar} href="/article/"/>),
                     ) : 'Новости не найдены'}
                 {more}

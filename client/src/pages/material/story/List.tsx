@@ -155,7 +155,7 @@ class StoryList extends Component<P, S> {
                 {this.state.list.length > 0 ?
                     <Row>
                         {this.state.list.map(el =>
-                            (<Block key={el.id} id={el.id} title={el.title} muteTitle={el.shortDescription}
+                            (<Block key={el.id} id={el.id} title={el.title} textBottom={el.shortDescription} textBottomRight={'by ' + el.userNickname}
                                     urlAvatar={el.urlAvatar} href="/material/story/" size={4}/>),
                         )}
                     </Row>

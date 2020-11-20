@@ -87,7 +87,7 @@ class ReportCreate extends React.Component<P, CommonS> {
         }
         switch (e.id) {
             case 'members':
-                return this.characterApi.getAll(3, 1, {title: e.value}).then(r => {
+                return this.characterApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         membersOptions: r.data.filter((el: Character) => {
@@ -106,7 +106,7 @@ class ReportCreate extends React.Component<P, CommonS> {
                     })
                 })
             case 'guilds':
-                return this.guildApi.getAll(3, 1, {title: e.value}).then(r => {
+                return this.guildApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         guildsOptions: r.data.filter((el: Character) => {
@@ -125,7 +125,7 @@ class ReportCreate extends React.Component<P, CommonS> {
                     })
                 })
             case 'stores':
-                return this.storyApi.getAll(3, 1, {title: e.value}).then(r => {
+                return this.storyApi.getAll(3, 1, {title: e.value, hidden: 1}).then(r => {
                     this.setState({
                         // Отсечь элементы, которые уже были выбранны
                         storesOptions: r.data.filter((el: Character) => {

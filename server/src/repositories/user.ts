@@ -357,7 +357,6 @@ class UserRepository extends Repository {
 
     // Редактирование настроек безопасноти
     updateSecure = (user: User) => {
-        console.log(user)
         const sql = `update account a
             join user u on a.id = u.id_account
                      set a.email = ?

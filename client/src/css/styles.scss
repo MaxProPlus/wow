@@ -65,6 +65,12 @@ hr {
   text-align: center;
 }
 
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .page-title {
   display: flex;
   justify-content: space-between;

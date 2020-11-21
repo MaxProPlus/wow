@@ -22,11 +22,11 @@ const Block = ({id, textTop = '', title = '', textBottom = '', textBottomRight =
             <Link to={href + id}>
                 <img src={urlAvatar} alt=""/>
                 <div className="material__background"/>
-                <div className="material__top">{textTop}</div>
-                <div className="material__title">{title}</div>
+                <div className="material__top text-truncate">{textTop}</div>
+                <div className="material__title text-truncate">{title}</div>
                 <div className="material__bottom">
-                    <div className="material__bottom-left">{textBottom}</div>
-                    <div className="material__bottom-right">{textBottomRight}</div>
+                    <div className="text-truncate">{textBottom}</div>
+                    <div className="material__bottom-right text-truncate">{textBottomRight}</div>
                 </div>
             </Link>
         </Col>

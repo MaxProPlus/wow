@@ -28,13 +28,7 @@ class FeedbackController extends Controller {
 
     update = async (req: Request, res: Response) => {
         const list = req.body as Feedback[]
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        const idUser = req.userId!
         const flagFeedbackModerator = await this.rightProvider.feedbackModerator(idUser)
         if (!flagFeedbackModerator) {
             return res.json({

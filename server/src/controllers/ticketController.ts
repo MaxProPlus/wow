@@ -18,13 +18,7 @@ class TicketController extends Controller {
     // Создать тикет
     create = async (req: Request, res: Response) => {
         const c: Ticket = req.body
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         const err = this.validator.validateTicket(c)
         if (err) {
             return res.json({
@@ -54,13 +48,7 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        const idUser = req.userId!
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         return this.ticketProvider.getById(idTicket).then(([ticket, comments]) => {
             if (ticket.idUser !== idUser && !ticketModerator) {
@@ -89,13 +77,7 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        const idUser = req.userId!
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         if (!ticketModerator) {
             return res.json({
@@ -124,13 +106,6 @@ class TicketController extends Controller {
 
     // Получить все типы тикетов
     getTypesOfTicket = async (req: Request, res: Response) => {
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
         return this.ticketProvider.getTypesOfTicket().then((r: TicketType[]) => {
             return res.json({
                 status: 'OK',
@@ -155,13 +130,6 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
         return this.ticketProvider.getTicketsByType(idTicketType, limit, page).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -178,13 +146,7 @@ class TicketController extends Controller {
     // Создать комментарий на тикет
     createComment = async (req: Request, res: Response) => {
         const c: CommentTicket = req.body
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -214,13 +176,7 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        if (!idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        const idUser = req.userId!
         return this.ticketProvider.getComments(idTicket, idUser).then((r) => {
             return res.json({
                 status: 'OK',

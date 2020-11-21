@@ -35,13 +35,7 @@ class StoryController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.storyProvider.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -138,13 +132,7 @@ class StoryController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.storyProvider.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -168,13 +156,7 @@ class StoryController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.storyProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
@@ -190,13 +172,7 @@ class StoryController extends Controller {
     // Создать комментарий
     createComment = async (req: Request, res: Response) => {
         const c: CommentStory = req.body
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -249,13 +225,7 @@ class StoryController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         this.storyProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

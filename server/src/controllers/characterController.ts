@@ -35,13 +35,7 @@ class CharacterController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.characterProvider.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -150,13 +144,7 @@ class CharacterController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.characterProvider.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -180,13 +168,7 @@ class CharacterController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         return this.characterProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
@@ -202,13 +184,7 @@ class CharacterController extends Controller {
     // Создать комментарий к персонажу
     createComment = async (req: Request, res: Response) => {
         const c: CommentCharacter = req.body
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -261,13 +237,7 @@ class CharacterController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = await this.getUserId(req)
-        if (!c.idUser) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        c.idUser = req.userId!
         this.characterProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

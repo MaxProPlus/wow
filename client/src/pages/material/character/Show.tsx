@@ -72,7 +72,7 @@ class CharacterPage extends React.Component<P, S> {
         }
     }
 
-    static getDerivedStateFromProps(nextProps: P, prevState: S) {
+    static getDerivedStateFromProps(nextProps: Readonly<P>, prevState: S) {
         // Проверка изменения url
         if (nextProps.match.params.id !== prevState.id) {
             if (isNaN(Number(nextProps.match.params.id))) {

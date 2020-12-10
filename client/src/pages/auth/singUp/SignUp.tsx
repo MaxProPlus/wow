@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {Link, RouteComponentProps} from 'react-router-dom'
 import UserApi from '../../../api/UserApi'
 import UserContext from '../../../contexts/userContext'
@@ -25,7 +25,7 @@ type S = {
     errorMessage: string
 }
 
-class SignUp extends Component<P, S> {
+class SignUp extends React.Component<P, S> {
     static contextType = UserContext
     validator = new Validator()
     userApi = new UserApi()

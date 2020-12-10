@@ -34,7 +34,7 @@ class SearchPage extends Component<P, S> {
         }
     }
 
-    static getDerivedStateFromProps(props: P, state: S) {
+    static getDerivedStateFromProps(props: Readonly<P>, state: S) {
         if ((new URLSearchParams(window.location.search)).get('title') !== state.title) {
             return {
                 title: (new URLSearchParams(window.location.search)).get('title'),

@@ -160,7 +160,7 @@ class UserRepository extends Repository {
                 }
                 if (typeof data[key] === 'string') {
                     sql += ` ${key} like ?`
-                    where.push(`%${data[key]}%`)
+                    where.push(data[key])
                 } else {
                     sql += ` ${key} = ?`
                     where.push(data[key])

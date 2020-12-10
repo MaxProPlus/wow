@@ -37,8 +37,14 @@ class UserProvider {
             return Promise.reject('Ошибка регистрации, возможно логин или email уже занят')
         } catch (e) {
         }
-        return this.smtp!.sendConfirmation(user.email, user.nickname, user.token).then(() => {
-            return this.repository.insertUserReg(user)
+        if (!parseInt(process.env.SEND_EMAIL as string)) {
+            await this.repository.insertUserReg(user)
+            await this.acceptReg(user.token)
+            return 'Регистрация прошла успешно'
+        }
+        return this.smtp!.sendConfirmation(user.email, user.nickname, user.token).then(async() => {
+            await this.repository.insertUserReg(user)
+            return 'Письмо отправлено на почту'
         }, () => {
             return Promise.reject('Ошибка при отправке сообщения. Если ошибка повторится, то свяжитесь с администрацией')
         })
@@ -151,9 +157,14 @@ class UserProvider {
             return Promise.reject('Ошибка, данный email возможно занят')
         } catch (e) {
         }
-
-        return this.smtp!.sendChangeEmail(user.email, user.token).then(() => {
-            return this.repository.insertAccountEmail(user)
+        if (!parseInt(process.env.SEND_EMAIL as string)) {
+            await this.repository.insertAccountEmail(user)
+            await this.acceptEmail(user.token)
+            return 'Почта успешно изменена'
+        }
+        return this.smtp!.sendChangeEmail(user.email, user.token).then(async () => {
+            await this.repository.insertAccountEmail(user)
+            return 'Подтверждение отправлено на почту'
         }, () => {
             return Promise.reject('Ошибка при отправке сообщения. Если ошибка повториться, то свяжитесь с администрацией')
         })

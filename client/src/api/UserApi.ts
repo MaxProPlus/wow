@@ -25,7 +25,7 @@ class UserApi extends Api {
         return this.post(url, user).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
-            return Promise.resolve()
+            return Promise.resolve(r.results)
         })
     }
 
@@ -99,7 +99,7 @@ class UserApi extends Api {
         return this.post(url, user).then(r => {
             if (r.status !== 'OK')
                 return Promise.reject(r.errorMessage)
-            return Promise.resolve()
+            return Promise.resolve(r.results)
         })
     }
 

@@ -60,9 +60,9 @@ class SignUp extends React.Component<P, S> {
             })
             return
         }
-        this.userApi.signup(user).then(() => {
+        this.userApi.signup(user).then((msg) => {
             this.setState({
-                acceptMessage: 'Письмо отправлено на почту',
+                acceptMessage: msg,
                 isLoaded: true,
             })
         }, err => {

@@ -198,9 +198,9 @@ class Setting extends React.Component<P, S> {
             acceptSecure: '',
             errorSecure: '',
         })
-        this.userApi.updateSecure(user).then(() => {
+        this.userApi.updateSecure(user).then((msg) => {
             this.setState({
-                acceptSecure: 'Подтверждение отправлено на почту',
+                acceptSecure: msg,
             })
         }, err => {
             this.setState({

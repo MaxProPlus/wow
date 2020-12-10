@@ -32,9 +32,10 @@ class UserController extends Controller {
                 errorMessage: err,
             })
         }
-        return this.userProvider.signUp(user).then(() => {
+        return this.userProvider.signUp(user).then((msg: string) => {
             res.json({
                 status: 'OK',
+                results: msg,
             })
         }, (err) => {
             return res.json({
@@ -232,9 +233,10 @@ class UserController extends Controller {
                 errorMessage: 'Ошибка авторизации',
             })
         }
-        return this.userProvider.updateSecure(user).then(() => {
+        return this.userProvider.updateSecure(user).then((msg) => {
             return res.json({
                 status: 'OK',
+                results: msg,
             })
         }, (err: any) => {
             return res.json({

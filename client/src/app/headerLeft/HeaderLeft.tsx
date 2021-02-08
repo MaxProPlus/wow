@@ -140,8 +140,8 @@ class HeaderLeft extends Component<P, S> {
                                 className={`${styles.item} ${styles.subItem}${this.state.path.includes('/ticket') ? ` ${styles.active}` : ''}`}
                                 to="/help/ticket/type">Тикеты</Link>
                             <Link
-                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/transmog') ? ` ${styles.active}` : ''}`}
-                                to="/help/transmog">Трансмогрификация</Link>
+                                className={`${styles.item} ${styles.subItem}${this.state.path.includes('/trans') ? ` ${styles.active}` : ''}`}
+                                to="/help/trans">Трансмогрификация</Link>
                             <Link
                                 className={`${styles.item} ${styles.subItem}${this.state.path.includes('/feedback') ? ` ${styles.active}` : ''}`}
                                 to="/help/feedback">Обратная связь</Link>

@@ -31,11 +31,14 @@ const ForumCreate = React.lazy(() => import('../pages/material/forum/Create'))
 const ForumEdit = React.lazy(() => import('../pages/material/forum/Edit'))
 const ForumList = React.lazy(() => import('../pages/material/forum/List'))
 const ForumPage = React.lazy(() => import('../pages/material/forum/Show'))
+const Guid = React.lazy(() => import('../pages/help/guid/Guid'))
 const TicketTypeList = React.lazy(() => import('../pages/help/ticket/list/TypeList'))
 const TicketList = React.lazy(() => import('../pages/help/ticket/list/List'))
+const Trans = React.lazy(() => import('../pages/help/trans/Trans'))
 const FeedbackList = React.lazy(() => import('../pages/help/feedback/List'))
-const RulePage = React.lazy(() => import('../pages/start/rule/Rule'))
+const Registration = React.lazy(() => import('../pages/start/registration/Registration'))
 const HowPage = React.lazy(() => import('../pages/start/how/How'))
+const RulePage = React.lazy(() => import('../pages/start/rule/Rule'))
 const ArticleList = React.lazy(() => import('../pages/article/List'))
 const ArticleCreate = React.lazy(() => import('../pages/article/Create'))
 const ArticleEdit = React.lazy(() => import('../pages/article/Edit'))
@@ -57,6 +60,7 @@ const Routes = ({scrollTop}: P) => {
                 <Route path="/profile/:id" component={Profile}/>
                 <Route path="/setting" component={Setting}/>
 
+                <Route exact path="/start/reg" component={Registration}/>
                 <Route exact path="/start/how" component={HowPage}/>
                 <Route exact path="/start/rule" component={RulePage}/>
 
@@ -116,7 +120,7 @@ const Routes = ({scrollTop}: P) => {
 
                 <Route path="/material/search" component={SearchPage}/>
 
-                <Route exact path="/help/feedback" component={FeedbackList}/>
+                <Route exact path="/help/guid" component={Guid}/>
 
                 <Route exact path="/help/ticket/type"
                        component={TicketTypeList}/>{/*категории тикетов*/}
@@ -126,6 +130,9 @@ const Routes = ({scrollTop}: P) => {
                        render={(props) => (
                            <Create {...props} scrollTop={scrollTop}/>)}/>{/*создание тикета*/}
                 <Route path="/help/ticket/:id" component={TicketPage}/>{/*конкретный тикет*/}
+
+                <Route exact path="/help/trans" component={Trans}/>
+                <Route exact path="/help/feedback" component={FeedbackList}/>
 
                 <Route exact path="/admin" component={AdminDashboard}/>
                 <Route path="/admin/list" component={ListOfAdmins}/>

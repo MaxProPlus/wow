@@ -4,11 +4,12 @@ import styles from './HeaderLeft.module.scss'
 import logo from './logo.png'
 import history from '../../utils/history'
 import Accordion from '../../components/accordion/Accordion'
+import {UnregisterCallback} from 'history'
 
 type P = {
     showMenu: boolean
-    innerRef: any
-    hideMenu: any
+    innerRef: React.RefCallback<HTMLHeadingElement>
+    hideMenu: () => void
 }
 
 type S = {
@@ -19,9 +20,9 @@ type S = {
 }
 
 class HeaderLeft extends Component<P, S> {
-    private removeListen: any
+    private removeListen?: UnregisterCallback
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             showStart: false,
@@ -40,7 +41,7 @@ class HeaderLeft extends Component<P, S> {
     }
 
     componentWillUnmount() {
-        this.removeListen()
+        this.removeListen!()
     }
 
     toggleStart = () => {

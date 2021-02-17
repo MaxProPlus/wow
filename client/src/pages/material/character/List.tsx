@@ -200,7 +200,7 @@ class CharacterList extends Component<P, S> {
                                     </Select>
                                 </Col>
                                 <Col md={6} className="d-flex align-items-end">
-                                    <Button block="true" className="mb-3">Найти</Button>
+                                    <Button block className="mb-3">Найти</Button>
                                 </Col>
                             </Row>
                         </Col>

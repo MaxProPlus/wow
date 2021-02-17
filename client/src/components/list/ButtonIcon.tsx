@@ -5,10 +5,10 @@ import styles from './SearchBlock.module.scss'
 type P = {
     href: string
     icon: string
-    children: any
+    children: React.ReactNode
 }
 
-const ButtonIcon = ({href, children, icon}: P) => {
+const ButtonIcon: React.FC<P> = ({href, children, icon}) => {
 
     return (
         <Button to={href}><img className={styles.icon} src={icon} alt=""/><span

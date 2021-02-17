@@ -35,7 +35,7 @@ class ArticlePage extends React.Component<P, S> {
     static contextType = UserContext
     private forumApi = new ArticleApi()
 
-    constructor(props: any) {
+    constructor(props: P) {
         super(props)
         this.state = {
             isLoaded: false,
@@ -166,7 +166,7 @@ class ArticlePage extends React.Component<P, S> {
                 <ConfirmationWindow onAccept={this.handleRemove} onDecline={this.hideRemoveWindow}
                                     show={this.state.modalShow} title="Вы действительно хотите новость?"/>
                 <div>
-                    <PageTitle title="Новость" icon="">
+                    <PageTitle title="Новость">
                         <ControlButton show={this.state.isAdmin} id={this.state.id}
                                        href="/article" nameRemove="Удалить новость"
                                        showRemoveWindow={this.showRemoveWindow}/>

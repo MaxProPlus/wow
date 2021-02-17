@@ -12,7 +12,7 @@ type P = {
     showRemoveWindow: () => void
 }
 
-const ControlButton = ({show, id, href, nameRemove, showRemoveWindow}: P) => {
+const ControlButton: React.FC<P> = ({show, id, href, nameRemove, showRemoveWindow}) => {
 
     if (!show) {
         return null

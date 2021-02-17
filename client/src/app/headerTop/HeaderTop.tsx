@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component} from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 import UserContext from '../../contexts/userContext'
 import Dropdown from 'components/dropdown/Dropdown'
@@ -10,14 +10,14 @@ import SearchInput from '../../components/list/SearchInput'
 import history from '../../utils/history'
 
 type P = {
-    onClickMenu: (e: any) => void
+    onClickMenu: () => void
 }
 
 type S = {
     title: string
 }
 
-class HeaderTop extends Component<P, S> {
+class HeaderTop extends React.Component<P, S> {
     static contextType = UserContext
 
     constructor(props: P) {
@@ -28,13 +28,13 @@ class HeaderTop extends Component<P, S> {
         }
     }
 
-    handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             title: e.target.value,
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => {
         e.preventDefault()
         history.push({
             pathname: '/material/search',

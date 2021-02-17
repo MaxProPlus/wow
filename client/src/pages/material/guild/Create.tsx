@@ -41,7 +41,7 @@ class GuildCreate extends React.Component<P, CommonS> {
     private characterApi = new CharacterApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -76,8 +76,8 @@ class GuildCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -164,7 +164,7 @@ class GuildCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(guild, this.avatar)
+        let formData = handleFormData(guild, this.avatar!)
         this.guildApi.create(formData).then(r => {
             history.push('/material/guild/' + r)
         }, err => {

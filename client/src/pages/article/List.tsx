@@ -90,7 +90,7 @@ class ArticleList extends Component<P, S> {
         } as any)
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.page = 1
         this.setState({
@@ -108,8 +108,8 @@ class ArticleList extends Component<P, S> {
         return (
             <div>
                 {!this.state.isLoaded && <Spinner/>}
-                <PageTitle title="Последние обновления" icon="" className={`${stylesTitle.header} page-article-list__title`}>
-                    {this.context.user.rights.includes('ARTICLE_CRUD') &&
+                <PageTitle title="Последние обновления" className={`${stylesTitle.header} page-article-list__title`}>
+                    {this.context.user.rights.includes('ARTICLE_MODERATOR') &&
                     <Button to="/article/create"><img className={stylesButton.icon} src={penIcon} alt=""/><span
                         className={stylesButton.text}>Создать новость</span></Button>}
                 </PageTitle>

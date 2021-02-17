@@ -15,7 +15,7 @@ type P = {
     textBottomRight?: string,
 }
 
-const Block = ({id, textTop = '', title = '', textBottom = '', textBottomRight = '', urlAvatar, size, href}: P) => {
+const Block: React.FC<P> = ({id, textTop = '', title = '', textBottom = '', textBottomRight = '', urlAvatar, size, href}) => {
 
     return (
         <Col className="material" lg={size}>

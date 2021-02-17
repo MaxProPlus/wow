@@ -33,7 +33,7 @@ class ArticleEdit extends React.Component<P, S> {
     static contextType = UserContext
     private articleApi = new ArticleApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -99,11 +99,11 @@ class ArticleEdit extends React.Component<P, S> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -111,7 +111,7 @@ class ArticleEdit extends React.Component<P, S> {
         })
         let article = this.state as unknown as Article
         let err = this.validator.validateArticle(article)
-        err += this.validator.validateImg(this.avatar)
+        err += this.validator.validateImg(this.avatar!)
         if (!!err) {
             this.props.scrollTop()
             this.setState({
@@ -120,7 +120,7 @@ class ArticleEdit extends React.Component<P, S> {
             })
             return
         }
-        let formData = handleFormData(article, this.avatar)
+        let formData = handleFormData(article, this.avatar!)
 
         this.articleApi.update(this.state.id, formData).then(r => {
             this.props.history.push('/article/' + r)
@@ -140,7 +140,7 @@ class ArticleEdit extends React.Component<P, S> {
         if (!!this.state.globalErrorMessage) {
             return (<Page><AlertDanger>{this.state.globalErrorMessage}</AlertDanger></Page>)
         }
-        if (this.context.user.id > 0 && !this.context.user.rights.includes('ARTICLE_CRUD')) {
+        if (this.context.user.id > 0 && !this.context.user.rights.includes('ARTICLE_MODERATOR')) {
             return (<Page><AlertDanger>Нет прав</AlertDanger></Page>)
         }
         return (
@@ -149,7 +149,7 @@ class ArticleEdit extends React.Component<P, S> {
                     {!this.state.isLoaded && <Spinner/>}
                     {this.context.user.id === -1 &&
                     <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
-                    <PageTitle className="mb-0" title="Редактирование новости" icon=""/>
+                    <PageTitle className="mb-0" title="Редактирование новости"/>
                     <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>

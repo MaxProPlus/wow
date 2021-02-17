@@ -12,7 +12,7 @@ type P = {
     onSubmit: (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => void
 }
 
-const SearchInput: React.FC<P> = ({placeholder, value, id, toggle, onChange, onSubmit}: P) => {
+const SearchInput: React.FC<P> = ({placeholder, value, id, toggle, onChange, onSubmit}) => {
 
     return (
         <form className="search-form" onSubmit={onSubmit}>

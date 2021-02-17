@@ -10,7 +10,7 @@ type P = {
     onDecline: () => void
 }
 
-const ConfirmationWindow = ({title, show, onAccept, onDecline}: P) => {
+const ConfirmationWindow: React.FC<P> = ({title, show, onAccept, onDecline}) => {
     if (!show) {
         return null
     }

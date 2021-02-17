@@ -11,7 +11,7 @@ import Routes from './Routes'
 import Cookie from '../utils/cookie'
 import HeaderLeft from './headerLeft/HeaderLeft'
 
-interface S {
+type S = {
     isLoaded: boolean
     showMenu: boolean
     user: User
@@ -19,7 +19,7 @@ interface S {
 
 class App extends React.Component<{}, S> {
     private userApi = new UserApi()
-    private wrapperRef?: HTMLElement
+    private wrapperRef?: HTMLHeadingElement
     private containerRef?: HTMLElement
 
     constructor(props: {}) {
@@ -72,8 +72,8 @@ class App extends React.Component<{}, S> {
         document.removeEventListener('mousedown', this.handleClickOutside)
     }
 
-    handleClickOutside = (e: any) => {
-        if (this.wrapperRef && !this.wrapperRef.contains(e.target)) {
+    handleClickOutside = (e: MouseEvent) => {
+        if (this.wrapperRef && !this.wrapperRef.contains(e.target as Node)) {
             this.hideMenu()
             document.removeEventListener('mousedown', this.handleClickOutside)
         }
@@ -94,7 +94,7 @@ class App extends React.Component<{}, S> {
         }
     }
 
-    setWrapperRef = (node: HTMLElement) => {
+    setWrapperRef = (node: HTMLHeadingElement) => {
         this.wrapperRef = node
     }
 

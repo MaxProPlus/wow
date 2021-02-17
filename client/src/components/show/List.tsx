@@ -8,7 +8,7 @@ type P = {
     list: any[]
 }
 
-const List = ({title, href, list}: P) => {
+const List: React.FC<P> = ({title, href, list}) => {
     if (!list.length) {
         return null
     }

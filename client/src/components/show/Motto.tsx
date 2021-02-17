@@ -2,10 +2,10 @@ import React from 'react'
 import styles from './Motto.module.scss'
 
 type P = {
-    children: any
+    children: React.ReactNode
 }
 
-const Motto = (props: P) => {
+const Motto: React.FC<P> = (props) => {
     return (
         <div className={styles.title}>{props.children}</div>
     )

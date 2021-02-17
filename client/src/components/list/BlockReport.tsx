@@ -14,7 +14,7 @@ type P = {
     bottomRightText?: React.ReactNode,
 }
 
-const BlockReport = ({className = '', id, title, muteTitle = '', bottomText, bottomRightText, urlAvatar, href}: P) => {
+const BlockReport: React.FC<P> = ({className = '', id, title, muteTitle = '', bottomText, bottomRightText, urlAvatar, href}) => {
 
     return (
         <Row className={`material-fluid ${className}`}>

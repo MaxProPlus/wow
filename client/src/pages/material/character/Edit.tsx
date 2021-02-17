@@ -45,7 +45,7 @@ class CharacterEdit extends React.Component<P, S> {
     static contextType = UserContext
     private characterApi = new CharacterApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
     private userApi = new UserApi()
 
     constructor(props: P) {
@@ -132,8 +132,8 @@ class CharacterEdit extends React.Component<P, S> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -204,7 +204,7 @@ class CharacterEdit extends React.Component<P, S> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -212,7 +212,7 @@ class CharacterEdit extends React.Component<P, S> {
         })
         let character = this.state as unknown as Character
         let err = this.validator.validateCharacter(character)
-        err += this.validator.validateImg(this.avatar)
+        err += this.validator.validateImg(this.avatar!)
         if (!!err) {
             this.props.scrollTop()
             this.setState({
@@ -221,7 +221,7 @@ class CharacterEdit extends React.Component<P, S> {
             })
             return
         }
-        let formData = handleFormData(character, this.avatar)
+        let formData = handleFormData(character, this.avatar!)
 
         this.characterApi.update(this.state.id, formData).then(r => {
             history.push('/material/character/' + r)

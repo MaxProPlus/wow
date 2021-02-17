@@ -1,7 +1,16 @@
 import React from 'react'
 import Form from '../Form'
 
-const Textarea = ({label, value, id, onChange, placeholder, rows}: any) => {
+type P = {
+    id: string
+    value: string
+    label: string
+    placeholder?: string
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+    rows?: number
+}
+
+const Textarea: React.FC<P> = ({label, value, id, onChange, placeholder, rows}) => {
     return (
         <Form.Group>
             <Form.Label htmlFor={id}>{label}</Form.Label>
@@ -9,7 +18,6 @@ const Textarea = ({label, value, id, onChange, placeholder, rows}: any) => {
                            onChange={onChange}
                            placeholder={placeholder}
                            rows={rows}/>
-
         </Form.Group>
     )
 }

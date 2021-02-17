@@ -2,12 +2,12 @@ import React from 'react'
 import styles from './PageTitle.module.scss'
 
 type P = {
-    icon: any
+    icon?: string
     title: string
-    children?: any
-    className?: any
+    children?: React.ReactNode
+    className?: string
 }
-const PageTitle = ({title, icon, children, className}: P) => {
+const PageTitle: React.FC<P> = ({title, icon, children, className}) => {
 
     let blockClass = styles.block
     if (!!className) {

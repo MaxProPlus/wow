@@ -39,7 +39,7 @@ class CharacterCreate extends React.Component<P, CommonS> {
     private characterApi = new CharacterApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -74,8 +74,8 @@ class CharacterCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -146,7 +146,7 @@ class CharacterCreate extends React.Component<P, CommonS> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -163,7 +163,7 @@ class CharacterCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(character, this.avatar)
+        let formData = handleFormData(character, this.avatar!)
 
         this.characterApi.create(formData).then(r => {
             history.push('/material/character/' + r)

@@ -61,7 +61,7 @@ class SignIn extends Component<P, S> {
         }
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         this.setState({
@@ -87,11 +87,11 @@ class SignIn extends Component<P, S> {
         })
     }
 
-    handleChange = (e: any) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
             [e.target.id]: e.target.value,
-        } as { [K in keyof S]: S[K] })
+        } as any)
     }
 
     render() {

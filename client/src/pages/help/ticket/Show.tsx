@@ -115,7 +115,7 @@ class TicketPage extends React.Component<P, S> {
         return this.ticketApi.addComment(comment)
     }
 
-    handleStatus = (e: any) => {
+    handleStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const status = parseInt(e.target.value)
         this.setState({
             isLoaded: false,
@@ -151,7 +151,7 @@ class TicketPage extends React.Component<P, S> {
                         }
                     </div>
                     <div className="comments">
-                        {this.state.comments.map((c: any) => <CommentComponent key={c.id}
+                        {this.state.comments.map((c: CommentTicket) => <CommentComponent key={c.id}
                                                                        {...c}/>)}
                     </div>
                     {(this.state.ticket.status !== TicketStatus.CLOSE && !this.state.errorMessage) &&

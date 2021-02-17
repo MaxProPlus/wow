@@ -1,4 +1,4 @@
-import React, {ChangeEvent} from 'react'
+import React from 'react'
 import {RouteProps} from '../../types/RouteProps'
 import {CommonS, handleFormData} from './Common'
 import UserContext from '../../contexts/userContext'
@@ -25,7 +25,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
     static contextType = UserContext
     private articleApi = new ArticleApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -36,14 +36,14 @@ class ArticleCreate extends React.Component<P, CommonS> {
         }
     }
 
-    handleChange = (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({
             errorMessage: '',
             [e.target.id]: e.target.value,
         } as any)
     }
 
-    handleChangeChecked = (e: ChangeEvent<HTMLInputElement>) => {
+    handleChangeChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.handleChange({
             target: {
                 id: e.target.id,
@@ -52,11 +52,11 @@ class ArticleCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -73,7 +73,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(article, this.avatar)
+        let formData = handleFormData(article, this.avatar!)
 
         this.articleApi.create(formData).then(r => {
             this.props.history.push('/article/' + r)
@@ -90,7 +90,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
     }
 
     render() {
-        if (this.context.user.id > 0 && !this.context.user.rights.includes('ARTICLE_CRUD')) {
+        if (this.context.user.id > 0 && !this.context.user.rights.includes('ARTICLE_MODERATOR')) {
             return (<Page><AlertDanger>Нет прав</AlertDanger></Page>)
         }
         return (
@@ -99,7 +99,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
                     {!this.state.isLoaded && <Spinner/>}
                     {this.context.user.id === -1 &&
                     <Redirect to={{pathname: '/login', state: {from: this.props.location}}}/>}
-                    <PageTitle className="mb-0" title="Создание новости" icon=""/>
+                    <PageTitle className="mb-0" title="Создание новости"/>
                     <Form onSubmit={this.handleSubmit}>
                         <AlertDanger>{this.state.errorMessage}</AlertDanger>
                         <Row>

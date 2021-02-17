@@ -99,7 +99,7 @@ class StoryList extends Component<P, S> {
         } as any)
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLImageElement, globalThis.MouseEvent>) => {
         e.preventDefault()
         const data: any = {}
         if (this.state.filterShow) {
@@ -146,7 +146,7 @@ class StoryList extends Component<P, S> {
                                 <Col md={6}>
                                 </Col>
                                 <Col md={6} className="d-flex align-items-end">
-                                    <Button block="true" className="mb-3">Найти</Button>
+                                    <Button block className="mb-3">Найти</Button>
                                 </Col>
                             </Row>
                         </Col>

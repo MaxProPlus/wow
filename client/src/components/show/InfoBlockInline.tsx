@@ -3,12 +3,12 @@ import {Col, Row} from 'react-bootstrap'
 import styles from './InfoBlockInline.module.scss'
 
 type P = {
-    icon: any,
+    icon: string,
     title: string,
     value: string | number
 }
 
-const InfoBlockInline = ({icon, title, value}: P) => {
+const InfoBlockInline: React.FC<P> = ({icon, title, value}) => {
     if (!value) {
         return null
     }

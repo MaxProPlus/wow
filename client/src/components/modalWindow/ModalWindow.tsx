@@ -4,10 +4,10 @@ import styles from './ModalWindow.module.scss'
 type P = {
     title: string
     show: boolean
-    children: any
+    children: React.ReactNode
 }
 
-const ModalWindow = ({title, children, show}: P) => {
+const ModalWindow: React.FC<P> = ({title, children, show}) => {
     if (!show) {
         return null
     }

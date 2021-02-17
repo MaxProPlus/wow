@@ -43,7 +43,7 @@ class SignUp extends React.Component<P, S> {
         }
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             isLoaded: false,
@@ -73,7 +73,7 @@ class SignUp extends React.Component<P, S> {
         })
     }
 
-    handleChange = (e: any) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
             acceptMessage: '',

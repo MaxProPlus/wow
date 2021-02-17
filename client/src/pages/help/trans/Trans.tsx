@@ -1,12 +1,12 @@
-import React, {FC} from 'react'
+import React from 'react'
 import Page from '../../../components/page/Page'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 
-const Trans: FC = () => {
+const Trans: React.FC = () => {
 
     return (
         <Page>
-            <PageTitle icon={''} title="Трансмогрификация"/>
+            <PageTitle title="Трансмогрификация"/>
             <p>Страница в процессе создания...</p>
         </Page>
     )

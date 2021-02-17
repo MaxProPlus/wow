@@ -20,7 +20,7 @@ type P = RouteComponentProps & RouteProps
 type S = {
     isLoaded: boolean
     title: string
-    idTicketType: 0
+    idTicketType: number
     listType: TicketType[]
     text: string
     error: string
@@ -64,7 +64,7 @@ class Create extends React.Component<P, S> {
         })
     }
 
-    handleChangeSelect = (e: any) => {
+    handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         this.setState({
             idTicketType: Number(e.target.value),
         } as S)
@@ -76,7 +76,7 @@ class Create extends React.Component<P, S> {
         } as { [K in keyof S]: S[K] })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             error: '',

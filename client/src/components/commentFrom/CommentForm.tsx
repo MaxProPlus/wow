@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {ChangeEvent, Component} from 'react'
 import './CommentForm.scss'
 import userContext from '../../contexts/userContext'
 import AvatarImg from '../../components/avatar-img/AvatarImg'
@@ -10,8 +10,8 @@ import Validator from '../../../../server/src/common/validator'
 import {Comment} from '../../../../server/src/common/entity/types'
 
 type P = {
-    onCommentUpdate: any
-    onSendComment: any
+    onCommentUpdate: () => void
+    onSendComment: (comment: Comment | any) => Promise<any>
 }
 
 type S = {
@@ -33,7 +33,7 @@ class CommentForm extends Component<P, S> {
         }
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         let comment = new Comment()
         comment.text = this.state.comment
@@ -62,7 +62,7 @@ class CommentForm extends Component<P, S> {
         })
     }
 
-    handleChange = (e: any) => {
+    handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorMessage: '',
             comment: e.target.value,

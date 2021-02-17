@@ -44,7 +44,7 @@ class StoryEdit extends React.Component<P, S> {
     private guildApi = new GuildApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -138,8 +138,8 @@ class StoryEdit extends React.Component<P, S> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -229,7 +229,7 @@ class StoryEdit extends React.Component<P, S> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -246,7 +246,7 @@ class StoryEdit extends React.Component<P, S> {
             })
             return
         }
-        let formData = handleFormData(story, this.avatar)
+        let formData = handleFormData(story, this.avatar!)
         this.storyApi.update(this.state.id, formData).then(r => {
             history.push('/material/story/' + r)
         }, err => {

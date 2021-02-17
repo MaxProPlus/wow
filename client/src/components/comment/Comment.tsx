@@ -6,10 +6,10 @@ import './Comment.scss'
 import DateFormatter from '../../utils/date'
 
 type P = CommentType & {
-    onClickRemove?: any
+    onClickRemove?: () => void
 }
 
-export default function CommentComponent(props: P) {
+const CommentComponent: React.FC<P> = (props) => {
     return (
         <div className="comment-item">
             <div className="d-flex justify-content-between">
@@ -25,3 +25,5 @@ export default function CommentComponent(props: P) {
         </div>
     )
 }
+
+export default CommentComponent

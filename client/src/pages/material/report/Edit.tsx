@@ -45,7 +45,7 @@ class ReportEdit extends React.Component<P, S> {
     private storyApi = new StoryApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -145,8 +145,8 @@ class ReportEdit extends React.Component<P, S> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -255,7 +255,7 @@ class ReportEdit extends React.Component<P, S> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -263,7 +263,7 @@ class ReportEdit extends React.Component<P, S> {
         })
         let report = this.state as any as Report
         let err = this.validator.validateReport(report)
-        err += this.validator.validateImg(this.avatar)
+        err += this.validator.validateImg(this.avatar!)
         if (!!err) {
             this.props.scrollTop()
             this.setState({
@@ -272,7 +272,7 @@ class ReportEdit extends React.Component<P, S> {
             })
             return
         }
-        let formData = handleFormData(report, this.avatar)
+        let formData = handleFormData(report, this.avatar!)
 
         this.reportApi.update(this.state.id, formData).then(r => {
             history.push('/material/report/' + r)

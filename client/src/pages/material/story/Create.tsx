@@ -43,7 +43,7 @@ class StoryCreate extends React.Component<P, CommonS> {
     private guildApi = new GuildApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -79,10 +79,11 @@ class StoryCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
-    handleSubmit = (e: any) => {
+
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -99,7 +100,7 @@ class StoryCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(story, this.avatar)
+        let formData = handleFormData(story, this.avatar!)
         this.storyApi.create(formData).then(r => {
             history.push('/material/story/' + r)
         }, err => {

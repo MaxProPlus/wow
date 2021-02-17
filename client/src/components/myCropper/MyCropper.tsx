@@ -1,4 +1,4 @@
-import React, {createRef} from 'react'
+import React from 'react'
 import Cropper from 'react-cropper'
 import 'cropperjs/dist/cropper.css'
 import {Col, Row} from 'react-bootstrap'
@@ -9,7 +9,7 @@ type P = {
     src: string,
     label: string,
     ratio: number,
-    onChange: (e: any) => void
+    onChange: (dataurl: string) => void
 }
 
 type S = {
@@ -17,16 +17,15 @@ type S = {
 }
 
 export class MyCropper extends React.Component<P, S> {
-    cropper: any
-    imageRef: any
+    cropper?: Cropper
+    imageRef: React.RefObject<HTMLImageElement>
 
     constructor(props: P) {
         super(props)
         this.state = {
             image: props.src,
         }
-        this.imageRef = createRef()
-
+        this.imageRef = React.createRef()
     }
 
     componentDidUpdate(prevProps: P, prevState: S) {
@@ -37,23 +36,19 @@ export class MyCropper extends React.Component<P, S> {
         }
     }
 
-    handleChangeInput = (e: any) => {
+    handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
-        let files
-        if (e.dataTransfer) {
-            files = e.dataTransfer.files
-        } else if (e.target) {
-            files = e.target.files
-        }
+        // todo Валидация изображения?
+        const files = e.target.files!
         const reader = new FileReader()
         reader.onload = () => {
             this.setState({
-                image: reader.result as any,
+                image: reader.result as string,
             })
         }
+
         reader.readAsDataURL(files[0])
     }
-
 
     handleCrop = () => {
         if (typeof this.cropper !== 'undefined') {
@@ -61,16 +56,16 @@ export class MyCropper extends React.Component<P, S> {
         }
     }
 
-    handleInitialized = (instance: any) => {
+    handleInitialized = (instance: Cropper) => {
         this.cropper = instance
     }
 
     handleReady = () => {
-        this.cropper.zoom(-5)
+        this.cropper!.zoom(-5)
     }
 
     render() {
-        let {ratio, label} = this.props
+        const {ratio, label} = this.props
 
         return (
             <Row className={styles.block}>

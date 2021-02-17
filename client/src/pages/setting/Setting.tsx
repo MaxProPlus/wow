@@ -28,7 +28,7 @@ type S = {
     linkMail: string,
     linkVk: string,
     linkTg: string,
-    avatar: any,
+    avatar: File | null,
     errorAvatar: string,
     errorGeneral: string,
     errorSecure: string,
@@ -56,7 +56,7 @@ class Setting extends React.Component<P, S> {
             password: '',
             passwordRepeat: '',
             nickname: '',
-            avatar: '',
+            avatar: null,
             errorAvatar: '',
             errorGeneral: '',
             acceptSecure: '',
@@ -100,39 +100,39 @@ class Setting extends React.Component<P, S> {
         })
     }
 
-    handleChange = (e: any) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             errorGeneral: '',
             errorSecure: '',
             errorPassword: '',
             [e.target.name]: e.target.value,
-        } as { [K in keyof S]: S[K] })
+        } as any)
     }
 
-    handleImageChange = (e: any) => {
-        const err = this.validator.validateImg(e.target.files[0])
+    handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const err = this.validator.validateImg(e.target.files![0])
         if (!!err) {
             this.setState({
                 errorAvatar: err,
-                avatar: '',
+                avatar: null,
             })
             e.target.value = ''
             return
         }
         this.setState({
             errorAvatar: '',
-            avatar: e.target.files[0],
+            avatar: e.target.files![0],
         })
     }
 
-    handleSubmitProfileAvatar = (e: any) => {
+    handleSubmitProfileAvatar = (e: React.FormEvent<HTMLFormElement>) => {
         this.setState({
             isLoaded: false,
             errorAvatar: '',
         })
         e.preventDefault()
         let formData = new FormData()
-        formData.append('avatar', this.state.avatar)
+        formData.append('avatar', this.state.avatar!)
         this.userApi.updateAvatar(formData).then(() => {
             this.setState({
                 errorAvatar: '',
@@ -149,7 +149,7 @@ class Setting extends React.Component<P, S> {
         })
     }
 
-    handleSubmitProfile = (e: any) => {
+    handleSubmitProfile = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         let user = new User()
         user.nickname = this.state.nickname
@@ -181,7 +181,7 @@ class Setting extends React.Component<P, S> {
         })
     }
 
-    handleSubmitSecure = (e: any) => {
+    handleSubmitSecure = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         let user = new User()
         user.email = this.state.email
@@ -213,7 +213,7 @@ class Setting extends React.Component<P, S> {
         })
     }
 
-    handleSubmitUserPassword = (e: any) => {
+    handleSubmitUserPassword = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         let user = new UserPassword()
         user.passwordAccept = this.state.passwordOld

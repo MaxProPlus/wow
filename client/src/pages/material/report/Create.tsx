@@ -37,7 +37,7 @@ class ReportCreate extends React.Component<P, CommonS> {
     private storyApi = new StoryApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -74,8 +74,8 @@ class ReportCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -184,7 +184,7 @@ class ReportCreate extends React.Component<P, CommonS> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -201,7 +201,7 @@ class ReportCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(report, this.avatar)
+        let formData = handleFormData(report, this.avatar!)
 
         this.reportApi.create(formData).then(r => {
             history.push('/material/report/' + r)

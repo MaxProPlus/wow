@@ -2,12 +2,12 @@ import React from 'react'
 import styles from './InfoBlock.module.scss'
 
 type P = {
-    icon?: any,
-    title: any,
-    children: any
+    icon?: string,
+    title: string,
+    children: React.ReactNode
 }
 
-const InfoBlock = ({icon, title, children}: P) => {
+const InfoBlock: React.FC<P> = ({icon, title, children}) => {
     if (!children) {
         return null
     }

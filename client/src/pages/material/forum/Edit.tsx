@@ -39,7 +39,7 @@ class ForumEdit extends React.Component<P, S> {
     private forumApi = new ForumApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -112,8 +112,8 @@ class ForumEdit extends React.Component<P, S> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -165,7 +165,7 @@ class ForumEdit extends React.Component<P, S> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -173,7 +173,7 @@ class ForumEdit extends React.Component<P, S> {
         })
         let forum = this.state as unknown as Forum
         let err = this.validator.validateForum(forum)
-        err += this.validator.validateImg(this.avatar)
+        err += this.validator.validateImg(this.avatar!)
         if (!!err) {
             this.props.scrollTop()
             this.setState({
@@ -182,7 +182,7 @@ class ForumEdit extends React.Component<P, S> {
             })
             return
         }
-        let formData = handleFormData(forum, this.avatar)
+        let formData = handleFormData(forum, this.avatar!)
 
         this.forumApi.update(this.state.id, formData).then(r => {
             history.push('/material/forum/' + r)

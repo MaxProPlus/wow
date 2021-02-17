@@ -6,7 +6,7 @@ const Registrations: FC = () => {
 
     return (
         <Page>
-            <PageTitle icon={''} title="Регистрация"/>
+            <PageTitle title="Регистрация"/>
             <p>Страница в процессе создания...</p>
         </Page>
     )

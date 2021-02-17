@@ -4,12 +4,12 @@ import './Profile.scss'
 import history from '../../utils/history'
 import {User} from '../../../../server/src/common/entity/types'
 
-type propsTypes = User & {
-    children?: any
-    onClick?: any
+type P = User & {
+    children?: React.ReactNode
+    onClick?: () => void
 }
 
-export default React.forwardRef((props: propsTypes, ref: any) => {
+export default React.forwardRef((props: P, ref: any) => {
     let handleClick = () => {
         history.push('/profile/' + props.id)
     }

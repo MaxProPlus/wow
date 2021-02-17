@@ -41,7 +41,6 @@ class Accordion extends Component<P, S> {
         })
     }
 
-
     render() {
         let className = styles.accordion
         if (!!this.props.className) {

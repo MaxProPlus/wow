@@ -31,7 +31,7 @@ class ForumCreate extends React.Component<P, CommonS> {
     private forumApi = new ForumApi()
     private userApi = new UserApi()
     private validator = new Validator()
-    private avatar: File | any
+    private avatar: File | null = null
 
     constructor(props: P) {
         super(props)
@@ -59,8 +59,8 @@ class ForumCreate extends React.Component<P, CommonS> {
         } as any)
     }
 
-    handleImageChange = (e: any) => {
-        this.avatar = Helper.dataURLtoFile(e)
+    handleImageChange = (dataurl: string) => {
+        this.avatar = Helper.dataURLtoFile(dataurl)
     }
 
     handleChangeMultiSelect = (e: MyMultiSelectInputEvent) => {
@@ -112,7 +112,7 @@ class ForumCreate extends React.Component<P, CommonS> {
         })
     }
 
-    handleSubmit = (e: any) => {
+    handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         this.setState({
             errorMessage: '',
@@ -129,7 +129,7 @@ class ForumCreate extends React.Component<P, CommonS> {
             })
             return
         }
-        let formData = handleFormData(forum, this.avatar)
+        let formData = handleFormData(forum, this.avatar!)
 
         this.forumApi.create(formData).then(r => {
             history.push('/material/forum/' + r)

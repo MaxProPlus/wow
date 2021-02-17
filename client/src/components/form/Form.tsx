@@ -1,10 +1,10 @@
-import React, {ChangeEvent, FormEvent} from 'react'
+import React from 'react'
 import './Form.scss'
 
 type PForm = {
-    children: any
+    children: React.ReactNode
     className?: string
-    onSubmit: (e: FormEvent<HTMLFormElement>) => void
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
 const Form = (props: PForm) => {
@@ -18,7 +18,7 @@ const Form = (props: PForm) => {
 }
 
 type PGroup = {
-    children: any
+    children: React.ReactNode
 }
 
 Form.Group = (props: PGroup) => {
@@ -30,10 +30,10 @@ Form.Group = (props: PGroup) => {
 type PInput = {
     type?: string
     placeholder?: string
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void,
-    value: string | number,
-    id: string,
-    name: string,
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    value?: string | number
+    id?: string
+    name?: string
 }
 
 Form.Input = (props: PInput) => {
@@ -55,11 +55,11 @@ Form.Input = (props: PInput) => {
 
 type PTextArea = {
     placeholder?: string
-    onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void,
-    value: string,
-    id: string,
-    name: string,
-    rows: number,
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+    value: string
+    id: string
+    name: string
+    rows?: number
 }
 
 Form.TextArea = (props: PTextArea) => {
@@ -77,11 +77,11 @@ Form.TextArea = (props: PTextArea) => {
 }
 
 type PSelect = {
-    children?: any
-    onChange: (e: ChangeEvent<HTMLSelectElement>) => void,
-    value: string | number,
-    id: string,
-    name: string,
+    children?: React.ReactNode
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+    value: string | number
+    id?: string
+    name?: string
 }
 
 Form.Select = (props: PSelect) => {
@@ -93,8 +93,8 @@ Form.Select = (props: PSelect) => {
 }
 
 type PLabel = {
-    children: any,
-    htmlFor: string,
+    children: React.ReactNode
+    htmlFor?: string
 }
 
 Form.Label = (props: PLabel) => {

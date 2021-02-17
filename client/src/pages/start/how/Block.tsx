@@ -2,13 +2,12 @@ import React, {FC} from 'react'
 import styles from './Block.module.scss'
 
 type P = {
-    children: any
+    children: React.ReactNode
     title: string
-    icon: any
+    icon: string
 }
 
 const Block: FC<P> = ({icon, title, children}) => {
-
 
     return (
         <>
@@ -18,7 +17,6 @@ const Block: FC<P> = ({icon, title, children}) => {
             </div>
         </>
     )
-
 }
 
 export default Block

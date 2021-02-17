@@ -9,7 +9,7 @@ type P = {
     list: any[]
 }
 
-const Card = ({title, href, list}: P) => {
+const Card: React.FC<P> = ({title, href, list}) => {
     if (!list.length) {
         return null
     }

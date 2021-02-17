@@ -6,16 +6,16 @@ import './Dropdown.scss'
 import Profile from '../profile/Profile'
 import {Link} from 'react-router-dom'
 
-type stateTypes = {
+type S = {
     visible: boolean
 }
 
-class Dropdown extends Component<{}, stateTypes> {
+class Dropdown extends Component<{}, S> {
     static contextType = UserContext
     userApi = new UserApi()
     wrapperRef?: HTMLElement
 
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props)
         this.state = {
             visible: false,
@@ -30,14 +30,14 @@ class Dropdown extends Component<{}, stateTypes> {
         document.removeEventListener('mousedown', this.handleClickOutside)
     }
 
-    handleClickOutside = (e: any) => {
-        if (this.wrapperRef && !this.wrapperRef.contains(e.target)) {
+    handleClickOutside = (e: MouseEvent) => {
+        if (this.wrapperRef && !this.wrapperRef.contains(e.target as Node)) {
             this.hideMenu()
         }
     }
 
     toggleMenu = () => {
-        this.setState((state: any) => {
+        this.setState((state: S) => {
             return {visible: !state.visible}
         })
     }

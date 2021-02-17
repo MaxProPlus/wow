@@ -6,7 +6,7 @@ const Trans: FC = () => {
 
     return (
         <Page>
-            <PageTitle icon={''} title="Гайды"/>
+            <PageTitle title="Гайды"/>
             <p>Страница в процессе создания...</p>
         </Page>
     )

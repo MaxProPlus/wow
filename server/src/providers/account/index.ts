@@ -7,19 +7,13 @@ import RightProvider from '../right'
 import {Smtp} from '../../services/smtp'
 
 class UserProvider {
-    private repository: UserRepository
-    private hash = new Hash()
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-    private smtp: Smtp | null = null
-
-    constructor(connection: any) {
-        this.repository = new UserRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
-    }
-
-    setSmtp = (smtp: Smtp) => {
-        this.smtp = smtp
+    constructor(
+        private repository: UserRepository,
+        private smtp: Smtp,
+        private rightProvider: RightProvider,
+        private uploader: Uploader,
+        private hash: Hash
+    ) {
     }
 
     // Регистрация
@@ -42,7 +36,7 @@ class UserProvider {
             await this.acceptReg(user.token)
             return 'Регистрация прошла успешно'
         }
-        return this.smtp!.sendConfirmation(user.email, user.nickname, user.token).then(async() => {
+        return this.smtp.sendConfirmation(user.email, user.nickname, user.token).then(async () => {
             await this.repository.insertUserReg(user)
             return 'Письмо отправлено на почту'
         }, () => {
@@ -162,7 +156,7 @@ class UserProvider {
             await this.acceptEmail(user.token)
             return 'Почта успешно изменена'
         }
-        return this.smtp!.sendChangeEmail(user.email, user.token).then(async () => {
+        return this.smtp.sendChangeEmail(user.email, user.token).then(async () => {
             await this.repository.insertAccountEmail(user)
             return 'Подтверждение отправлено на почту'
         }, () => {

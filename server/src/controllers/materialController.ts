@@ -1,12 +1,10 @@
 import MaterialModel from '../providers/material'
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 
 class MaterialController {
-    private materialProvider: MaterialModel
-
-    constructor(app: Express) {
-        const db = app.get('db')
-        this.materialProvider = new MaterialModel(db)
+    constructor(
+        private materialProvider: MaterialModel
+    ) {
     }
 
     // Получить все материалы

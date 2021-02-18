@@ -1,20 +1,22 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {CommentGuild, Guild} from '../common/entity/types'
 import Validator from '../common/validator'
 import {GuildUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import GuildProvider from '../providers/guild'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class GuildController extends Controller {
-    private guildProvider: GuildProvider
-    private validator: Validator
 
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.guildProvider = new GuildProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private guildProvider: GuildProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать гильдию

@@ -4,13 +4,8 @@ import Auth from '../services/auth'
 import TokenStorage from '../services/token'
 
 class Controller {
-    protected rightProvider: RightProvider
-    protected auth: Auth
 
-    constructor(app: Express) {
-        const db = app.get('db')
-        this.rightProvider = new RightProvider(db)
-        this.auth = new Auth(db)
+    constructor(protected rightProvider: RightProvider, protected auth: Auth) {
     }
 
     protected getUserId = (req: Request) => {

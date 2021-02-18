@@ -4,14 +4,11 @@ import {UserAuth} from '../../entity/types'
 import Hash from '../hash'
 
 class Auth {
-    private userModel: UserProvider
-    private repository: UserRepository
-    private hash: Hash
-
-    constructor(connection: any) {
-        this.userModel = new UserProvider(connection)
-        this.repository = new UserRepository(connection.getPoolPromise())
-        this.hash = new Hash()
+    constructor(
+        private repository: UserRepository,
+        private userModel: UserProvider,
+        private hash: Hash
+    ) {
     }
 
     // Проверка авторизации по токену

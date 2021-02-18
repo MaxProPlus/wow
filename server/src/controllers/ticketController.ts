@@ -1,18 +1,19 @@
-import {Express, Request, Response} from 'express'
-import {CommentTicket, Ticket, TicketType, User} from '../common/entity/types'
+import {Request, Response} from 'express'
+import {CommentTicket, Ticket, TicketType} from '../common/entity/types'
 import Validator from '../common/validator'
 import TicketProvider from '../providers/ticket'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class TicketController extends Controller {
-    private ticketProvider: TicketProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.ticketProvider = new TicketProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private ticketProvider: TicketProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать тикет

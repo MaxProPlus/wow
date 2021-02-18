@@ -4,12 +4,10 @@ import {defaultAvatar} from '../../entity/types'
 import RightProvider from '../right'
 
 class TicketProvider {
-    private repository: TicketRepository
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new TicketRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: TicketRepository,
+        private rightProvider: RightProvider,
+    ) {
     }
 
     // Создать тикет

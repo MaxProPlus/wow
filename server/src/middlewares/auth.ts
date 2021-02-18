@@ -1,10 +1,8 @@
 import {NextFunction, Request, RequestHandler, Response} from 'express'
 import TokenStorage from '../services/token'
-import Auth from '../services/auth'
-import app from '../server'
+import {auth} from '../modules/app'
 
 const authId: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    const auth = new Auth(app.get('db'))
     req.userId = await auth.checkAuth(TokenStorage.getToken(req)).then((id: number) => {
         return id
     }, () => {

@@ -5,13 +5,11 @@ import Uploader from '../../services/uploader'
 import RightProvider from '../right'
 
 class ForumProvider {
-    private repository: ForumRepository
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new ForumRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: ForumRepository,
+        private rightProvider: RightProvider,
+        private uploader: Uploader
+    ) {
     }
 
     // Создать форум

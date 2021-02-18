@@ -5,13 +5,11 @@ import Uploader from '../../services/uploader'
 import RightProvider from '../right'
 
 class CharacterProvider {
-    private repository: CharacterRepository
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new CharacterRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: CharacterRepository,
+        private rightProvider: RightProvider,
+        private uploader: Uploader
+    ) {
     }
 
     // Создать персонажа

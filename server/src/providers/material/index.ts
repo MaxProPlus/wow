@@ -1,10 +1,9 @@
 import MaterialRepository from '../../repositories/material'
 
 class MaterialProvider {
-    private repository: MaterialRepository
-
-    constructor(connection: any) {
-        this.repository = new MaterialRepository(connection.getPoolPromise())
+    constructor(
+        private repository: MaterialRepository
+    ) {
     }
 
     // Получить все материалы

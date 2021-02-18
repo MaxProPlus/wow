@@ -1,20 +1,21 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {Character, CommentCharacter} from '../common/entity/types'
 import Validator from '../common/validator'
 import CharacterProvider from '../providers/character'
 import {CharacterUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class CharacterController extends Controller {
-    private characterProvider: CharacterProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.characterProvider = new CharacterProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private characterProvider: CharacterProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать персонажа

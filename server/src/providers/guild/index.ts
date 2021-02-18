@@ -5,13 +5,11 @@ import Uploader from '../../services/uploader'
 import RightProvider from '../right'
 
 class GuildProvider {
-    private repository: GuildRepository
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new GuildRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: GuildRepository,
+        private rightProvider: RightProvider,
+        private uploader: Uploader
+    ) {
     }
 
     // Создать гильдию

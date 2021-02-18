@@ -1,20 +1,21 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {Article, CommentArticle} from '../common/entity/types'
 import Validator from '../common/validator'
 import ArticleProvider from '../providers/article'
 import {ArticleUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class ArticleController extends Controller {
-    private articleProvider: ArticleProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.articleProvider = new ArticleProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private articleProvider: ArticleProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать новость

@@ -1,20 +1,21 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {CommentReport, Report} from '../common/entity/types'
 import Validator from '../common/validator'
 import {ReportUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import ReportProvider from '../providers/report'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class ReportController extends Controller {
-    private reportProvider: ReportProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.reportProvider = new ReportProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private reportProvider: ReportProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать отчет / лог

@@ -1,31 +1,21 @@
 import {Express, Router} from 'express'
-import UserController from '../controllers/userController'
-import TicketController from '../controllers/ticketController'
-import CharacterController from '../controllers/characterController'
-import GuildController from '../controllers/guildController'
-import StoryController from '../controllers/storyController'
-import ReportController from '../controllers/reportController'
-import ForumController from '../controllers/forumController'
-import FeedbackController from '../controllers/feedbackController'
-import ArticleController from '../controllers/articleController'
-import MaterialController from '../controllers/materialController'
 import authId from '../middlewares/auth'
+import {
+    articleController,
+    characterController,
+    feedbackController,
+    forumController,
+    guildController,
+    materialController,
+    reportController,
+    storyController,
+    ticketController,
+    userController
+} from '../modules/app'
 
 // Инициализация роутов
 export default (app: Express) => {
     const router = Router()
-
-    // Инициализация контроллеров
-    const userController = new UserController(app)
-    const articleController = new ArticleController(app)
-    const ticketController = new TicketController(app)
-    const characterController = new CharacterController(app)
-    const guildController = new GuildController(app)
-    const storyController = new StoryController(app)
-    const reportController = new ReportController(app)
-    const forumController = new ForumController(app)
-    const feedbackController = new FeedbackController(app)
-    const materialController = new MaterialController(app)
 
     router.post('/users/general', userController.updateGeneral)
     router.post('/users/avatar', userController.updateAvatar)

@@ -5,13 +5,11 @@ import Uploader from '../../services/uploader'
 import RightProvider from '../right'
 
 class StoryProvider {
-    private repository: StoryRepository
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new StoryRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: StoryRepository,
+        private rightProvider: RightProvider,
+        private uploader: Uploader
+    ) {
     }
 
     // Создать сюжет

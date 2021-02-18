@@ -1,20 +1,21 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {CommentForum, Forum} from '../common/entity/types'
 import Validator from '../common/validator'
 import {ForumUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import ForumProvider from '../providers/forum'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class ForumController extends Controller {
-    private forumProvider: ForumProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.forumProvider = new ForumProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private forumProvider: ForumProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать форум

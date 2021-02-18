@@ -1,20 +1,21 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import {CommentStory, Story} from '../common/entity/types'
 import Validator from '../common/validator'
 import {StoryUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import StoryProvider from '../providers/story'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class StoryController extends Controller {
-    private storyProvider: StoryProvider
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.storyProvider = new StoryProvider(db)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private storyProvider: StoryProvider,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Создать сюжет

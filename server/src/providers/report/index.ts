@@ -5,13 +5,11 @@ import Uploader from '../../services/uploader'
 import RightProvider from '../right'
 
 class ReportProvider {
-    private repository: ReportRepository
-    private uploader = new Uploader()
-    private rightProvider: RightProvider
-
-    constructor(connection: any) {
-        this.repository = new ReportRepository(connection.getPoolPromise())
-        this.rightProvider = new RightProvider(connection)
+    constructor(
+        private repository: ReportRepository,
+        private rightProvider: RightProvider,
+        private uploader: Uploader
+    ) {
     }
 
     // Создать отчет

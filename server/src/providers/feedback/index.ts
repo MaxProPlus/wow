@@ -1,13 +1,11 @@
 import FeedbackRepository from '../../repositories/feedback'
-import {DB} from '../../services/mysql'
 import {Feedback} from '../../common/entity/types'
 import {defaultAvatar} from '../../entity/types'
 
 class FeedbackProvider {
-    private repository: FeedbackRepository
-
-    constructor(conn: DB) {
-        this.repository = new FeedbackRepository(conn.getPoolPromise())
+    constructor(
+        private repository: FeedbackRepository
+    ) {
     }
 
     getAll = () => {

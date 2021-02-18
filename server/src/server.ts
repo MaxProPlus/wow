@@ -9,8 +9,6 @@ import 'express-async-errors'
 
 import BaseRouter from './routes'
 import logger from './services/logger'
-import connection from './services/mysql'
-import smtp from './services/smtp'
 
 // Init express
 const app = express()
@@ -19,8 +17,6 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
 app.use(fileUpload())
-app.set('db', connection())
-app.set('smtp', smtp())
 
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {

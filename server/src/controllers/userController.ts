@@ -1,4 +1,4 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import UserProvider from '../providers/account'
 import {User, UserPassword} from '../common/entity/types'
 import Validator from '../common/validator'
@@ -7,19 +7,18 @@ import {About} from '../entity/types'
 import {Smtp} from '../services/smtp'
 import TokenStorage from '../services/token'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class UserController extends Controller {
-    private userProvider: UserProvider
-    private smtp: Smtp
-    private validator: Validator
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.smtp = app.get('smtp')
-        this.userProvider = new UserProvider(db)
-        this.userProvider.setSmtp(this.smtp)
-        this.validator = new Validator()
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private userProvider: UserProvider,
+        private smtp: Smtp,
+        private validator: Validator
+    ) {
+        super(rightProvider, auth)
     }
 
     // Регистрация
@@ -250,7 +249,10 @@ class UserController extends Controller {
     updatePassword = async (req: Request, res: Response) => {
         const user: UserPassword = req.body
         try {
-            const {id, username} = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.passwordAccept)
+            const {
+                id,
+                username
+            } = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.passwordAccept)
             user.id = id
             user.username = username
         } catch (err) {

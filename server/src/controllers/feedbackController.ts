@@ -1,15 +1,17 @@
-import {Express, Request, Response} from 'express'
+import {Request, Response} from 'express'
 import FeedbackProvider from '../providers/feedback'
 import {Feedback} from '../common/entity/types'
 import Controller from '../core/controller'
+import RightProvider from '../providers/right'
+import Auth from '../services/auth'
 
 class FeedbackController extends Controller {
-    private feedbackProvider: FeedbackProvider
-
-    constructor(app: Express) {
-        super(app)
-        const db = app.get('db')
-        this.feedbackProvider = new FeedbackProvider(db)
+    constructor(
+        rightProvider: RightProvider,
+        auth: Auth,
+        private feedbackProvider: FeedbackProvider
+    ) {
+        super(rightProvider, auth)
     }
 
     getAll = (req: Request, res: Response) => {

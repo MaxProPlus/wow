@@ -1,6 +1,10 @@
 // tslint:disable-next-line:no-namespace
-declare namespace Express {
-    interface Request {
-        userId?: number
+import {User} from '../common/entity/types'
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: User | null
+        }
     }
 }

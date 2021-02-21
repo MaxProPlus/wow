@@ -1,20 +1,22 @@
 import {NextFunction, Request, RequestHandler, Response} from 'express'
 import TokenStorage from '../services/token'
-import {auth} from '../modules/app'
+import {authProvider} from '../modules/app'
+import {UNAUTHORIZED} from '../errors'
 
-const authId: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    req.userId = await auth.checkAuth(TokenStorage.getToken(req)).then((id: number) => {
-        return id
-    }, () => {
-        return 0
-    })
-    if (!req.userId) {
-        return res.json({
-            status: 'INVALID_AUTH',
-            errorMessage: 'Ошибка авторизации',
-        })
+// прикрепить пользователя к Request
+export const getUser: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    req.user = await authProvider.getUser(TokenStorage.getToken(req))
+    if (!req.user) {
+        return res.json(UNAUTHORIZED)
     }
     next()
 }
 
-export default authId
+// прикрепить пользователя с правами к Request
+export const getUserWithRight: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+    req.user = await authProvider.getUserWithRights(TokenStorage.getToken(req))
+    if (!req.user) {
+        return res.json(UNAUTHORIZED)
+    }
+    next()
+}

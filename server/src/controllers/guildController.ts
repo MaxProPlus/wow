@@ -6,17 +6,19 @@ import {UploadedFile} from 'express-fileupload'
 import GuildProvider from '../providers/guild'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import TokenStorage from '../services/token'
+import {FORBIDDEN} from '../errors'
 
 class GuildController extends Controller {
 
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private guildProvider: GuildProvider,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     // Создать гильдию
@@ -37,7 +39,7 @@ class GuildController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.guildProvider.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -60,13 +62,12 @@ class GuildController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        return this.guildProvider.getById(id).then(([guild, comments]) => {
-            if (!!guild.closed && idUser !== guild.idUser) {
-                return res.json({
-                    status: 'ERROR_RIGHT',
-                    errorMessage: 'Нет прав для просмотра',
-                })
+        return this.guildProvider.getById(id).then(async ([guild, comments]) => {
+            if (guild.closed) {
+                const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+                if (!user || user && user.id !== guild.idUser) {
+                    return res.json(FORBIDDEN)
+                }
             }
             return res.json({
                 status: 'OK',
@@ -134,7 +135,7 @@ class GuildController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.guildProvider.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -158,7 +159,7 @@ class GuildController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.guildProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
@@ -174,7 +175,7 @@ class GuildController extends Controller {
     // Создать комментарий
     createComment = async (req: Request, res: Response) => {
         const c: CommentGuild = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -227,7 +228,7 @@ class GuildController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         this.guildProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

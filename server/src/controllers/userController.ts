@@ -1,105 +1,23 @@
 import {Request, Response} from 'express'
 import UserProvider from '../providers/account'
-import {User, UserPassword} from '../common/entity/types'
+import {User} from '../common/entity/types'
 import Validator from '../common/validator'
 import {UploadedFile} from 'express-fileupload'
-import {About} from '../entity/types'
 import {Smtp} from '../services/smtp'
 import TokenStorage from '../services/token'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
 
 class UserController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private userProvider: UserProvider,
         private smtp: Smtp,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
-    }
-
-    // Регистрация
-    signUp = (req: Request, res: Response) => {
-        const user: User = req.body
-        const err = this.validator.validateSignup(user)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
-        }
-        return this.userProvider.signUp(user).then((msg: string) => {
-            res.json({
-                status: 'OK',
-                results: msg,
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
-    }
-
-    // Подтверждение регистрации
-    acceptReg = (req: Request, res: Response) => {
-        const token = req.query.token as string
-        return this.userProvider.acceptReg(token).then(() => {
-            return res.json({
-                status: 'OK',
-            })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Ошибка регистрации, неверный токен',
-            })
-        })
-    }
-
-    // Подтверждение смены email
-    acceptEmail = (req: Request, res: Response) => {
-        const token = req.query.token as string
-        return this.userProvider.acceptEmail(token).then(() => {
-            return res.json({
-                status: 'OK',
-            })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Ошибка, неверный токен',
-            })
-        })
-    }
-
-    // Авторизация
-    signIn = (req: Request, res: Response) => {
-        const user: User = req.body
-        const about = new About()
-        about.ip = req.ip
-        return this.userProvider.login(user, about).then((r: any) => {
-            TokenStorage.setToken(res, r)
-            res.cookie('token', r)
-            return res.json({
-                status: 'OK',
-            })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Неверный логин или пароль',
-            })
-        })
-    }
-
-    // Выход
-    logout = (req: Request, res: Response) => {
-        res.clearCookie('token')
-        this.userProvider.logout(TokenStorage.getToken(req))
-        return res.json({
-            status: 'OK',
-        })
+        super(rightProvider, authProvider)
     }
 
     // Получить контекст
@@ -112,7 +30,7 @@ class UserController extends Controller {
         }, () => {
             res.clearCookie('token')
             return res.json({
-                status: 'INVALID_AUTH',
+                status: 'UNAUTHORIZED',
                 errorMessage: 'Ошибка авторизации',
             })
         })
@@ -142,14 +60,7 @@ class UserController extends Controller {
 
     // Получить информацию о пользователе
     getGeneral = async (req: Request, res: Response) => {
-        const id = await this.getUserId(req)
-        if (!id) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
-        return this.userProvider.getGeneral(id).then((r: any) => {
+        return this.userProvider.getGeneral(req.user!.id).then((r: any) => {
             return res.json({
                 status: 'OK',
                 results: [r],
@@ -186,13 +97,7 @@ class UserController extends Controller {
     // Редактирование основной информации
     updateGeneral = async (req: Request, res: Response) => {
         const user: User = req.body
-        user.id = await this.getUserId(req)
-        if (!user.id) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
+        user.id = req.user!.id
         const err = this.validator.validateGeneral(user)
         if (!!err) {
             return res.json({
@@ -204,73 +109,6 @@ class UserController extends Controller {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
-    }
-
-    // Редактирование настроек безопасноти
-    updateSecure = async (req: Request, res: Response) => {
-        const user: User = req.body
-        const err = this.validator.validateEmail(user)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
-        }
-        try {
-            const {id} = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.password)
-            user.id = id
-        } catch (e) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
-        return this.userProvider.updateSecure(user).then((msg) => {
-            return res.json({
-                status: 'OK',
-                results: msg,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
-            })
-        })
-    }
-
-    // Редактирование пароля
-    updatePassword = async (req: Request, res: Response) => {
-        const user: UserPassword = req.body
-        try {
-            const {
-                id,
-                username
-            } = await this.auth.checkAuthWithPassword(TokenStorage.getToken(req), user.passwordAccept)
-            user.id = id
-            user.username = username
-        } catch (err) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
-        const err = this.validator.validatePassword(user)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
-        }
-        return this.userProvider.updatePassword(user).then(() => {
-            return res.json({
-                status: 'OK',
             })
         }, (err: any) => {
             return res.json({
@@ -295,14 +133,7 @@ class UserController extends Controller {
                 errorMessage: err,
             })
         }
-        const id = await this.getUserId(req)
-        if (!id) {
-            return res.json({
-                status: 'INVALID_AUTH',
-                errorMessage: 'Ошибка авторизации',
-            })
-        }
-        return this.userProvider.updateAvatar(id, req.files.avatar).then(() => {
+        return this.userProvider.updateAvatar(req.user!.id, req.files.avatar).then(() => {
             return res.json({
                 status: 'OK',
             })

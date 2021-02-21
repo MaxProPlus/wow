@@ -6,16 +6,18 @@ import {ArticleUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import TokenStorage from '../services/token'
+import {FORBIDDEN} from '../errors'
 
 class ArticleController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private articleProvider: ArticleProvider,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     // Создать новость
@@ -36,14 +38,11 @@ class ArticleController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json({
-                status: 'ERROR_RIGHT',
-                errorMessage: 'Нет прав',
-            })
+            return res.json(FORBIDDEN)
         }
         return this.articleProvider.create(c).then((r: any) => {
             return res.json({
@@ -67,13 +66,12 @@ class ArticleController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        return this.articleProvider.getById(id).then(([article, comments]) => {
-            if (!!article.closed && idUser !== article.idUser) {
-                return res.json({
-                    status: 'ERROR_RIGHT',
-                    errorMessage: 'Нет прав для просмотра',
-                })
+        return this.articleProvider.getById(id).then(async ([article, comments]) => {
+            if (article.closed) {
+                const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+                if (!user || user && user.id !== article.idUser) {
+                    return res.json(FORBIDDEN)
+                }
             }
             return res.json({
                 status: 'OK',
@@ -141,14 +139,11 @@ class ArticleController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json({
-                status: 'ERROR_RIGHT',
-                errorMessage: 'Нет прав',
-            })
+            return res.json(FORBIDDEN)
         }
         return this.articleProvider.update(c).then((r: any) => {
             return res.json({
@@ -173,14 +168,11 @@ class ArticleController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json({
-                status: 'ERROR_RIGHT',
-                errorMessage: 'Нет прав',
-            })
+            return res.json(FORBIDDEN)
         }
         return this.articleProvider.remove(c).then(() => {
             return res.json({
@@ -197,7 +189,7 @@ class ArticleController extends Controller {
     // Создать комментарий к персонажу
     createComment = async (req: Request, res: Response) => {
         const c: CommentArticle = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -250,7 +242,7 @@ class ArticleController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         this.articleProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

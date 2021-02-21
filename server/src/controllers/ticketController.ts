@@ -4,22 +4,23 @@ import Validator from '../common/validator'
 import TicketProvider from '../providers/ticket'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import {FORBIDDEN} from '../errors'
 
 class TicketController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private ticketProvider: TicketProvider,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     // Создать тикет
     create = async (req: Request, res: Response) => {
         const c: Ticket = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateTicket(c)
         if (err) {
             return res.json({
@@ -49,14 +50,11 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = req.userId!
+        const idUser = req.user!.id
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         return this.ticketProvider.getById(idTicket).then(([ticket, comments]) => {
             if (ticket.idUser !== idUser && !ticketModerator) {
-                return res.json({
-                    status: 'ERROR_RIGHT',
-                    errorMessage: 'Нет прав для просмотра',
-                })
+                return res.json(FORBIDDEN)
             }
             return res.json({
                 status: 'OK',
@@ -78,13 +76,10 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = req.userId!
+        const idUser = req.user!.id
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         if (!ticketModerator) {
-            return res.json({
-                status: 'ERROR_RIGHT',
-                errorMessage: 'Нет прав для редактирование статуса',
-            })
+            return res.json(FORBIDDEN)
         }
         const err = this.validator.validateTicketStatus(req.body.status)
         if (err) {
@@ -147,7 +142,7 @@ class TicketController extends Controller {
     // Создать комментарий на тикет
     createComment = async (req: Request, res: Response) => {
         const c: CommentTicket = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -177,7 +172,7 @@ class TicketController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = req.userId!
+        const idUser = req.user!.id
         return this.ticketProvider.getComments(idTicket, idUser).then((r) => {
             return res.json({
                 status: 'OK',

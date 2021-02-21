@@ -6,16 +6,18 @@ import {CharacterUpload} from '../entity/types'
 import {UploadedFile} from 'express-fileupload'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import TokenStorage from '../services/token'
+import {FORBIDDEN} from '../errors'
 
 class CharacterController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private characterProvider: CharacterProvider,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     // Создать персонажа
@@ -36,7 +38,7 @@ class CharacterController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.characterProvider.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -59,13 +61,12 @@ class CharacterController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        return this.characterProvider.getById(id).then(([character, comments]) => {
-            if (!!character.closed && idUser !== character.idUser) {
-                return res.json({
-                    status: 'ERROR_RIGHT',
-                    errorMessage: 'Нет прав для просмотра',
-                })
+        return this.characterProvider.getById(id).then(async ([character, comments]) => {
+            if (character.closed) {
+                const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+                if (!user || user && user.id !== character.idUser) {
+                    return res.json(FORBIDDEN)
+                }
             }
             return res.json({
                 status: 'OK',
@@ -145,7 +146,8 @@ class CharacterController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
+        console.log(req.user)
         return this.characterProvider.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -169,7 +171,7 @@ class CharacterController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.characterProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
@@ -185,7 +187,7 @@ class CharacterController extends Controller {
     // Создать комментарий к персонажу
     createComment = async (req: Request, res: Response) => {
         const c: CommentCharacter = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -238,7 +240,7 @@ class CharacterController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         this.characterProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

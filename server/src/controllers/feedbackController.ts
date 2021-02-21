@@ -3,15 +3,16 @@ import FeedbackProvider from '../providers/feedback'
 import {Feedback} from '../common/entity/types'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import {FORBIDDEN} from '../errors'
 
 class FeedbackController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private feedbackProvider: FeedbackProvider
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     getAll = (req: Request, res: Response) => {
@@ -30,13 +31,10 @@ class FeedbackController extends Controller {
 
     update = async (req: Request, res: Response) => {
         const list = req.body as Feedback[]
-        const idUser = req.userId!
+        const idUser = req.user!.id
         const flagFeedbackModerator = await this.rightProvider.feedbackModerator(idUser)
         if (!flagFeedbackModerator) {
-            return res.json({
-                status: 'ERROR_RIGHT',
-                errorMessage: 'Нет прав',
-            })
+            return res.json(FORBIDDEN)
         }
         return this.feedbackProvider.update(list).then(() => {
             return res.json({

@@ -14,11 +14,6 @@ export class About {
     ip = ''
 }
 
-export class UserAuth {
-    id = 0
-    username = ''
-}
-
 export class CharacterUpload extends Character {
     fileAvatar!: UploadedFile
 }

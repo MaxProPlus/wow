@@ -6,16 +6,18 @@ import {UploadedFile} from 'express-fileupload'
 import ReportProvider from '../providers/report'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
-import Auth from '../services/auth'
+import AuthProvider from '../providers/auth'
+import TokenStorage from '../services/token'
+import {FORBIDDEN} from '../errors'
 
 class ReportController extends Controller {
     constructor(
         rightProvider: RightProvider,
-        auth: Auth,
+        authProvider: AuthProvider,
         private reportProvider: ReportProvider,
         private validator: Validator
     ) {
-        super(rightProvider, auth)
+        super(rightProvider, authProvider)
     }
 
     // Создать отчет / лог
@@ -36,7 +38,7 @@ class ReportController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.reportProvider.create(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -59,13 +61,12 @@ class ReportController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        const idUser = await this.getUserId(req)
-        return this.reportProvider.getById(id).then(([story, comments]) => {
-            if (!!story.closed && idUser !== story.idUser) {
-                return res.json({
-                    status: 'ERROR_RIGHT',
-                    errorMessage: 'Нет прав для просмотра',
-                })
+        return this.reportProvider.getById(id).then(async ([story, comments]) => {
+            if (story.closed) {
+                const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+                if (!user || user && user.id !== story.idUser) {
+                    return res.json(FORBIDDEN)
+                }
             }
             return res.json({
                 status: 'OK',
@@ -133,7 +134,7 @@ class ReportController extends Controller {
                 errorMessage: err,
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.reportProvider.update(c).then((r: any) => {
             return res.json({
                 status: 'OK',
@@ -157,7 +158,7 @@ class ReportController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         return this.reportProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
@@ -173,7 +174,7 @@ class ReportController extends Controller {
     // Создать комментарий
     createComment = async (req: Request, res: Response) => {
         const c: CommentReport = req.body
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
             return res.json({
@@ -226,7 +227,7 @@ class ReportController extends Controller {
                 errorMessage: 'Ошибка парсинга id',
             })
         }
-        c.idUser = req.userId!
+        c.idUser = req.user!.id
         this.reportProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',

@@ -1,19 +1,11 @@
 import {createTransport, SentMessageInfo} from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
-import logger from '../logger'
 import {ApiError} from '../../errors'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import ConfigProvider from '../config'
+import {logger} from '../../modules/core'
 
-// Конфиг на подключение smtp сервера
-const config = {
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: true,
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD
-    }
-}
-
+// Ошибка отправки по email
 export class SmtpError extends ApiError {
     constructor() {
         super('Ошибка при отправке сообщения. Если ошибка повторится, то свяжитесь с администрацией', 'ERROR_SMTP')
@@ -24,15 +16,14 @@ export class SmtpError extends ApiError {
 export class Smtp {
     private transport: Mail
 
-    constructor() {
-        // @ts-ignore
-        this.transport = createTransport(config)
+    constructor(private configProvider: ConfigProvider) {
+        this.transport = createTransport(configProvider.get<SMTPTransport.Options>('smtp'))
     }
 
     // Отправка подтверждения регистрации
     public sendConfirmation = (email: string, nickname: string, token: string): Promise<SentMessageInfo> => {
         const mailOptions = {
-            from: `Equilibrium: RP сервере WOW robot <${config.auth.user}>`,
+            from: `Equilibrium: RP сервере WOW robot <${this.configProvider.get('smtp.auth.user')}>`,
             to: email,
             subject: 'Подтверждение аккаунта на сайте Equilibrium: RP сервере WOW',
             html: this.htmlConfirmation(nickname, token)
@@ -45,8 +36,7 @@ export class Smtp {
 
     // Формирование html подтверждения регистрации
     private htmlConfirmation = (nickname: string, token: string): string => {
-        // @ts-ignore
-        const link = `http://${process.env.HOST}${(process.env.PORT !== 80?':'+process.env.PORT: '')}/login?token=${token}`
+        const link = `http://${this.configProvider.get('host')}${(this.configProvider.get('port') !== 80?':'+this.configProvider.get('port'): '')}/login?token=${token}`
         return `<p>Здравствуйте, ${nickname}</p>
             <p>Перейдите по следующей ссылке для активации аккаунта:</p>
             <p><a href="${link}">${link}</a></p>`
@@ -55,7 +45,7 @@ export class Smtp {
     // Отправка потверждения изменения email
     public sendChangeEmail = (email: string, token: string): Promise<SentMessageInfo> => {
         const mailOptions = {
-            from: `Equilibrium: RP сервере WOW robot <${config.auth.user}>`,
+            from: `Equilibrium: RP сервере WOW robot <${this.configProvider.get('smtp.auth.user')}>`,
             to: email,
             subject: 'Подтверждение смена email на сайте Equilibrium: RP сервере WOW',
             html: this.htmlChangeEmail(token)
@@ -68,12 +58,11 @@ export class Smtp {
 
     // Формирование html потверждения изменения email
     private htmlChangeEmail = (token: string) => {
-        // @ts-ignore
-        const link = `http://${process.env.HOST}${(process.env.PORT !== 80?':'+process.env.PORT: '')}/setting?token=${token}`
+        const link = `http://${this.configProvider.get('host')}${(this.configProvider.get('port') !== 80?':'+this.configProvider.get('port'): '')}/setting?token=${token}`
         return `<p>Здравствуйте</p>
             <p>Перейдите по следующей ссылке для смены email: </p>
             <p><a href="${link}">${link}</a></p>`
     }
 }
 
-export default () => new Smtp()
+export default Smtp

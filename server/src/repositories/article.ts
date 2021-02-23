@@ -1,8 +1,9 @@
 import {Article, CommentArticle} from '../common/entity/types'
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError, NotFoundError} from '../errors'
 import {ArticleNotFoundError} from '../providers/article'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class ArticleRepository extends Repository {
 
@@ -11,9 +12,9 @@ class ArticleRepository extends Repository {
         const sql = `INSERT INTO article (id_user, url_avatar, title, short_description, description,
                                           closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [a.idUser, a.urlAvatar, a.title, a.shortDescription, a.description, a.closed, a.hidden, a.comment, a.style]).then(([r]: any) => {
+        return this.pool.query(sql, [a.idUser, a.urlAvatar, a.title, a.shortDescription, a.description, a.closed, a.hidden, a.comment, a.style]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -43,7 +44,7 @@ class ArticleRepository extends Repository {
                 throw new ArticleNotFoundError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -66,7 +67,7 @@ class ArticleRepository extends Repository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Article[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -82,7 +83,7 @@ class ArticleRepository extends Repository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -103,12 +104,12 @@ class ArticleRepository extends Repository {
                      where id = ?
                        and is_remove = 0`
         return this.pool.query(sql, [a.urlAvatar, a.title, a.shortDescription, a.description,
-            a.closed, a.hidden, a.comment, a.style, a.id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+            a.closed, a.hidden, a.comment, a.style, a.id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ArticleNotFoundError()
             }
             return a.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -119,12 +120,12 @@ class ArticleRepository extends Repository {
         const sql = `UPDATE article
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ArticleNotFoundError()
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -134,9 +135,9 @@ class ArticleRepository extends Repository {
     insertComment = (comment: CommentArticle): Promise<number> => {
         const sql = `INSERT INTO article_comment (text, id_user, id_article)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idArticle]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idArticle]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -156,7 +157,7 @@ class ArticleRepository extends Repository {
                 throw new NotFoundError('Комментарий не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -178,7 +179,7 @@ class ArticleRepository extends Repository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentArticle[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -189,12 +190,12 @@ class ArticleRepository extends Repository {
         const sql = `UPDATE article_comment
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Комментарий не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

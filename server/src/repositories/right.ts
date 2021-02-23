@@ -1,6 +1,7 @@
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError} from 'mysql'
 
 class RightRepository extends Repository {
 
@@ -12,7 +13,7 @@ class RightRepository extends Repository {
                      where aar.id_user = ?`
         return this.pool.query(sql, [idUser]).then((r: any) => {
             return r[0].map((el: any) => el.name)
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -25,9 +26,9 @@ class RightRepository extends Repository {
                               join ar_user_role aar on arp.id_role = aar.id_role
                      where p.name = ?
                        AND aar.id_user = ?`
-        return this.pool.query(sql, [right, idUser]).then((r: any) => {
-            return r[0].length > 0
-        }, (err: Error) => {
+        return this.pool.query(sql, [right, idUser]).then(([r]: [number[]]) => {
+            return r.length > 0
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

@@ -1,6 +1,7 @@
 import Repository from '../core/repository'
-import logger from '../services/logger'
 import {DBError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError} from 'mysql'
 
 class MaterialRepository extends Repository {
 
@@ -41,7 +42,7 @@ class MaterialRepository extends Repository {
             limit ? offset ?`
         return this.pool.query(sql, [title, title, title, title, limit, limit * (page - 1)]).then(([r]: [any[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -81,7 +82,7 @@ class MaterialRepository extends Repository {
                                 and title like ?) X`
         return this.pool.query(sql, [title, title, title, title]).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

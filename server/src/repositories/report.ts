@@ -1,8 +1,9 @@
 import {Character, CommentReport, Guild, Report, Story} from '../common/entity/types'
-import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
 import {DBError, NotFoundError} from '../errors'
 import {ReportNotFoundError} from '../providers/report'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class ReportRepository extends BasicMaterialRepository {
 
@@ -17,9 +18,9 @@ class ReportRepository extends BasicMaterialRepository {
                                          description, rule, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, shortDescription,
-            description, rule, closed, hidden, comment, style]).then(([r]: any) => {
+            description, rule, closed, hidden, comment, style]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -29,9 +30,9 @@ class ReportRepository extends BasicMaterialRepository {
     insertMember = (id: number, idReport: number): Promise<number> => {
         const sql = `INSERT INTO report_to_character (id_report, id_character)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idReport]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idReport]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -41,9 +42,9 @@ class ReportRepository extends BasicMaterialRepository {
     insertGuild = (id: number, idGuild: number): Promise<number> => {
         const sql = `INSERT INTO report_to_guild (id_report, id_guild)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idGuild]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idGuild]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -53,9 +54,9 @@ class ReportRepository extends BasicMaterialRepository {
     insertStory = (id: number, idStory: number): Promise<number> => {
         const sql = `INSERT INTO report_to_story (id_report, id_story)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idStory]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idStory]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -86,7 +87,7 @@ class ReportRepository extends BasicMaterialRepository {
                 throw new ReportNotFoundError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -104,7 +105,7 @@ class ReportRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -122,7 +123,7 @@ class ReportRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -140,7 +141,7 @@ class ReportRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -165,7 +166,7 @@ class ReportRepository extends BasicMaterialRepository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Report[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -181,7 +182,7 @@ class ReportRepository extends BasicMaterialRepository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -203,12 +204,12 @@ class ReportRepository extends BasicMaterialRepository {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ReportNotFoundError()
             }
             return report.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -219,12 +220,12 @@ class ReportRepository extends BasicMaterialRepository {
         const sql = `UPDATE report
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ReportNotFoundError()
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -236,12 +237,12 @@ class ReportRepository extends BasicMaterialRepository {
                      from report_to_character
                      where id_report = ?
                        and id_character = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Связь не найдена')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -253,12 +254,12 @@ class ReportRepository extends BasicMaterialRepository {
                      from report_to_guild
                      where id_report = ?
                        and id_guild = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Связь не найдена')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -270,12 +271,12 @@ class ReportRepository extends BasicMaterialRepository {
                      from report_to_story
                      where id_report = ?
                        and id_story = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Связь не найдена')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -285,9 +286,9 @@ class ReportRepository extends BasicMaterialRepository {
     insertComment = (comment: CommentReport): Promise<number> => {
         const sql = `INSERT INTO report_comment (text, id_user, id_report)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idReport]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idReport]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -307,7 +308,7 @@ class ReportRepository extends BasicMaterialRepository {
                 throw new NotFoundError('Комментарий не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -329,7 +330,7 @@ class ReportRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentReport[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -340,12 +341,12 @@ class ReportRepository extends BasicMaterialRepository {
         const sql = `UPDATE report_comment
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Комментарий не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

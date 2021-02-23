@@ -1,6 +1,6 @@
 import {ErrorRequestHandler, NextFunction, Request, Response} from 'express'
-import logger from '../services/logger'
 import {ApiError} from '../errors'
+import {logger} from '../modules/core'
 
 // middleware вывод ошибок
 export const apiErrorMiddleware: ErrorRequestHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {

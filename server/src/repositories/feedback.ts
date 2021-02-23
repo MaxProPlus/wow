@@ -1,7 +1,8 @@
 import Repository from '../core/repository'
 import {Feedback} from '../common/entity/types'
-import logger from '../services/logger'
 import {DBError, NotFoundError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class FeedbackRepository extends Repository {
 
@@ -10,9 +11,9 @@ class FeedbackRepository extends Repository {
         const {idUser, role} = feedback
         const sql = `INSERT INTO feedback (id_user, role)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [idUser, role]).then(([r]: any) => {
+        return this.pool.query(sql, [idUser, role]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -33,7 +34,7 @@ class FeedbackRepository extends Repository {
                               join feedback f on u.id = f.id_user`
         return this.pool.query(sql).then(([r]: [Feedback[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -45,12 +46,12 @@ class FeedbackRepository extends Repository {
         const sql = `update feedback
                      set role = ?
                      where id_user = ?`
-        return this.pool.query(sql, [role, idUser]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [role, idUser]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Пользователь не найден')
             }
             return idUser
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -63,7 +64,7 @@ class FeedbackRepository extends Repository {
                      where id = ?`
         return this.pool.query(sql, [id]).then(() => {
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

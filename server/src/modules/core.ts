@@ -1,0 +1,15 @@
+import ConfigProvider from '../services/config'
+import initLogger from '../services/logger'
+import DB from '../services/mysql'
+import {PoolConfig} from 'mysql'
+import Smtp from '../services/smtp'
+import Uploader from '../services/uploader'
+import Hash from '../services/hash'
+
+// Инициализация системных провайдеров
+export const configProvider = new ConfigProvider()
+export const db = new DB(configProvider.get<PoolConfig>('db'))
+export const smtp = new Smtp(configProvider)
+export const uploader = new Uploader()
+export const hash = new Hash()
+export const logger = initLogger()

@@ -1,5 +1,4 @@
-import connection from '../services/mysql'
-import initSmtp from '../services/smtp'
+import {configProvider, db, hash, smtp, uploader} from './core'
 import UserController from '../controllers/user'
 import ArticleController from '../controllers/article'
 import TicketController from '../controllers/ticket'
@@ -14,8 +13,6 @@ import RightProvider from '../providers/right'
 import Validator from '../common/validator'
 import UserProvider from '../providers/account'
 import UserRepository from '../repositories/user'
-import Uploader from '../services/uploader'
-import Hash from '../services/hash'
 import ArticleRepository from '../repositories/article'
 import ArticleProvider from '../providers/article'
 import TicketRepository from '../repositories/ticket'
@@ -42,18 +39,14 @@ import RegistrationProvider from '../providers/registration'
 import RegistrationController from '../controllers/registration'
 
 // Общие провайдеры
-const db = connection()
-const smtp = initSmtp()
 const validator = new Validator()
-const uploader = new Uploader()
-const hash = new Hash()
 
 // Провайдер на проверку прав
 const rightProvider = new RightProvider(db)
 
 // Провайдер, репозиторий на регистрацию
 const registrationRepository = new RegistrationRepository(db.getPoolPromise())
-const registrationProvider = new RegistrationProvider(registrationRepository, hash, smtp)
+const registrationProvider = new RegistrationProvider(registrationRepository, configProvider, hash, smtp)
 
 // Провайдер, репозиторий на аутентификацию
 const authRepository = new AuthRepository(db.getPoolPromise())

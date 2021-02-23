@@ -1,7 +1,7 @@
 import Hash from '../hash'
 import path from 'path'
 import fs from 'fs'
-import logger from '../logger'
+import {logger} from '../../modules/core'
 
 // Возращаемый тип getInfo для дальшейшего перемещения и сохранения в бд
 type FileInfo = {

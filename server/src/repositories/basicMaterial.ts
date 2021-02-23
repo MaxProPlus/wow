@@ -1,7 +1,8 @@
 import Repository from '../core/repository'
-import logger from '../services/logger'
 import {User} from '../common/entity/types'
 import {DBError, NotFoundError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 // Базовый класс для материалов с соавторами
 // Работает с таблицей table_coauthor, где table задает конструктором
@@ -17,9 +18,9 @@ class BasicMaterialRepository extends Repository {
     insertCoauthor = (id: number, idUser: number): Promise<number> => {
         const sql = `INSERT INTO ${this.table}_coauthor (id_${this.table}, id_user)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idUser]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idUser]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -46,12 +47,12 @@ class BasicMaterialRepository extends Repository {
                      from ${this.table}_coauthor
                      where id_${this.table} = ?
                        and id_user = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Соавтор не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

@@ -4,7 +4,7 @@ class Repository {
 
     // Генерировать where связкой and, если есть data
     // Включая похожие строки
-    protected genWhereAnd = (data: any) => {
+    protected genWhereAnd = (data: any): {where: any[], sqlWhere: string} => {
         const where = []
         let sqlWhere = ''
         if (data && Object.keys(data).length) {
@@ -30,7 +30,7 @@ class Repository {
 
     // Генерировать where связкой or, если есть data
     // Точное совпадение
-    protected genWhereOr = (data: any) => {
+    protected genWhereOr = (data: any): {where: any[], sqlWhere: string} => {
         const where = []
         let sqlWhere = ''
         if (data && Object.keys(data).length) {
@@ -50,7 +50,7 @@ class Repository {
 
     // Генерировать дополнительные условия для data
     // Включая похожие строки
-    protected genConditionAnd = (data: any) => {
+    protected genConditionAnd = (data: any): {where: any[], sqlWhere: string} => {
         const where = []
         let sqlWhere = ''
         if (data) {

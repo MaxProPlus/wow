@@ -3,6 +3,7 @@ import RegistrationRepository from '../../repositories/registration'
 import Hash from '../../services/hash'
 import {Smtp} from '../../services/smtp'
 import {ApiError} from '../../errors'
+import ConfigProvider from '../../services/config'
 
 // Ошибка регистрации
 export class RegistrationError extends ApiError {
@@ -14,6 +15,7 @@ export class RegistrationError extends ApiError {
 class RegistrationProvider {
     constructor(
         private registrationRepository: RegistrationRepository,
+        private configProvider: ConfigProvider,
         private hash: Hash,
         private smtp: Smtp
     ) {
@@ -36,7 +38,7 @@ class RegistrationProvider {
             throw new RegistrationError('Ошибка, возможно логин или email уже занят')
         }
 
-        if (!parseInt(process.env.SEND_EMAIL as string)) {
+        if (!this.configProvider.get('sendEmail')) {
             await this.registrationRepository.insertUserReg(user)
             await this.acceptReg(user.token)
             return 'Регистрация прошла успешно'
@@ -91,7 +93,7 @@ class RegistrationProvider {
             throw new RegistrationError('Ошибка, данный email возможно занят')
         }
 
-        if (!parseInt(process.env.SEND_EMAIL as string)) {
+        if (!this.configProvider.get('sendEmail')) {
             await this.registrationRepository.insertAccountEmail(user)
             await this.acceptEmail(user.token)
             return 'Почта успешно изменена'

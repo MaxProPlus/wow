@@ -9,6 +9,7 @@ import 'express-async-errors'
 
 import initApiRouter from './routes'
 import {apiErrorMiddleware} from './middlewares/apiError'
+import {configProvider} from './modules/core'
 
 // Init express
 const app = express()
@@ -19,12 +20,12 @@ app.use(cookieParser())
 app.use(fileUpload())
 
 // Show routes called in console during development
-if (process.env.NODE_ENV === 'development') {
+if (configProvider.get<string>('env') === 'development') {
     // @ts-ignore
     app.use(morgan('dev'))
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (configProvider.get<string>('env') === 'production') {
     app.use(helmet())
 }
 

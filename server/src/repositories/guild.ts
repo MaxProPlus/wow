@@ -1,8 +1,9 @@
 import {Character, CommentGuild, Guild, Report, Story} from '../common/entity/types'
-import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
 import {DBError, NotFoundError} from '../errors'
 import {GuildNotFoundError} from '../providers/guild'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class GuildRepository extends BasicMaterialRepository {
 
@@ -18,9 +19,9 @@ class GuildRepository extends BasicMaterialRepository {
                                         status, kit, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
-            status, kit, closed, hidden, comment, style]).then(([r]: any) => {
+            status, kit, closed, hidden, comment, style]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -30,9 +31,9 @@ class GuildRepository extends BasicMaterialRepository {
     insertMember = (id: number, idLink: number): Promise<number> => {
         const sql = `INSERT INTO guild_to_character (id_guild, id_character)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -68,7 +69,7 @@ class GuildRepository extends BasicMaterialRepository {
                 throw new GuildNotFoundError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -86,7 +87,7 @@ class GuildRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -104,7 +105,7 @@ class GuildRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -122,7 +123,7 @@ class GuildRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -145,7 +146,7 @@ class GuildRepository extends BasicMaterialRepository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -161,7 +162,7 @@ class GuildRepository extends BasicMaterialRepository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -188,12 +189,12 @@ class GuildRepository extends BasicMaterialRepository {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style, id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new GuildNotFoundError()
             }
             return guild.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -204,12 +205,12 @@ class GuildRepository extends BasicMaterialRepository {
         const sql = `UPDATE guild
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new GuildNotFoundError()
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -221,12 +222,12 @@ class GuildRepository extends BasicMaterialRepository {
                      from guild_to_character
                      where id_guild = ?
                        and id_character = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Связь не найдена')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -236,9 +237,9 @@ class GuildRepository extends BasicMaterialRepository {
     insertComment = (comment: CommentGuild): Promise<number> => {
         const sql = `INSERT INTO guild_comment (text, id_user, id_guild)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idGuild]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idGuild]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -258,7 +259,7 @@ class GuildRepository extends BasicMaterialRepository {
                 throw new NotFoundError('Комментарий не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -280,7 +281,7 @@ class GuildRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentGuild[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -291,12 +292,12 @@ class GuildRepository extends BasicMaterialRepository {
         const sql = `UPDATE guild_comment
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Комментарий не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

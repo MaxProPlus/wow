@@ -1,8 +1,9 @@
 import {Character, CommentCharacter, Guild, Report, Story} from '../common/entity/types'
-import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
 import {DBError, NotFoundError} from '../errors'
 import {CharacterNotFoundError} from '../providers/character'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class CharacterRepository extends BasicMaterialRepository {
     constructor(pool: any) {
@@ -20,9 +21,9 @@ class CharacterRepository extends BasicMaterialRepository {
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [character.idUser, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
-            character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then(([r]: any) => {
+            character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -32,9 +33,9 @@ class CharacterRepository extends BasicMaterialRepository {
     insertLink = (id: number, idLink: number) => {
         const sql = `INSERT INTO character_to_character (id_character, id_character_link)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -78,7 +79,7 @@ class CharacterRepository extends BasicMaterialRepository {
                 throw new CharacterNotFoundError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -96,7 +97,7 @@ class CharacterRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -114,7 +115,7 @@ class CharacterRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -132,7 +133,7 @@ class CharacterRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -150,7 +151,7 @@ class CharacterRepository extends BasicMaterialRepository {
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -175,7 +176,7 @@ class CharacterRepository extends BasicMaterialRepository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Character[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -191,7 +192,7 @@ class CharacterRepository extends BasicMaterialRepository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -227,12 +228,12 @@ class CharacterRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
-            character.status, character.active, character.closed, character.hidden, character.comment, character.style, character.id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+            character.status, character.active, character.closed, character.hidden, character.comment, character.style, character.id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new CharacterNotFoundError()
             }
             return character.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -243,12 +244,12 @@ class CharacterRepository extends BasicMaterialRepository {
         const sql = `UPDATE \`character\`
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new CharacterNotFoundError()
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -260,12 +261,12 @@ class CharacterRepository extends BasicMaterialRepository {
                      from character_to_character
                      where id_character = ?
                        and id_character_link = ?`
-        return this.pool.query(sql, [id, idLink]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id, idLink]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Связь не найдена')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -275,9 +276,9 @@ class CharacterRepository extends BasicMaterialRepository {
     insertComment = (comment: CommentCharacter): Promise<number> => {
         const sql = `INSERT INTO character_comment (text, id_user, id_character)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idCharacter]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idCharacter]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -297,7 +298,7 @@ class CharacterRepository extends BasicMaterialRepository {
                 throw new NotFoundError('Комментарий не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -319,7 +320,7 @@ class CharacterRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -330,12 +331,12 @@ class CharacterRepository extends BasicMaterialRepository {
         const sql = `UPDATE character_comment
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Комментарий не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

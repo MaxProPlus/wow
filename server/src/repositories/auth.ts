@@ -1,9 +1,10 @@
 import {User} from '../common/entity/types'
 import {Token} from '../entity/types'
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError} from '../errors'
 import {AuthError} from '../providers/auth'
+import {logger} from '../modules/core'
+import {MysqlError} from 'mysql'
 
 class AuthRepository extends Repository {
 
@@ -20,7 +21,7 @@ class AuthRepository extends Repository {
                 throw new AuthError('Неверный логин или пароль')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -31,7 +32,7 @@ class AuthRepository extends Repository {
         const sql = 'INSERT INTO token(id_user, text, ip) VALUES(?, ?, ?)'
         return this.pool.query(sql, [data.idUser, data.text, data.ip]).then(() => {
             return data.text
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -44,7 +45,7 @@ class AuthRepository extends Repository {
                      WHERE text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             return r[0] || null
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -68,7 +69,7 @@ class AuthRepository extends Repository {
                 user.rights = r.map((el: any) => el.name)
             }
             return user
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -87,7 +88,7 @@ class AuthRepository extends Repository {
                 return null
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -105,7 +106,7 @@ class AuthRepository extends Repository {
                 return null
             }
             return r[0].username
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -118,7 +119,7 @@ class AuthRepository extends Repository {
                      WHERE text = ?`
         return this.pool.query(sql, [token]).then(() => {
             return
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

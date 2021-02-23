@@ -1,16 +1,17 @@
 import {User, UserPassword} from '../common/entity/types'
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError, NotFoundError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class RegistrationRepository extends Repository {
     // Занести в бд user
     insertUserReg = (user: User): Promise<number> => {
         const sql = `INSERT INTO user_reg (nickname, username, password, email, token)
                      VALUES (?, ?, ?, ?, ?)`
-        return this.pool.query(sql, [user.nickname, user.username, user.password, user.email, user.token]).then(([r]: any) => {
+        return this.pool.query(sql, [user.nickname, user.username, user.password, user.email, user.token]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -20,9 +21,9 @@ class RegistrationRepository extends Repository {
     insertAccount = (user: User): Promise<number> => {
         const sql = `INSERT INTO account (username, sha_pass_hash, email, reg_mail)
                      VALUES (?, ?, ?, ?)`
-        return this.pool.query(sql, [user.username, user.password, user.email, user.email]).then(([r]: any) => {
+        return this.pool.query(sql, [user.username, user.password, user.email, user.email]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -32,9 +33,9 @@ class RegistrationRepository extends Repository {
     insertUser = (user: User, idAccount: number): Promise<number> => {
         const sql = `INSERT INTO user (nickname, id_account)
                      VALUES (?, ?)`
-        return this.pool.query(sql, [user.nickname, idAccount]).then(([r]: any) => {
+        return this.pool.query(sql, [user.nickname, idAccount]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -48,7 +49,7 @@ class RegistrationRepository extends Repository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: [User[]]) => {
             return r[0] || null
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -67,7 +68,7 @@ class RegistrationRepository extends Repository {
                 throw new NotFoundError('Токен не найден или просрочен')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -85,7 +86,7 @@ class RegistrationRepository extends Repository {
                 throw new NotFoundError('Токен не найден или просрочен')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -97,12 +98,12 @@ class RegistrationRepository extends Repository {
             join user u on a.id = u.id_account
                      set a.email = ?
                      where u.id = ?`
-        return this.pool.query(sql, [user.email, user.id]).then(([r]: any) => {
+        return this.pool.query(sql, [user.email, user.id]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return user.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -111,9 +112,9 @@ class RegistrationRepository extends Repository {
     insertAccountEmail = (user: User): Promise<number> => {
         const sql = `INSERT INTO user_email (id_user, email, token)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [user.id, user.email, user.token]).then(([r]: any) => {
+        return this.pool.query(sql, [user.id, user.email, user.token]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -125,12 +126,12 @@ class RegistrationRepository extends Repository {
             join user u on a.id = u.id_account
                      set a.sha_pass_hash = ?
                      where u.id = ?`
-        return this.pool.query(sql, [user.password, user.id]).then(([r]: any) => {
+        return this.pool.query(sql, [user.password, user.id]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return user.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -141,12 +142,12 @@ class RegistrationRepository extends Repository {
         const sql = `UPDATE user_reg
                      SET is_remove = 1
                      WHERE token = ?`
-        return this.pool.query(sql, [token]).then(([r]: any) => {
+        return this.pool.query(sql, [token]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -158,12 +159,12 @@ class RegistrationRepository extends Repository {
         const sql = `UPDATE user_email
                      SET is_remove = 1
                      WHERE token = ?`
-        return this.pool.query(sql, [token]).then(([r]: any) => {
+        return this.pool.query(sql, [token]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

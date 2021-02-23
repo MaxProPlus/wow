@@ -1,9 +1,9 @@
 import './loadEnv'
+import {configProvider, logger} from './modules/core'
 import app from './server'
-import logger from './services/logger'
 
 // Start the server
-const port = Number(process.env.PORT || 3000)
+const port = configProvider.get<number>('port')
 app.listen(port, () => {
-    logger.info(`Express server started on : http://${process.env.HOST}:${port}`)
+    logger.info(`Express server started on : http://${configProvider.get<string>('host')}:${port}`)
 })

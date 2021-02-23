@@ -1,8 +1,9 @@
 import {CommentForum, Forum} from '../common/entity/types'
-import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
 import {DBError, NotFoundError} from '../errors'
 import {ForumNotFoundError} from '../providers/forum'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class ForumRepository extends BasicMaterialRepository {
     constructor(pool: any) {
@@ -16,9 +17,9 @@ class ForumRepository extends BasicMaterialRepository {
                                         description, rule, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, shortDescription,
-            description, rule, closed, hidden, comment, style]).then(([r]: any) => {
+            description, rule, closed, hidden, comment, style]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -49,7 +50,7 @@ class ForumRepository extends BasicMaterialRepository {
                 throw new ForumNotFoundError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -75,7 +76,7 @@ class ForumRepository extends BasicMaterialRepository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Forum[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -91,7 +92,7 @@ class ForumRepository extends BasicMaterialRepository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -113,12 +114,12 @@ class ForumRepository extends BasicMaterialRepository {
                          style             = ?
                      where id = ?
                        and is_remove = 0`
-        return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ForumNotFoundError()
             }
             return report.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -129,12 +130,12 @@ class ForumRepository extends BasicMaterialRepository {
         const sql = `UPDATE forum
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new ForumNotFoundError()
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -144,9 +145,9 @@ class ForumRepository extends BasicMaterialRepository {
     insertComment = (comment: CommentForum): Promise<number> => {
         const sql = `INSERT INTO forum_comment (text, id_user, id_forum)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idForum]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idForum]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -166,7 +167,7 @@ class ForumRepository extends BasicMaterialRepository {
                 throw new NotFoundError('Комментарий не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -188,7 +189,7 @@ class ForumRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentForum[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -199,12 +200,12 @@ class ForumRepository extends BasicMaterialRepository {
         const sql = `UPDATE forum_comment
                      SET is_remove = 1
                      where id = ?`
-        return this.pool.query(sql, [id]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [id]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Комментарий не найден')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

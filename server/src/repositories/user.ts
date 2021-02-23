@@ -1,7 +1,8 @@
 import {User} from '../common/entity/types'
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError, NotFoundError, UnauthorizedError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class UserRepository extends Repository {
 
@@ -18,7 +19,7 @@ class UserRepository extends Repository {
                 throw new UnauthorizedError()
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -36,7 +37,7 @@ class UserRepository extends Repository {
                 throw new NotFoundError('Не найден пользователь')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -59,7 +60,7 @@ class UserRepository extends Repository {
                 throw new NotFoundError('Не найден пользователь')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -75,7 +76,7 @@ class UserRepository extends Repository {
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: any) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -89,7 +90,7 @@ class UserRepository extends Repository {
         sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -104,12 +105,12 @@ class UserRepository extends Repository {
                          link_vk   = ?,
                          link_tg   = ?
                      WHERE id = ? `
-        return this.pool.query(sql, [user.nickname, user.linkDs, user.linkMail, user.linkVk, user.linkTg, user.id]).then(([r]: any) => {
+        return this.pool.query(sql, [user.nickname, user.linkDs, user.linkMail, user.linkVk, user.linkTg, user.id]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return user.id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -120,12 +121,12 @@ class UserRepository extends Repository {
         const sql = `UPDATE user u
                      SET u.url_avatar = ?
                      WHERE u.id = ?`
-        return this.pool.query(sql, [avatarUrl, id]).then(([r]: any) => {
+        return this.pool.query(sql, [avatarUrl, id]).then(([r]: [OkPacket]) => {
             if (!r.affectedRows) {
                 throw new NotFoundError('Не найден пользователь')
             }
             return id
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

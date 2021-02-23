@@ -1,7 +1,8 @@
 import {CommentTicket, Ticket, TicketStatus, TicketType} from '../common/entity/types'
-import logger from '../services/logger'
 import Repository from '../core/repository'
 import {DBError, NotFoundError} from '../errors'
+import {logger} from '../modules/core'
+import {MysqlError, OkPacket} from 'mysql'
 
 class TicketRepository extends Repository {
 
@@ -9,9 +10,9 @@ class TicketRepository extends Repository {
     insert = (ticket: Ticket): Promise<number> => {
         const sql = `INSERT INTO ticket (title, text, id_ticket_type, id_user)
                      VALUES (?, ?, ?, ?)`
-        return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idUser]).then(([r]: any) => {
+        return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idUser]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -27,7 +28,7 @@ class TicketRepository extends Repository {
                 throw new NotFoundError('Тикет не найден')
             }
             return r[0].count
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -55,7 +56,7 @@ class TicketRepository extends Repository {
                 throw new NotFoundError('Тикет не найден')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -74,7 +75,7 @@ class TicketRepository extends Repository {
                 throw new NotFoundError('Категория заявок не найдена')
             }
             return r[0]
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -89,7 +90,7 @@ class TicketRepository extends Repository {
                 throw new NotFoundError('Категории заявок не найдены')
             }
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -111,7 +112,7 @@ class TicketRepository extends Repository {
                      limit ? offset ?`
         return this.pool.query(sql, [id, limit, limit * (page - 1)]).then(([r]: [Ticket[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -123,12 +124,12 @@ class TicketRepository extends Repository {
                          updated_at    = current_timestamp(),
                          id_user_moder = ?
                      where id = ?`
-        return this.pool.query(sql, [status, idUser, idTicket]).then((r: any) => {
-            if (!r[0].affectedRows) {
+        return this.pool.query(sql, [status, idUser, idTicket]).then(([r]: [OkPacket]) => {
+            if (!r.affectedRows) {
                 throw new NotFoundError('Тикет не найден')
             }
             return idTicket
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -138,9 +139,9 @@ class TicketRepository extends Repository {
     insertComment = (comment: CommentTicket): Promise<number> => {
         const sql = `INSERT INTO ticket_comment (text, id_user, id_ticket)
                      VALUES (?, ?, ?)`
-        return this.pool.query(sql, [comment.text, comment.idUser, comment.idTicket]).then(([r]: any) => {
+        return this.pool.query(sql, [comment.text, comment.idUser, comment.idTicket]).then(([r]: [OkPacket]) => {
             return r.insertId
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })
@@ -160,7 +161,7 @@ class TicketRepository extends Repository {
                      where c.id_ticket = ?`
         return this.pool.query(sql, [id]).then(([r]: [CommentTicket[]]) => {
             return r
-        }, (err: Error) => {
+        }, (err: MysqlError) => {
             logger.error('Ошибка запроса к бд: ', err)
             throw new DBError()
         })

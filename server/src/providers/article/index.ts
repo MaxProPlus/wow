@@ -3,6 +3,14 @@ import {Article, CommentArticle} from '../../common/entity/types'
 import {ArticleUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import RightProvider from '../right'
+import {ForbiddenError, NotFoundError} from '../../errors'
+
+// Ошибка "Новость не найдена"
+export class ArticleNotFoundError extends NotFoundError {
+    constructor() {
+        super('Новость не найдена')
+    }
+}
 
 class ArticleProvider {
 
@@ -14,7 +22,7 @@ class ArticleProvider {
     }
 
     // Создать новость
-    create = async (c: ArticleUpload) => {
+    create = async (c: ArticleUpload): Promise<number> => {
         const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'articleAvatar')
         c.urlAvatar = infoAvatar.url
 
@@ -31,15 +39,15 @@ class ArticleProvider {
         ]
         return Promise.all<Article, CommentArticle[]>(p).then(([c, comments]) => {
             return [c, comments]
-        }) as Promise<[Article, CommentArticle[]]>
+        })
     }
 
     // Получить все новости
-    getAll = (limit: number, page: number, data?: any) => {
+    getAll = (limit: number, page: number, data?: any): Promise<{ data: Article[], count: number }> => {
         const p = []
         p.push(this.repository.selectAll(limit, page, data))
         p.push(this.repository.selectCount(data))
-        return Promise.all(p).then((r) => {
+        return Promise.all<any>(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],
@@ -48,13 +56,13 @@ class ArticleProvider {
     }
 
     // Редактировать новость
-    update = async (c: ArticleUpload) => {
+    update = async (c: ArticleUpload): Promise<number> => {
         const oldArticle = await this.repository.selectById(c.id)
 
         c.urlAvatar = oldArticle.urlAvatar
         let infoAvatar
         // Если загружена новая аватарка, то обновляем ее
-        if (!!c.fileAvatar) {
+        if (c.fileAvatar) {
             this.uploader.remove(oldArticle.urlAvatar)
             infoAvatar = this.uploader.getInfo(c.fileAvatar, 'articleAvatar')
             c.urlAvatar = infoAvatar.url
@@ -65,20 +73,20 @@ class ArticleProvider {
     }
 
     // Удалить новость
-    remove = async (character: Article) => {
+    remove = async (character: Article): Promise<number> => {
         const oldArticle = await this.repository.selectById(character.id)
         if (oldArticle.idUser !== character.idUser) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
         this.uploader.remove(oldArticle.urlAvatar)
         return this.repository.remove(character.id)
     }
 
     // Создать комментарий к новости
-    createComment = async (comment: CommentArticle) => {
+    createComment = async (comment: CommentArticle): Promise<number> => {
         const c = await this.repository.selectById(comment.idArticle)
-        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
-            return Promise.reject('Комментирование запрещено')
+        if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+            throw new ForbiddenError('Комментирование запрещено')
         }
         return this.repository.insertComment(comment)
     }
@@ -95,7 +103,7 @@ class ArticleProvider {
     }
 
     // Удалить комментарий
-    removeComment = async (comment: CommentArticle) => {
+    removeComment = async (comment: CommentArticle): Promise<number> => {
         const oldComment = await this.repository.selectCommentById(comment.id)
         const article = await this.repository.selectById(oldComment.idArticle)
         if (oldComment.idUser === comment.idUser
@@ -104,7 +112,7 @@ class ArticleProvider {
             || await this.rightProvider.articleModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
-        return Promise.reject('Нет прав')
+        throw new ForbiddenError()
     }
 }
 

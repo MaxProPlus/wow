@@ -1,6 +1,7 @@
 import Repository from '../core/repository'
 import logger from '../services/logger'
 import {User} from '../common/entity/types'
+import {DBError, NotFoundError} from '../errors'
 
 // Базовый класс для материалов с соавторами
 // Работает с таблицей table_coauthor, где table задает конструктором
@@ -13,14 +14,14 @@ class BasicMaterialRepository extends Repository {
     }
 
     // Добавить соавтора
-    insertCoauthor = (id: number, idUser: number) => {
+    insertCoauthor = (id: number, idUser: number): Promise<number> => {
         const sql = `INSERT INTO ${this.table}_coauthor (id_${this.table}, id_user)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idUser]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -32,27 +33,27 @@ class BasicMaterialRepository extends Repository {
                               join \`${this.table}\` s on tc.id_${this.table} = s.id
                      where s.id = ?`
         return this.pool.query(sql, [id]).then(([r]: [User[]]) => {
-            return Promise.resolve(r)
+            return r
         }, (err: any) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить соавтора
-    removeCoauthor = (id: number, idLink: number) => {
+    removeCoauthor = (id: number, idLink: number): Promise<number> => {
         const sql = `delete
                      from ${this.table}_coauthor
                      where id_${this.table} = ?
                        and id_user = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Соавтор не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 

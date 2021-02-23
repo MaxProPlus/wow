@@ -1,6 +1,7 @@
-import {createTransport} from 'nodemailer'
+import {createTransport, SentMessageInfo} from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
 import logger from '../logger'
+import {ApiError} from '../../errors'
 
 // Конфиг на подключение smtp сервера
 const config = {
@@ -10,6 +11,12 @@ const config = {
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD
+    }
+}
+
+export class SmtpError extends ApiError {
+    constructor() {
+        super('Ошибка при отправке сообщения. Если ошибка повторится, то свяжитесь с администрацией', 'ERROR_SMTP')
     }
 }
 
@@ -23,23 +30,21 @@ export class Smtp {
     }
 
     // Отправка подтверждения регистрации
-    public sendConfirmation = (email: string, nickname: string, token: string) => {
+    public sendConfirmation = (email: string, nickname: string, token: string): Promise<SentMessageInfo> => {
         const mailOptions = {
             from: `Equilibrium: RP сервере WOW robot <${config.auth.user}>`,
             to: email,
             subject: 'Подтверждение аккаунта на сайте Equilibrium: RP сервере WOW',
             html: this.htmlConfirmation(nickname, token)
         }
-        return this.transport.sendMail(mailOptions).then(() => {
-            return Promise.resolve()
-        }, err => {
+        return this.transport.sendMail(mailOptions).catch((err: Error) => {
             logger.error(err)
-            return Promise.reject()
+            throw new SmtpError()
         })
     }
 
     // Формирование html подтверждения регистрации
-    private htmlConfirmation = (nickname: string, token: string) => {
+    private htmlConfirmation = (nickname: string, token: string): string => {
         // @ts-ignore
         const link = `http://${process.env.HOST}${(process.env.PORT !== 80?':'+process.env.PORT: '')}/login?token=${token}`
         return `<p>Здравствуйте, ${nickname}</p>
@@ -48,18 +53,16 @@ export class Smtp {
     }
 
     // Отправка потверждения изменения email
-    public sendChangeEmail = (email: string, token: string) => {
+    public sendChangeEmail = (email: string, token: string): Promise<SentMessageInfo> => {
         const mailOptions = {
             from: `Equilibrium: RP сервере WOW robot <${config.auth.user}>`,
             to: email,
             subject: 'Подтверждение смена email на сайте Equilibrium: RP сервере WOW',
             html: this.htmlChangeEmail(token)
         }
-        return this.transport.sendMail(mailOptions).then(() => {
-            return Promise.resolve()
-        }, err => {
+        return this.transport.sendMail(mailOptions).catch(err => {
             logger.error(err)
-            return Promise.reject()
+            throw new SmtpError()
         })
     }
 

@@ -2,11 +2,13 @@ import {User} from '../common/entity/types'
 import {Token} from '../entity/types'
 import logger from '../services/logger'
 import Repository from '../core/repository'
+import {DBError} from '../errors'
+import {AuthError} from '../providers/auth'
 
 class AuthRepository extends Repository {
 
     // Аутентификация
-    login = (user: User) => {
+    login = (user: User): Promise<any> => {
         const sql = `select u.id,
                             a.id as idAccount
                      from user u
@@ -15,41 +17,41 @@ class AuthRepository extends Repository {
                        and a.sha_pass_hash = ?`
         return this.pool.query(sql, [user.username, user.password]).then(([r]: any) => {
             if (!r.length) {
-                return Promise.reject('Неверный логин или пароль')
+                throw new AuthError('Неверный логин или пароль')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Сохранить токен
-    saveToken = (data: Token) => {
+    saveToken = (data: Token): Promise<string> => {
         const sql = 'INSERT INTO token(id_user, text, ip) VALUES(?, ?, ?)'
         return this.pool.query(sql, [data.idUser, data.text, data.ip]).then(() => {
-            return Promise.resolve(data.text)
-        }, (err: any) => {
+            return data.text
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить пользователя по токену
-    getUserByToken = (token: string) => {
+    getUserByToken = (token: string): Promise<User | null> => {
         const sql = `SELECT id_user AS id
                      FROM token
                      WHERE text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0] || null
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить пользователя с правами по токену
-    getUserWithRightsByToken = (token: string) => {
+    getUserWithRightsByToken = (token: string): Promise<User | null> => {
         const sql = `select t.id_user as id, p.name
                      from token t
                               left join ar_user_role aur on t.id_user = aur.id_user
@@ -58,22 +60,22 @@ class AuthRepository extends Repository {
                      where t.text = ?`
         return this.pool.query(sql, [token]).then(([r]: any) => {
             if (!r) {
-                return Promise.resolve(null)
+                return null
             }
             const user = new User()
             user.id = r[0].id
             if (r[0].name) {
-                user.rights = r.map((el: any)=>el.name)
+                user.rights = r.map((el: any) => el.name)
             }
-            return Promise.resolve(user)
-        }, (err: any) => {
+            return user
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить пользователя по токену и паролю
-    getUserByTokenAndPassword = (token: string, pass: string) => {
+    getUserByTokenAndPassword = (token: string, pass: string): Promise<User | null> => {
         const sql = `select t.id_user as id, a.username
                      from token t
                               join user u on u.id = t.id_user
@@ -84,10 +86,10 @@ class AuthRepository extends Repository {
             if (!r.length) {
                 return null
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -102,23 +104,23 @@ class AuthRepository extends Repository {
             if (!r.length) {
                 return null
             }
-            return Promise.resolve(r[0].username)
-        }, (err: any) => {
+            return r[0].username
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Выход
-    logout = (token: string) => {
+    logout = (token: string): Promise<void> => {
         const sql = `DELETE
                      FROM token
                      WHERE text = ?`
         return this.pool.query(sql, [token]).then(() => {
-            return Promise.resolve()
-        }, (err: any) => {
+            return
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

@@ -1,18 +1,19 @@
 import {CommentTicket, Ticket, TicketStatus, TicketType} from '../common/entity/types'
 import logger from '../services/logger'
 import Repository from '../core/repository'
+import {DBError, NotFoundError} from '../errors'
 
 class TicketRepository extends Repository {
 
     // Создать тикет
-    insert = (ticket: Ticket) => {
+    insert = (ticket: Ticket): Promise<number> => {
         const sql = `INSERT INTO ticket (title, text, id_ticket_type, id_user)
                      VALUES (?, ?, ?, ?)`
         return this.pool.query(sql, [ticket.title, ticket.text, ticket.idTicketType, ticket.idUser]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -23,17 +24,17 @@ class TicketRepository extends Repository {
                      where id_ticket_type = ?`
         return this.pool.query(sql, [id]).then(([r]: any) => {
             if (!r.length) {
-                return Promise.reject('Тикет не найден')
+                throw new NotFoundError('Тикет не найден')
             }
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить тикет по id
-    selectById = (id: number): Ticket => {
+    selectById = (id: number): Promise<Ticket> => {
         const sql = `select t.id,
                             t.title,
                             t.id_ticket_type as idTicketType,
@@ -51,17 +52,17 @@ class TicketRepository extends Repository {
                      where t.id = ?`
         return this.pool.query(sql, [id]).then(([r]: [Ticket[]]) => {
             if (!r.length) {
-                return Promise.reject('Тикет не найден')
+                throw new NotFoundError('Тикет не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить тип тикета по id
-    selectTypeOfTicketById = (idType: number) => {
+    selectTypeOfTicketById = (idType: number): Promise<TicketType> => {
         const sql = `select t.id,
                             t.title,
                             t.description,
@@ -70,32 +71,32 @@ class TicketRepository extends Repository {
                      where t.id = ?`
         return this.pool.query(sql, [idType]).then(([r]: [TicketType[]]) => {
             if (!r.length) {
-                return Promise.reject('Категория заявок не найдена')
+                throw new NotFoundError('Категория заявок не найдена')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить все типы тикетов
-    selectTypesOfTicket = () => {
+    selectTypesOfTicket = (): Promise<TicketType[]> => {
         const sql = `select t.id, t.title, t.description, t.url_avatar as urlAvatar
                      from ticket_type t`
         return this.pool.query(sql).then(([r]: [TicketType[]]) => {
             if (!r.length) {
-                return Promise.reject('Категории заявок не найдены')
+                throw new NotFoundError('Категории заявок не найдены')
             }
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить все тикеты по id типу
-    selectTicketsByType = (id: number, limit: number, page: number) => {
+    selectTicketsByType = (id: number, limit: number, page: number): Promise<Ticket[]> => {
         const sql = `select t.id,
                             t.title,
                             t.id_ticket_type as idTicketType,
@@ -109,14 +110,14 @@ class TicketRepository extends Repository {
                      where t.id_ticket_type = ?
                      limit ? offset ?`
         return this.pool.query(sql, [id, limit, limit * (page - 1)]).then(([r]: [Ticket[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
-    updateStatus = (idTicket: number, status: TicketStatus, idUser: number) => {
+    updateStatus = (idTicket: number, status: TicketStatus, idUser: number): Promise<number> => {
         const sql = `UPDATE ticket
                      SET status        = ?,
                          updated_at    = current_timestamp(),
@@ -124,29 +125,29 @@ class TicketRepository extends Repository {
                      where id = ?`
         return this.pool.query(sql, [status, idUser, idTicket]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Тикет не найден')
+                throw new NotFoundError('Тикет не найден')
             }
-            return Promise.resolve(idTicket)
-        }, (err: any) => {
+            return idTicket
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Создать комментарий на тикет
-    insertComment = (comment: CommentTicket) => {
+    insertComment = (comment: CommentTicket): Promise<number> => {
         const sql = `INSERT INTO ticket_comment (text, id_user, id_ticket)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idTicket]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить комментарии тикетов по id
-    selectCommentsByIdTicket = (id: number) => {
+    selectCommentsByIdTicket = (id: number): Promise<CommentTicket[]> => {
         const sql = `select c.id,
                             c.text,
                             c.id_user    as idUser,
@@ -158,10 +159,10 @@ class TicketRepository extends Repository {
                               join user u on c.id_user = u.id
                      where c.id_ticket = ?`
         return this.pool.query(sql, [id]).then(([r]: [CommentTicket[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

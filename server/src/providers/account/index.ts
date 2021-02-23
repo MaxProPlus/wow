@@ -15,18 +15,18 @@ class UserProvider {
     }
 
     // Получить контекст
-    getContext = async (token: string) => {
+    getContext = async (token: string): Promise<User> => {
         const user: User = await this.repository.getContext(token)
         if (!user.urlAvatar) {
             user.urlAvatar = defaultAvatar
         }
         user.rights = await this.rightProvider.getRights(user.id)
-        return Promise.resolve(user)
+        return user
     }
 
     // Получить пользователя по id
-    getById = (id: number) => {
-        return this.repository.selectById(id).then((user: User) => {
+    getById = (id: number): Promise<User> => {
+        return this.repository.selectById(id).then((user) => {
             if (!user.urlAvatar) {
                 user.urlAvatar = defaultAvatar
             }
@@ -35,15 +35,15 @@ class UserProvider {
     }
 
     // Получить информацию о пользователе
-    getGeneral = async (idProfile: number) => {
+    getGeneral = async (idProfile: number): Promise<User> => {
         return this.repository.selectUserGeneralById(idProfile)
     }
 
-    getAll = (limit: number, page: number, data?: any) => {
+    getAll = (limit: number, page: number, data?: any): Promise<{ data: User[], count: number }> => {
         const p = []
         p.push(this.repository.selectAll(limit, page, data))
         p.push(this.repository.selectCount(data))
-        return Promise.all(p).then((r) => {
+        return Promise.all<any>(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],
@@ -52,12 +52,12 @@ class UserProvider {
     }
 
     // Редактирование основной информации
-    updateGeneral = async (user: User) => {
+    updateGeneral = async (user: User): Promise<number> => {
         return this.repository.updateGeneral(user)
     }
 
     // Загрузка аватарки
-    updateAvatar = async (id: number, avatar: any) => {
+    updateAvatar = async (id: number, avatar: any): Promise<number> => {
         const oldAvatarPath = (await this.repository.selectById(id)).urlAvatar
         if (oldAvatarPath) {
             this.uploader.remove(oldAvatarPath)

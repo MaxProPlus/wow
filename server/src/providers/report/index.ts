@@ -1,8 +1,16 @@
 import ReportRepository from '../../repositories/report'
-import {Character, CommentReport, CommentStory, Guild, Report, Story, User} from '../../common/entity/types'
+import {Character, CommentReport, Guild, Report, Story, User} from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import RightProvider from '../right'
+import {ForbiddenError, NotFoundError} from '../../errors'
+
+// Ошибка "Отчет / лог не найден"
+export class ReportNotFoundError extends NotFoundError {
+    constructor() {
+        super('Отчет / лог не найден')
+    }
+}
 
 class ReportProvider {
     constructor(
@@ -13,7 +21,7 @@ class ReportProvider {
     }
 
     // Создать отчет
-    create = async (c: ReportUpload) => {
+    create = async (c: ReportUpload): Promise<number> => {
         const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'reportAvatar')
         c.urlAvatar = infoAvatar.url
 
@@ -56,11 +64,11 @@ class ReportProvider {
     }
 
     // Получить все отчеты
-    getAll = (limit: number, page: number, data?: any) => {
+    getAll = (limit: number, page: number, data?: any): Promise<{ data: Report[], count: number }> => {
         const p = []
         p.push(this.repository.selectAll(limit, page, data))
         p.push(this.repository.selectCount(data))
-        return Promise.all(p).then((r) => {
+        return Promise.all<any>(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],
@@ -69,14 +77,14 @@ class ReportProvider {
     }
 
     // Редактировать отчет
-    update = async (c: ReportUpload) => {
+    update = async (c: ReportUpload): Promise<number> => {
         const old = await this.repository.selectById(c.id)
         old.coauthors = await this.repository.selectCoauthorById(c.id)
         if (old.idUser !== c.idUser && (old.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
 
-        const p: Promise<any>[] = []
+        const p = []
 
         old.members = await this.repository.selectMembersById(c.id)
         // Перебор нового списка участников отчета
@@ -144,40 +152,40 @@ class ReportProvider {
         // Обновить аватарку
         c.urlAvatar = old.urlAvatar
         let infoAvatar
-        if (!!c.fileAvatar) {
+        if (c.fileAvatar) {
             this.uploader.remove(old.urlAvatar)
             infoAvatar = this.uploader.getInfo(c.fileAvatar, 'reportAvatar')
             c.urlAvatar = infoAvatar.url
             p.push(c.fileAvatar.mv(infoAvatar.path))
         }
-        await Promise.all(p)
+        await Promise.all<any>(p)
         return this.repository.update(c)
     }
 
     // Удалить отчет
-    remove = async (report: Report) => {
+    remove = async (report: Report): Promise<number> => {
         const old = await this.repository.selectById(report.id)
         old.coauthors = await this.repository.selectCoauthorById(report.id)
         if (old.idUser !== report.idUser && (old.coauthors.findIndex((el: User) => el.id === report.idUser)) === -1) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
         this.uploader.remove(old.urlAvatar)
         return this.repository.remove(report.id)
     }
 
     // Создать комментарий
-    createComment = async (comment: CommentReport) => {
+    createComment = async (comment: CommentReport): Promise<number> => {
         const c = await this.repository.selectById(comment.idReport)
-        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
-            return Promise.reject('Комментирование запрещено')
+        if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+            throw new ForbiddenError('Комментирование запрещено')
         }
         return this.repository.insertComment(comment)
     }
 
     // Получить комментарии
-    getComments = async (id: number) => {
+    getComments = async (id: number): Promise<CommentReport[]> => {
         const comments = await this.repository.selectCommentsByIdReport(id)
-        comments.forEach((c: CommentStory) => {
+        comments.forEach((c) => {
             if (!c.authorUrlAvatar) {
                 c.authorUrlAvatar = defaultAvatar
             }
@@ -186,7 +194,7 @@ class ReportProvider {
     }
 
     // Удалить комментарий
-    removeComment = async (comment: CommentReport) => {
+    removeComment = async (comment: CommentReport): Promise<number> => {
         const oldComment = await this.repository.selectCommentById(comment.id)
         const report = await this.repository.selectById(oldComment.idReport)
         if (oldComment.idUser === comment.idUser
@@ -194,7 +202,7 @@ class ReportProvider {
             || await this.rightProvider.commentModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
-        return Promise.reject('Нет прав')
+        throw new ForbiddenError()
     }
 }
 

@@ -4,11 +4,11 @@ import path from 'path'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
-import express, {NextFunction, Request, Response} from 'express'
+import express, {Request, Response} from 'express'
 import 'express-async-errors'
 
 import initApiRouter from './routes'
-import logger from './services/logger'
+import {apiErrorMiddleware} from './middlewares/apiError'
 
 // Init express
 const app = express()
@@ -30,14 +30,8 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/api', initApiRouter())
 
-// Print API errors
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-    logger.error(err.message, err)
-    return res.status(400).json({
-        status: 'ERROR',
-        errorMessage: err.message,
-    })
-})
+// Print errors
+app.use(apiErrorMiddleware)
 
 // Статика фронта
 app.use(express.static(path.join(__dirname, '../../client/build')))

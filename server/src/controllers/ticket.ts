@@ -1,11 +1,11 @@
 import {Request, Response} from 'express'
-import {CommentTicket, Ticket, TicketType} from '../common/entity/types'
+import {CommentTicket, Ticket} from '../common/entity/types'
 import Validator from '../common/validator'
 import TicketProvider from '../providers/ticket'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
-import {FORBIDDEN} from '../errors'
+import {ForbiddenError, ParseError, ValidationError} from '../errors'
 
 class TicketController extends Controller {
     constructor(
@@ -23,20 +23,12 @@ class TicketController extends Controller {
         c.idUser = req.user!.id
         const err = this.validator.validateTicket(c)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
-        return this.ticketProvider.create(c).then((r: any) => {
+        return this.ticketProvider.create(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -45,25 +37,17 @@ class TicketController extends Controller {
     getById = async (req: Request, res: Response) => {
         const idTicket = parseInt(req.params.id)
         if (isNaN(idTicket)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         const idUser = req.user!.id
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         return this.ticketProvider.getById(idTicket).then(([ticket, comments]) => {
             if (ticket.idUser !== idUser && !ticketModerator) {
-                return res.json(FORBIDDEN)
+                throw new ForbiddenError()
             }
             return res.json({
                 status: 'OK',
                 results: [ticket, comments],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -71,46 +55,30 @@ class TicketController extends Controller {
     changeStatus = async (req: Request, res: Response) => {
         const idTicket = parseInt(req.params.id)
         if (isNaN(idTicket)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         const idUser = req.user!.id
         const ticketModerator = await this.rightProvider.ticketModerator(idUser)
         if (!ticketModerator) {
-            return res.json(FORBIDDEN)
+            throw new ForbiddenError()
         }
         const err = this.validator.validateTicketStatus(req.body.status)
         if (err) {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Ошибка валидации',
-            })
+            throw new ValidationError(err)
         }
         return this.ticketProvider.changeStatus(idTicket, req.body.status, idUser).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
 
     // Получить все типы тикетов
     getTypesOfTicket = async (req: Request, res: Response) => {
-        return this.ticketProvider.getTypesOfTicket().then((r: TicketType[]) => {
+        return this.ticketProvider.getTypesOfTicket().then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -121,20 +89,12 @@ class TicketController extends Controller {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
         if (isNaN(idTicketType)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
-        return this.ticketProvider.getTicketsByType(idTicketType, limit, page).then((r: any) => {
+        return this.ticketProvider.getTicketsByType(idTicketType, limit, page).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -145,20 +105,12 @@ class TicketController extends Controller {
         c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
-        return this.ticketProvider.createComment(c).then((r: any) => {
+        return this.ticketProvider.createComment(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -167,21 +119,13 @@ class TicketController extends Controller {
     getComments = async (req: Request, res: Response) => {
         const idTicket = parseInt(req.params.idTicket)
         if (isNaN(idTicket)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         const idUser = req.user!.id
         return this.ticketProvider.getComments(idTicket, idUser).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }

@@ -8,7 +8,8 @@ class FeedbackProvider {
     ) {
     }
 
-    getAll = () => {
+    // Получить список администраторов
+    getAll = (): Promise<Feedback[]> => {
         return this.repository.selectAll().then(r => {
             r.forEach(el => {
                 if (!el.urlAvatar) {
@@ -19,7 +20,8 @@ class FeedbackProvider {
         })
     }
 
-    update = async (list: Feedback[]) => {
+    // Обновить список администраторов
+    update = async (list: Feedback[]): Promise<any> => {
         const oldList = await this.getAll()
 
         // Перебираем новый список

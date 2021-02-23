@@ -1,15 +1,16 @@
 import {Character, CommentCharacter, Guild, Report, Story} from '../common/entity/types'
 import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
+import {DBError, NotFoundError} from '../errors'
+import {CharacterNotFoundError} from '../providers/character'
 
 class CharacterRepository extends BasicMaterialRepository {
-
     constructor(pool: any) {
         super(pool, 'character')
     }
 
     // Создать персонажа
-    insert = (character: Character) => {
+    insert = (character: Character): Promise<number> => {
         const sql = `INSERT INTO \`character\` (id_user, url_avatar, title, nickname, short_description, race,
                                                 nation,
                                                 territory, age, class, occupation, religion, languages, description,
@@ -20,10 +21,10 @@ class CharacterRepository extends BasicMaterialRepository {
         return this.pool.query(sql, [character.idUser, character.urlAvatar, character.title, character.nickname, character.shortDescription, character.race, character.nation,
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
             character.status, character.active, character.closed, character.hidden, character.comment, character.style]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -32,10 +33,10 @@ class CharacterRepository extends BasicMaterialRepository {
         const sql = `INSERT INTO character_to_character (id_character, id_character_link)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -74,12 +75,12 @@ class CharacterRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
             if (!r.length) {
-                return Promise.reject('Персонаж не найден')
+                throw new CharacterNotFoundError()
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -94,10 +95,10 @@ class CharacterRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -112,10 +113,10 @@ class CharacterRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -130,10 +131,10 @@ class CharacterRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -148,15 +149,15 @@ class CharacterRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить всех персонажей
-    selectAll = (limit: number, page: number, data?: any) => {
+    selectAll = (limit: number, page: number, data?: any): Promise<Character[]> => {
         let sql = `select c.id,
                           c.url_avatar      as urlAvatar,
                           title,
@@ -167,27 +168,16 @@ class CharacterRepository extends BasicMaterialRepository {
                             join user u on c.id_user = u.id
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         sql +=
             ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Character[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -197,29 +187,18 @@ class CharacterRepository extends BasicMaterialRepository {
                    from \`character\`
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Редактировать персонажа
-    update = (character: Character) => {
+    update = (character: Character): Promise<number> => {
         const sql = `UPDATE \`character\`
                      SET url_avatar        = ?,
                          updated_at        = current_timestamp(),
@@ -250,28 +229,28 @@ class CharacterRepository extends BasicMaterialRepository {
             character.territory, character.age, character.className, character.occupation, character.religion, character.languages, character.description, character.history, character.more, character.sex,
             character.status, character.active, character.closed, character.hidden, character.comment, character.style, character.id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Персонаж не найден')
+                throw new CharacterNotFoundError()
             }
-            return Promise.resolve(character.id)
-        }, (err: any) => {
+            return character.id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить персонажа
-    remove = (id: number) => {
+    remove = (id: number): Promise<number> => {
         const sql = `UPDATE \`character\`
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Персонаж не найден')
+                throw new CharacterNotFoundError()
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -283,12 +262,12 @@ class CharacterRepository extends BasicMaterialRepository {
                        and id_character_link = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Связь не найдена')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -297,10 +276,10 @@ class CharacterRepository extends BasicMaterialRepository {
         const sql = `INSERT INTO character_comment (text, id_user, id_character)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idCharacter]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -315,12 +294,12 @@ class CharacterRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {
             if (!r.length) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -339,26 +318,26 @@ class CharacterRepository extends BasicMaterialRepository {
                      where c.id_character = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentCharacter[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
+    removeComment = (id: number): Promise<number> => {
         const sql = `UPDATE character_comment
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

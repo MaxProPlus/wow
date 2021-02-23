@@ -3,6 +3,14 @@ import {Character, CommentGuild, Guild, Report, Story, User} from '../../common/
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import RightProvider from '../right'
+import {ForbiddenError, NotFoundError} from '../../errors'
+
+// Ошибка "Гильдия не найдена"
+export class GuildNotFoundError extends NotFoundError {
+    constructor(message: string = 'Гильдия не найдена') {
+        super(message)
+    }
+}
 
 class GuildProvider {
     constructor(
@@ -13,12 +21,12 @@ class GuildProvider {
     }
 
     // Создать гильдию
-    create = async (c: GuildUpload) => {
+    create = async (c: GuildUpload): Promise<number> => {
         const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'guildAvatar')
         c.urlAvatar = infoAvatar.url
 
         const id = await this.repository.insert(c)
-        const p: Promise<any>[] = []
+        const p = []
         p.push(Promise.all(c.members.map(async (idLink) => {
             await this.repository.insertMember(id, idLink)
         })))
@@ -26,7 +34,7 @@ class GuildProvider {
             return this.repository.insertCoauthor(id, el)
         })))
         p.push(c.fileAvatar.mv(infoAvatar.path))
-        await Promise.all(p)
+        await Promise.all<any>(p)
         return id
     }
 
@@ -50,11 +58,11 @@ class GuildProvider {
     }
 
     // Получить все гильдии
-    getAll = (limit: number, page: number, data?: any) => {
+    getAll = (limit: number, page: number, data?: any): Promise<{ data: Guild[], count: number }> => {
         const p = []
         p.push(this.repository.selectAll(limit, page, data))
         p.push(this.repository.selectCount(data))
-        return Promise.all(p).then((r) => {
+        return Promise.all<any>(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],
@@ -63,14 +71,14 @@ class GuildProvider {
     }
 
     // Редактировать гильдию
-    update = async (guild: GuildUpload) => {
+    update = async (guild: GuildUpload): Promise<number> => {
         const old = await this.repository.selectById(guild.id)
         old.coauthors = await this.repository.selectCoauthorById(guild.id)
         if (old.idUser !== guild.idUser && (old.coauthors.findIndex((el: User) => el.id === guild.idUser)) === -1) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
 
-        const p: Promise<any>[] = []
+        const p = []
 
         old.members = await this.repository.selectMembersById(guild.id)
         // Перебор нового списка участников гильдии
@@ -107,38 +115,38 @@ class GuildProvider {
         guild.urlAvatar = old.urlAvatar
         // Обновить аватарку
         let infoAvatar
-        if (!!guild.fileAvatar) {
+        if (guild.fileAvatar) {
             this.uploader.remove(old.urlAvatar)
             infoAvatar = this.uploader.getInfo(guild.fileAvatar, 'guildAvatar')
             guild.urlAvatar = infoAvatar.url
             p.push(guild.fileAvatar.mv(infoAvatar.path))
         }
-        await Promise.all(p)
+        await Promise.all<any>(p)
         return this.repository.update(guild)
     }
 
     // Удалить гильдию
-    remove = async (guild: Guild) => {
+    remove = async (guild: Guild): Promise<number> => {
         const old = await this.repository.selectById(guild.id)
         old.coauthors = await this.repository.selectCoauthorById(guild.id)
         if (old.idUser !== guild.idUser && (old.coauthors.findIndex((el: User) => el.id === guild.idUser)) === -1) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
         this.uploader.remove(old.urlAvatar)
         return this.repository.remove(guild.id)
     }
 
     // Создать комментарий
-    createComment = async (comment: CommentGuild) => {
+    createComment = async (comment: CommentGuild): Promise<number> => {
         const c = await this.repository.selectById(comment.idGuild)
-        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
-            return Promise.reject('Комментирование запрещено')
+        if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+            throw new ForbiddenError('Комментирование запрещено')
         }
         return this.repository.insertComment(comment)
     }
 
     // Получить комментарии
-    getComments = async (id: number) => {
+    getComments = async (id: number): Promise<CommentGuild[]> => {
         const comments = await this.repository.selectCommentsByIdGuild(id)
         comments.forEach((c: CommentGuild) => {
             if (!c.authorUrlAvatar) {
@@ -149,7 +157,7 @@ class GuildProvider {
     }
 
     // Удалить комментарий
-    removeComment = async (comment: CommentGuild) => {
+    removeComment = async (comment: CommentGuild): Promise<number> => {
         const oldComment = await this.repository.selectCommentById(comment.id)
         const guild = await this.repository.selectById(oldComment.idGuild)
         if (oldComment.idUser === comment.idUser
@@ -157,7 +165,7 @@ class GuildProvider {
             || await this.rightProvider.commentModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
-        return Promise.reject('Нет прав')
+        throw new ForbiddenError()
     }
 }
 

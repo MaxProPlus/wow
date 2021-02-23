@@ -1,19 +1,21 @@
 import {Article, CommentArticle} from '../common/entity/types'
 import logger from '../services/logger'
 import Repository from '../core/repository'
+import {DBError, NotFoundError} from '../errors'
+import {ArticleNotFoundError} from '../providers/article'
 
 class ArticleRepository extends Repository {
 
     // Создать новость
-    insert = (a: Article) => {
+    insert = (a: Article): Promise<number> => {
         const sql = `INSERT INTO article (id_user, url_avatar, title, short_description, description,
                                           closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [a.idUser, a.urlAvatar, a.title, a.shortDescription, a.description, a.closed, a.hidden, a.comment, a.style]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -38,17 +40,17 @@ class ArticleRepository extends Repository {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Article[]]) => {
             if (!r.length) {
-                return Promise.reject('Новость не найдена')
+                throw new ArticleNotFoundError()
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить все новости
-    selectAll = (limit: number, page: number, data?: any) => {
+    selectAll = (limit: number, page: number, data?: any): Promise<Article[]> => {
         let sql = `select id,
                           url_avatar        as urlAvatar,
                           created_at        as createdAt,
@@ -57,27 +59,16 @@ class ArticleRepository extends Repository {
                    from article
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         sql +=
             ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Article[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -87,29 +78,18 @@ class ArticleRepository extends Repository {
                    from article
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Редактировать новость
-    update = (a: Article) => {
+    update = (a: Article): Promise<number> => {
         const sql = `UPDATE article
                      SET url_avatar        = ?,
                          updated_at        = current_timestamp(),
@@ -125,28 +105,28 @@ class ArticleRepository extends Repository {
         return this.pool.query(sql, [a.urlAvatar, a.title, a.shortDescription, a.description,
             a.closed, a.hidden, a.comment, a.style, a.id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Новость не найдена')
+                throw new ArticleNotFoundError()
             }
-            return Promise.resolve(a.id)
-        }, (err: any) => {
+            return a.id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить новость
-    remove = (id: number) => {
+    remove = (id: number): Promise<number> => {
         const sql = `UPDATE article
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Новость не найдена')
+                throw new ArticleNotFoundError()
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -155,10 +135,10 @@ class ArticleRepository extends Repository {
         const sql = `INSERT INTO article_comment (text, id_user, id_article)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idArticle]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -173,12 +153,12 @@ class ArticleRepository extends Repository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentArticle[]]) => {
             if (!r.length) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -197,26 +177,26 @@ class ArticleRepository extends Repository {
                      where c.id_article = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentArticle[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
+    removeComment = (id: number): Promise<number> => {
         const sql = `UPDATE article_comment
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

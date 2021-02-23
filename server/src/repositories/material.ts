@@ -1,10 +1,11 @@
 import Repository from '../core/repository'
 import logger from '../services/logger'
+import {DBError} from '../errors'
 
 class MaterialRepository extends Repository {
 
     // Получить список
-    selectAll = (limit: number, page: number, data?: any) => {
+    selectAll = (limit: number, page: number, data?: any): Promise<any[]> => {
         const title = `%${data.title}%`
         const sql = `
             select *
@@ -39,10 +40,10 @@ class MaterialRepository extends Repository {
             order by id desc
             limit ? offset ?`
         return this.pool.query(sql, [title, title, title, title, limit, limit * (page - 1)]).then(([r]: [any[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -79,10 +80,10 @@ class MaterialRepository extends Repository {
                                 and is_remove = 0
                                 and title like ?) X`
         return this.pool.query(sql, [title, title, title, title]).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

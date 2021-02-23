@@ -15,15 +15,10 @@ class AuthController {
         const user: User = req.body
         const about = new About()
         about.ip = req.ip
-        return this.authProvider.login(user, about).then((r: any) => {
+        return this.authProvider.login(user, about).then((r) => {
             TokenStorage.setToken(res, r)
             return res.json({
                 status: 'OK',
-            })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Неверный логин или пароль',
             })
         })
     }

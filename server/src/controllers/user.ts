@@ -8,6 +8,7 @@ import TokenStorage from '../services/token'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
+import {FileError, ParseError, UnauthorizedError, ValidationError} from '../errors'
 
 class UserController extends Controller {
     constructor(
@@ -22,17 +23,16 @@ class UserController extends Controller {
 
     // Получить контекст
     getContext = (req: Request, res: Response) => {
-        return this.userProvider.getContext(TokenStorage.getToken(req)).then((r: any) => {
+        return this.userProvider.getContext(TokenStorage.getToken(req)).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
             })
-        }, () => {
-            res.clearCookie('token')
-            return res.json({
-                status: 'UNAUTHORIZED',
-                errorMessage: 'Ошибка авторизации',
-            })
+        }, (err: Error) => {
+            if (err instanceof UnauthorizedError) {
+                res.clearCookie('token')
+            }
+            throw err
         })
     }
 
@@ -40,35 +40,22 @@ class UserController extends Controller {
     getUser = (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
-        return this.userProvider.getById(id).then((r: any) => {
+        return this.userProvider.getById(id).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
 
     // Получить информацию о пользователе
     getGeneral = async (req: Request, res: Response) => {
-        return this.userProvider.getGeneral(req.user!.id).then((r: any) => {
+        return this.userProvider.getGeneral(req.user!.id).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -78,18 +65,13 @@ class UserController extends Controller {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
         const data: any = {}
-        if (!!req.query.nickname) {
+        if (req.query.nickname) {
             data.nickname = req.query.nickname
         }
-        return this.userProvider.getAll(limit, page, data).then((r: any) => {
+        return this.userProvider.getAll(limit, page, data).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -99,21 +81,13 @@ class UserController extends Controller {
         const user: User = req.body
         user.id = req.user!.id
         const err = this.validator.validateGeneral(user)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
-        return this.userProvider.updateGeneral(user).then((r: any) => {
+        return this.userProvider.updateGeneral(user).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -121,26 +95,15 @@ class UserController extends Controller {
     // Загрузка аватарки
     updateAvatar = async (req: Request, res: Response) => {
         if (!req.files || Object.keys(req.files).length === 0) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: 'Не прикреплен файл',
-            })
+            throw new FileError('Аватарка не прикреплена')
         }
         const err = this.validator.validateImg(req.files.avatar as UploadedFile)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         return this.userProvider.updateAvatar(req.user!.id, req.files.avatar).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }

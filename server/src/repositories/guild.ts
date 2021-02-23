@@ -1,6 +1,8 @@
 import {Character, CommentGuild, Guild, Report, Story} from '../common/entity/types'
 import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
+import {DBError, NotFoundError} from '../errors'
+import {GuildNotFoundError} from '../providers/guild'
 
 class GuildRepository extends BasicMaterialRepository {
 
@@ -9,7 +11,7 @@ class GuildRepository extends BasicMaterialRepository {
     }
 
     // Создать гильдию
-    insert = (guild: Guild) => {
+    insert = (guild: Guild): Promise<number> => {
         const {idUser, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more, status, kit, closed, hidden, comment, style} = guild
         const sql = `INSERT INTO guild (id_user, url_avatar, title, game_title, ideology, short_description,
                                         description, rule, more,
@@ -17,22 +19,22 @@ class GuildRepository extends BasicMaterialRepository {
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, gameTitle, ideology, shortDescription, description, rule, more,
             status, kit, closed, hidden, comment, style]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Вставка в таблицу многие ко многим
-    insertMember = (id: number, idLink: number) => {
+    insertMember = (id: number, idLink: number): Promise<number> => {
         const sql = `INSERT INTO guild_to_character (id_guild, id_character)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idLink]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -63,12 +65,12 @@ class GuildRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
             if (!r.length) {
-                return Promise.reject('Гильдия не найдена')
+                throw new GuildNotFoundError()
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -83,10 +85,10 @@ class GuildRepository extends BasicMaterialRepository {
                      where g.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -101,10 +103,10 @@ class GuildRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -119,15 +121,15 @@ class GuildRepository extends BasicMaterialRepository {
                      where c.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить все гильдии
-    selectAll = (limit: number, page: number, data?: any) => {
+    selectAll = (limit: number, page: number, data?: any): Promise<Guild[]> => {
         let sql = `select id,
                           id_user           as idUser,
                           url_avatar        as urlAvatar,
@@ -136,27 +138,16 @@ class GuildRepository extends BasicMaterialRepository {
                    from guild
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         sql +=
             ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Guild[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -166,29 +157,18 @@ class GuildRepository extends BasicMaterialRepository {
                    from guild
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Редактировать гильдию
-    update = (guild: Guild) => {
+    update = (guild: Guild): Promise<number> => {
         const {id, urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style} = guild
         const sql = `UPDATE guild
                      SET url_avatar        = ?,
@@ -210,45 +190,45 @@ class GuildRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [urlAvatar, title, gameTitle, shortDescription, ideology, description, rule, more, status, kit, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Гильдия не найдена')
+                throw new GuildNotFoundError()
             }
-            return Promise.resolve(guild.id)
-        }, (err: any) => {
+            return guild.id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить гильдию
-    remove = (id: number) => {
+    remove = (id: number): Promise<number> => {
         const sql = `UPDATE guild
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Гильдия не найдена')
+                throw new GuildNotFoundError()
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить участника из гильдии
-    removeMember = (id: number, idLink: number) => {
+    removeMember = (id: number, idLink: number): Promise<number> => {
         const sql = `delete
                      from guild_to_character
                      where id_guild = ?
                        and id_character = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Связь не найдена')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -257,10 +237,10 @@ class GuildRepository extends BasicMaterialRepository {
         const sql = `INSERT INTO guild_comment (text, id_user, id_guild)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idGuild]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -275,17 +255,17 @@ class GuildRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentGuild[]]) => {
             if (!r.length) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить комментарии
-    selectCommentsByIdGuild = (id: number) => {
+    selectCommentsByIdGuild = (id: number): Promise<CommentGuild[]> => {
         const sql = `select c.id,
                             c.text,
                             c.id_user    as idUser,
@@ -299,26 +279,26 @@ class GuildRepository extends BasicMaterialRepository {
                      where c.id_guild = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentGuild[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
+    removeComment = (id: number): Promise<number> => {
         const sql = `UPDATE guild_comment
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

@@ -1,8 +1,16 @@
-import AuthRepository from '../repositories/auth'
-import {User} from '../common/entity/types'
-import {About, Token} from '../entity/types'
-import Hash from '../services/hash'
-import RegistrationRepository from '../repositories/registration'
+import AuthRepository from '../../repositories/auth'
+import {User} from '../../common/entity/types'
+import {About, Token} from '../../entity/types'
+import Hash from '../../services/hash'
+import RegistrationRepository from '../../repositories/registration'
+import {ApiError} from '../../errors'
+
+// Ошибки аутентификации
+export class AuthError extends ApiError {
+    constructor(message: string, name: string = 'ERROR_AUTH') {
+        super(message, name)
+    }
+}
 
 class AuthProvider {
     constructor(
@@ -13,7 +21,7 @@ class AuthProvider {
     }
 
     // Аутентификация
-    login = async (user: User, about: About) => {
+    login = async (user: User, about: About): Promise<string> => {
         user.username = user.username.toUpperCase()
         user.password = user.password.toUpperCase()
         user.password = this.hash.getHash(user.username, user.password)

@@ -8,7 +8,7 @@ import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
-import {FORBIDDEN} from '../errors'
+import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 
 class ArticleController extends Controller {
     constructor(
@@ -23,36 +23,25 @@ class ArticleController extends Controller {
     // Создать новость
     create = async (req: Request, res: Response) => {
         if (!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar) {
-            return res.json({
-                status: 'INVALID_FILE',
-                errorMessage: 'Не прикрепленна аватарка новости',
-            })
+            throw new FileError('Аватарка новости не прикрепленна')
         }
         const c: ArticleUpload = req.body
         c.fileAvatar = req.files.fileAvatar as UploadedFile
         let err = this.validator.validateArticle(c)
         err += this.validator.validateImg(c.fileAvatar)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json(FORBIDDEN)
+            throw new ForbiddenError()
         }
-        return this.articleProvider.create(c).then((r: any) => {
+        return this.articleProvider.create(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -61,26 +50,18 @@ class ArticleController extends Controller {
     getById = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         return this.articleProvider.getById(id).then(async ([article, comments]) => {
             if (article.closed) {
                 const user = await this.authProvider.getUser(TokenStorage.getToken(req))
                 if (!user || user && user.id !== article.idUser) {
-                    return res.json(FORBIDDEN)
+                    throw new ForbiddenError()
                 }
             }
             return res.json({
                 status: 'OK',
                 results: [article, comments],
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -90,12 +71,12 @@ class ArticleController extends Controller {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
         const data: any = {}
-        if (!!req.query.title) {
+        if (req.query.title) {
             data.title = req.query.title
         }
         // Если hidden = 1, то поиск по всем материалам
         // Если hidden = 0, то поиск только по не скрытым материалам
-        if (!!req.query.hidden) {
+        if (req.query.hidden) {
             data.hidden = parseInt(req.query.hidden as string)
         } else {
             data.hidden = 0
@@ -103,15 +84,10 @@ class ArticleController extends Controller {
         if (data.hidden) {
             delete data.hidden
         }
-        return this.articleProvider.getAll(limit, page, data).then((r: any) => {
+        return this.articleProvider.getAll(limit, page, data).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -120,10 +96,7 @@ class ArticleController extends Controller {
     update = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         const c: ArticleUpload = req.body
         c.id = id
@@ -133,27 +106,19 @@ class ArticleController extends Controller {
             c.fileAvatar = req.files.fileAvatar as UploadedFile
             err += this.validator.validateImg(c.fileAvatar)
         }
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json(FORBIDDEN)
+            throw new ForbiddenError()
         }
-        return this.articleProvider.update(c).then((r: any) => {
+        return this.articleProvider.update(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -163,25 +128,17 @@ class ArticleController extends Controller {
         const c = new Article()
         c.id = parseInt(req.params.id)
         if (isNaN(c.id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         c.idUser = req.user!.id
 
         // Проверка прав на управление новостью
         if (!(await this.rightProvider.articleModerator(c.idUser))) {
-            return res.json(FORBIDDEN)
+            throw new ForbiddenError()
         }
         return this.articleProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -192,20 +149,12 @@ class ArticleController extends Controller {
         c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
-        return this.articleProvider.createComment(c).then((r: number) => {
+        return this.articleProvider.createComment(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -214,20 +163,12 @@ class ArticleController extends Controller {
     getComments = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         return this.articleProvider.getComments(id).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -237,20 +178,12 @@ class ArticleController extends Controller {
         const c = new CommentArticle()
         c.id = parseInt(req.params.idComment)
         if (isNaN(c.id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         c.idUser = req.user!.id
-        this.articleProvider.removeComment(c).then(() => {
+        return this.articleProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, err => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }

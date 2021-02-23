@@ -1,6 +1,8 @@
 import {CommentForum, Forum} from '../common/entity/types'
 import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
+import {DBError, NotFoundError} from '../errors'
+import {ForumNotFoundError} from '../providers/forum'
 
 class ForumRepository extends BasicMaterialRepository {
     constructor(pool: any) {
@@ -8,17 +10,17 @@ class ForumRepository extends BasicMaterialRepository {
     }
 
     // Создать форум
-    insert = (forum: Forum) => {
+    insert = (forum: Forum): Promise<number> => {
         const {idUser, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = forum
         const sql = `INSERT INTO forum (id_user, url_avatar, title, short_description,
                                         description, rule, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, shortDescription,
             description, rule, closed, hidden, comment, style]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -44,12 +46,12 @@ class ForumRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Forum[]]) => {
             if (!r.length) {
-                return Promise.reject('Форум не найден')
+                throw new ForumNotFoundError()
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -66,27 +68,16 @@ class ForumRepository extends BasicMaterialRepository {
                             join user u on f.id_user = u.id
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         sql +=
             ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Forum[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -96,29 +87,18 @@ class ForumRepository extends BasicMaterialRepository {
                    from forum
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Редактировать форум
-    update = (report: Forum) => {
+    update = (report: Forum): Promise<number> => {
         const {id, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = report
         const sql = `UPDATE forum
                      SET url_avatar        = ?,
@@ -135,28 +115,28 @@ class ForumRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Форум не найден')
+                throw new ForumNotFoundError()
             }
-            return Promise.resolve(report.id)
-        }, (err: any) => {
+            return report.id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить форум
-    remove = (id: number) => {
+    remove = (id: number): Promise<number> => {
         const sql = `UPDATE forum
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Форум не найден')
+                throw new ForumNotFoundError()
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -165,10 +145,10 @@ class ForumRepository extends BasicMaterialRepository {
         const sql = `INSERT INTO forum_comment (text, id_user, id_forum)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idForum]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -183,17 +163,17 @@ class ForumRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentForum[]]) => {
             if (!r.length) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить комментарии
-    selectCommentsByIdForum = (id: number) => {
+    selectCommentsByIdForum = (id: number): Promise<CommentForum[]> => {
         const sql = `select c.id,
                             c.text,
                             c.id_user    as idUser,
@@ -207,26 +187,26 @@ class ForumRepository extends BasicMaterialRepository {
                      where c.id_forum = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentForum[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
+    removeComment = (id: number): Promise<number> => {
         const sql = `UPDATE forum_comment
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

@@ -3,6 +3,14 @@ import {Character, CommentCharacter, Guild, Report, Story, User} from '../../com
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import RightProvider from '../right'
+import {ForbiddenError, NotFoundError} from '../../errors'
+
+// Ошибка "Персонаж не найден"
+export class CharacterNotFoundError extends NotFoundError {
+    constructor(message: string = 'Персонаж не найден') {
+        super(message)
+    }
+}
 
 class CharacterProvider {
     constructor(
@@ -48,15 +56,15 @@ class CharacterProvider {
             c.reports = reports
             c.coauthors = coauthors
             return [c, comments]
-        }) as Promise<[Character, CommentCharacter[]]>
+        })
     }
 
     // Получить всех персонажей
-    getAll = (limit: number, page: number, data?: any) => {
+    getAll = (limit: number, page: number, data?: any): Promise<{ data: Character[], count: number }> => {
         const p = []
         p.push(this.repository.selectAll(limit, page, data))
         p.push(this.repository.selectCount(data))
-        return Promise.all(p).then((r) => {
+        return Promise.all<any>(p).then((r) => {
             return {
                 data: r[0],
                 count: r[1],
@@ -65,15 +73,15 @@ class CharacterProvider {
     }
 
     // Редактировать персонажа
-    update = async (c: CharacterUpload) => {
+    update = async (c: CharacterUpload): Promise<number> => {
         const oldCharacter = await this.repository.selectById(c.id)
 
         oldCharacter.coauthors = await this.repository.selectCoauthorById(c.id)
         if (oldCharacter.idUser !== c.idUser && (oldCharacter.coauthors.findIndex((el: User) => el.id === c.idUser)) === -1) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError()
         }
 
-        const p: Promise<any>[] = []
+        const p = []
 
         oldCharacter.friends = await this.repository.selectByIdLink(c.id)
         // Перебор нового списка друзей персонажей
@@ -109,32 +117,32 @@ class CharacterProvider {
         c.urlAvatar = oldCharacter.urlAvatar
         let infoAvatar
         // Если загружена новая аватарка, то обновляем ее
-        if (!!c.fileAvatar) {
+        if (c.fileAvatar) {
             this.uploader.remove(oldCharacter.urlAvatar)
             infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
             c.urlAvatar = infoAvatar.url
             p.push(c.fileAvatar.mv(infoAvatar.path))
         }
-        await Promise.all(p)
+        await Promise.all<any>(p)
 
         return this.repository.update(c)
     }
 
     // Удалить персонажа
-    remove = async (character: Character) => {
+    remove = async (character: Character): Promise<number> => {
         const oldCharacter = await this.repository.selectById(character.id)
         if (oldCharacter.idUser !== character.idUser) {
-            return Promise.reject('Нет прав')
+            throw new ForbiddenError('Удалить может только владалец')
         }
         this.uploader.remove(oldCharacter.urlAvatar)
         return this.repository.remove(character.id)
     }
 
     // Создать комментарий к персонажу
-    createComment = async (comment: CommentCharacter) => {
+    createComment = async (comment: CommentCharacter): Promise<number> => {
         const c = await this.repository.selectById(comment.idCharacter)
-        if (!!c.comment || (!!c.closed && c.idUser !== comment.idUser)) {
-            return Promise.reject('Комментирование запрещено')
+        if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+            throw new ForbiddenError('Комментирование запрещено')
         }
         return this.repository.insertComment(comment)
     }
@@ -151,7 +159,7 @@ class CharacterProvider {
     }
 
     // Удалить комментарий
-    removeComment = async (comment: CommentCharacter) => {
+    removeComment = async (comment: CommentCharacter): Promise<number> => {
         const oldComment = await this.repository.selectCommentById(comment.id)
         const character = await this.repository.selectById(oldComment.idCharacter)
         if (oldComment.idUser === comment.idUser
@@ -159,7 +167,7 @@ class CharacterProvider {
             || await this.rightProvider.commentModerator(comment.idUser)) {
             return this.repository.removeComment(comment.id)
         }
-        return Promise.reject('Нет прав')
+        throw new ForbiddenError()
     }
 }
 

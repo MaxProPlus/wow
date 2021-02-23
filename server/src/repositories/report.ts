@@ -1,6 +1,8 @@
 import {Character, CommentReport, Guild, Report, Story} from '../common/entity/types'
 import logger from '../services/logger'
 import BasicMaterialRepository from './basicMaterial'
+import {DBError, NotFoundError} from '../errors'
+import {ReportNotFoundError} from '../providers/report'
 
 class ReportRepository extends BasicMaterialRepository {
 
@@ -9,53 +11,53 @@ class ReportRepository extends BasicMaterialRepository {
     }
 
     // Создать отчет / лог
-    insert = (report: Report) => {
+    insert = (report: Report): Promise<number> => {
         const {idUser, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = report
         const sql = `INSERT INTO report (id_user, url_avatar, title, short_description,
                                          description, rule, closed, hidden, comment, style)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         return this.pool.query(sql, [idUser, urlAvatar, title, shortDescription,
             description, rule, closed, hidden, comment, style]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Добавить участника лога
-    insertMember = (id: number, idReport: number) => {
+    insertMember = (id: number, idReport: number): Promise<number> => {
         const sql = `INSERT INTO report_to_character (id_report, id_character)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idReport]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Добавить гильдии отчета
-    insertGuild = (id: number, idGuild: number) => {
+    insertGuild = (id: number, idGuild: number): Promise<number> => {
         const sql = `INSERT INTO report_to_guild (id_report, id_guild)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idGuild]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Добавить сюжет отчета
-    insertStory = (id: number, idStory: number) => {
+    insertStory = (id: number, idStory: number): Promise<number> => {
         const sql = `INSERT INTO report_to_story (id_report, id_story)
                      VALUES (?, ?)`
         return this.pool.query(sql, [id, idStory]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -81,12 +83,12 @@ class ReportRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Report[]]) => {
             if (!r.length) {
-                return Promise.reject('Отчет / лог не найден')
+                throw new ReportNotFoundError()
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -101,10 +103,10 @@ class ReportRepository extends BasicMaterialRepository {
                      where s.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Character[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -119,10 +121,10 @@ class ReportRepository extends BasicMaterialRepository {
                      where s.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Guild[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -137,15 +139,15 @@ class ReportRepository extends BasicMaterialRepository {
                      where s.id = ?
                        and link.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [Story[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить все отчеты / логи
-    selectAll = (limit: number, page: number, data?: any) => {
+    selectAll = (limit: number, page: number, data?: any): Promise<Report[]> => {
         let sql = `select r.id,
                           r.url_avatar as urlAvatar,
                           title,
@@ -156,27 +158,16 @@ class ReportRepository extends BasicMaterialRepository {
                    where closed = 0
                      and is_remove = 0`
 
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         sql +=
             ` order by id desc
         limit ? offset ?`
         return this.pool.query(sql, [...where, limit, limit * (page - 1)]).then(([r]: [Report[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -186,29 +177,18 @@ class ReportRepository extends BasicMaterialRepository {
                    from report
                    where closed = 0
                      and is_remove = 0`
-        const where = []
-        if (!!data) {
-            // tslint:disable-next-line:forin
-            for (const key in data) {
-                if (typeof data[key] === 'string') {
-                    sql += ` and ${key} like ?`
-                    where.push(`%${data[key]}%`)
-                } else {
-                    sql += ` and ${key} = ?`
-                    where.push(data[key])
-                }
-            }
-        }
+        const {where, sqlWhere} = this.genConditionAnd(data)
+        sql += sqlWhere
         return this.pool.query(sql, where).then(([r]: any) => {
-            return Promise.resolve(r[0].count)
-        }, (err: any) => {
+            return r[0].count
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Редактировать отчет
-    update = (report: Report) => {
+    update = (report: Report): Promise<number> => {
         const {id, urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style} = report
         const sql = `UPDATE report
                      SET url_avatar        = ?,
@@ -225,79 +205,79 @@ class ReportRepository extends BasicMaterialRepository {
                        and is_remove = 0`
         return this.pool.query(sql, [urlAvatar, title, shortDescription, description, rule, closed, hidden, comment, style, id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Отчет / лог не найден')
+                throw new ReportNotFoundError()
             }
-            return Promise.resolve(report.id)
-        }, (err: any) => {
+            return report.id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить отчет
-    remove = (id: number) => {
+    remove = (id: number): Promise<number> => {
         const sql = `UPDATE report
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Отчет / лог не найден')
+                throw new ReportNotFoundError()
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить персонажа из отчета
-    removeMember = (id: number, idLink: number) => {
+    removeMember = (id: number, idLink: number): Promise<number> => {
         const sql = `delete
                      from report_to_character
                      where id_report = ?
                        and id_character = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Связь не найдена')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить гильдию из отчета
-    removeGuild = (id: number, idLink: number) => {
+    removeGuild = (id: number, idLink: number): Promise<number> => {
         const sql = `delete
                      from report_to_guild
                      where id_report = ?
                        and id_guild = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Связь не найдена')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить сюжет из отчета
-    removeStory = (id: number, idLink: number) => {
+    removeStory = (id: number, idLink: number): Promise<number> => {
         const sql = `delete
                      from report_to_story
                      where id_report = ?
                        and id_story = ?`
         return this.pool.query(sql, [id, idLink]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Связь не найдена')
+                throw new NotFoundError('Связь не найдена')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -306,10 +286,10 @@ class ReportRepository extends BasicMaterialRepository {
         const sql = `INSERT INTO report_comment (text, id_user, id_report)
                      VALUES (?, ?, ?)`
         return this.pool.query(sql, [comment.text, comment.idUser, comment.idReport]).then(([r]: any) => {
-            return Promise.resolve(r.insertId)
-        }, (err: any) => {
+            return r.insertId
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -324,17 +304,17 @@ class ReportRepository extends BasicMaterialRepository {
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentReport[]]) => {
             if (!r.length) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(r[0])
-        }, (err: any) => {
+            return r[0]
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Получить комментарии
-    selectCommentsByIdReport = (id: number) => {
+    selectCommentsByIdReport = (id: number): Promise<CommentReport[]> => {
         const sql = `select c.id,
                             c.text,
                             c.id_user    as idUser,
@@ -348,26 +328,26 @@ class ReportRepository extends BasicMaterialRepository {
                      where c.id_report = ?
                        and c.is_remove = 0`
         return this.pool.query(sql, [id]).then(([r]: [CommentReport[]]) => {
-            return Promise.resolve(r)
-        }, (err: any) => {
+            return r
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
     // Удалить комментарий
-    removeComment = (id: number) => {
+    removeComment = (id: number): Promise<number> => {
         const sql = `UPDATE report_comment
                      SET is_remove = 1
                      where id = ?`
         return this.pool.query(sql, [id]).then((r: any) => {
             if (!r[0].affectedRows) {
-                return Promise.reject('Комментарий не найден')
+                throw new NotFoundError('Комментарий не найден')
             }
-            return Promise.resolve(id)
-        }, (err: any) => {
+            return id
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

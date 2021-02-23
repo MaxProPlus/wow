@@ -8,7 +8,7 @@ import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
-import {FORBIDDEN} from '../errors'
+import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 
 class StoryController extends Controller {
     constructor(
@@ -23,31 +23,20 @@ class StoryController extends Controller {
     // Создать сюжет
     create = async (req: Request, res: Response) => {
         if (!req.files || Object.keys(req.files).length < 1 || !req.files.fileAvatar) {
-            return res.json({
-                status: 'INVALID_FILE',
-                errorMessage: 'Аватарка сюжета не прикреплена',
-            })
+            throw new FileError('Аватарка сюжета не прикреплена')
         }
         const c: StoryUpload = req.body
         c.fileAvatar = req.files.fileAvatar as UploadedFile
         let err = this.validator.validateStory(c)
         err += this.validator.validateImg(c.fileAvatar)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         c.idUser = req.user!.id
-        return this.storyProvider.create(c).then((r: any) => {
+        return this.storyProvider.create(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -56,26 +45,18 @@ class StoryController extends Controller {
     getById = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         return this.storyProvider.getById(id).then(async ([story, comments]) => {
             if (story.closed) {
                 const user = await this.authProvider.getUser(TokenStorage.getToken(req))
                 if (!user || user && user.id !== story.idUser) {
-                    return res.json(FORBIDDEN)
+                    throw new ForbiddenError()
                 }
             }
             return res.json({
                 status: 'OK',
                 results: [story, comments],
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -85,12 +66,12 @@ class StoryController extends Controller {
         const limit = parseInt(req.query.limit as string) || 10
         const page = parseInt(req.query.page as string) || 1
         const data: any = {}
-        if (!!req.query.title) {
+        if (req.query.title) {
             data.title = req.query.title
         }
         // Если hidden = 1, то поиск по всем материалам
         // Если hidden = 0, то поиск только по не скрытым материалам
-        if (!!req.query.hidden) {
+        if (req.query.hidden) {
             data.hidden = parseInt(req.query.hidden as string)
         } else {
             data.hidden = 0
@@ -98,15 +79,10 @@ class StoryController extends Controller {
         if (data.hidden) {
             delete data.hidden
         }
-        return this.storyProvider.getAll(limit, page, data).then((r: any) => {
+        return this.storyProvider.getAll(limit, page, data).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: string) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -115,10 +91,7 @@ class StoryController extends Controller {
     update = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         const c: StoryUpload = req.body
         c.id = id
@@ -128,22 +101,14 @@ class StoryController extends Controller {
             c.fileAvatar = req.files.fileAvatar as UploadedFile
             err += this.validator.validateImg(c.fileAvatar)
         }
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         c.idUser = req.user!.id
-        return this.storyProvider.update(c).then((r: any) => {
+        return this.storyProvider.update(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -153,20 +118,12 @@ class StoryController extends Controller {
         const c = new Story()
         c.id = parseInt(req.params.id)
         if (isNaN(c.id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         c.idUser = req.user!.id
         return this.storyProvider.remove(c).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -177,20 +134,12 @@ class StoryController extends Controller {
         c.idUser = req.user!.id
         const err = this.validator.validateComment(c)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
-        return this.storyProvider.createComment(c).then((r: number) => {
+        return this.storyProvider.createComment(c).then((r) => {
             return res.json({
                 status: 'OK',
                 results: [r],
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -199,20 +148,12 @@ class StoryController extends Controller {
     getComments = async (req: Request, res: Response) => {
         const id = parseInt(req.params.id)
         if (isNaN(id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         return this.storyProvider.getComments(id).then((r) => {
             return res.json({
                 status: 'OK',
                 results: r,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -222,20 +163,12 @@ class StoryController extends Controller {
         const c = new CommentStory()
         c.id = parseInt(req.params.idComment)
         if (isNaN(c.id)) {
-            return res.json({
-                status: 'INVALID_PARSE',
-                errorMessage: 'Ошибка парсинга id',
-            })
+            throw new ParseError()
         }
         c.idUser = req.user!.id
-        this.storyProvider.removeComment(c).then(() => {
+        return this.storyProvider.removeComment(c).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, err => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }

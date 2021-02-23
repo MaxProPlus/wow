@@ -8,23 +8,23 @@ class RightProvider {
     }
 
     getRights = (id: number): Promise<string[]> => {
-        return this.repository.selectRights(id).then(r => r, () => [])
+        return this.repository.selectRights(id)
     }
 
     ticketModerator = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('TICKET_MODERATOR', id).then(r => r, () => false)
+        return this.repository.checkRight('TICKET_MODERATOR', id)
     }
 
     feedbackModerator = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('FEEDBACK_MODERATOR', id).then(r => r, () => false)
+        return this.repository.checkRight('FEEDBACK_MODERATOR', id)
     }
 
     articleModerator = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('ARTICLE_MODERATOR', id).then(r => r, () => false)
+        return this.repository.checkRight('ARTICLE_MODERATOR', id)
     }
 
     commentModerator = (id: number): Promise<boolean> => {
-        return this.repository.checkRight('COMMENT_MODERATOR', id).then(r => r, () => false)
+        return this.repository.checkRight('COMMENT_MODERATOR', id)
     }
 }
 

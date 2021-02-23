@@ -1,5 +1,6 @@
 import logger from '../services/logger'
 import Repository from '../core/repository'
+import {DBError} from '../errors'
 
 class RightRepository extends Repository {
 
@@ -10,10 +11,10 @@ class RightRepository extends Repository {
                               join ar_user_role aar on arp.id_role = aar.id_role
                      where aar.id_user = ?`
         return this.pool.query(sql, [idUser]).then((r: any) => {
-            return Promise.resolve(r[0].map((el: any) => el.name))
-        }, (err: any) => {
+            return r[0].map((el: any) => el.name)
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 
@@ -25,13 +26,10 @@ class RightRepository extends Repository {
                      where p.name = ?
                        AND aar.id_user = ?`
         return this.pool.query(sql, [right, idUser]).then((r: any) => {
-            if (r[0].length > 0) {
-                return Promise.resolve(true)
-            }
-            return Promise.resolve(false)
-        }, (err: any) => {
+            return r[0].length > 0
+        }, (err: Error) => {
             logger.error('Ошибка запроса к бд: ', err)
-            return Promise.reject('Ошибка запроса к бд')
+            throw new DBError()
         })
     }
 }

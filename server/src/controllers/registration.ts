@@ -4,6 +4,7 @@ import RegistrationProvider from '../providers/registration'
 import Validator from '../common/validator'
 import TokenStorage from '../services/token'
 import AuthProvider from '../providers/auth'
+import {UnauthorizedError, ValidationError} from '../errors'
 
 class RegistrationController {
     constructor(
@@ -18,20 +19,12 @@ class RegistrationController {
         const user: User = req.body
         const err = this.validator.validateSignup(user)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
-        return this.registrationProvider.signUp(user).then((msg: string) => {
+        return this.registrationProvider.signUp(user).then((msg) => {
             res.json({
                 status: 'OK',
                 results: msg,
-            })
-        }, (err) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -43,11 +36,6 @@ class RegistrationController {
             return res.json({
                 status: 'OK',
             })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Ошибка регистрации, неверный токен',
-            })
         })
     }
 
@@ -58,11 +46,6 @@ class RegistrationController {
             return res.json({
                 status: 'OK',
             })
-        }, () => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: 'Ошибка, неверный токен',
-            })
         })
     }
 
@@ -70,29 +53,18 @@ class RegistrationController {
     updateSecure = async (req: Request, res: Response) => {
         const user: User = req.body
         const err = this.validator.validateEmail(user)
-        if (!!err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+        if (err) {
+            throw new ValidationError(err)
         }
         const dbUser = await this.authProvider.getUserByTokenAndPassword(TokenStorage.getToken(req), user.password)
         if (!dbUser) {
-            return res.json({
-                status: 'UNAUTHORIZED',
-                errorMessage: 'Ошибка авторизации',
-            })
+            throw new UnauthorizedError()
         }
         user.id = dbUser.id
         return this.registrationProvider.updateSecure(user).then((msg) => {
             return res.json({
                 status: 'OK',
                 results: msg,
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }
@@ -102,28 +74,17 @@ class RegistrationController {
         const user: UserPassword = req.body
         const dbUser = await this.authProvider.getUserByTokenAndPassword(TokenStorage.getToken(req), user.passwordAccept)
         if (!dbUser) {
-            return res.json({
-                status: 'UNAUTHORIZED',
-                errorMessage: 'Ошибка авторизации',
-            })
+            throw new UnauthorizedError()
         }
         user.id = dbUser.id
         user.username = dbUser.username
         const err = this.validator.validatePassword(user)
         if (err) {
-            return res.json({
-                status: 'INVALID_DATA',
-                errorMessage: err,
-            })
+            throw new ValidationError(err)
         }
         return this.registrationProvider.updatePassword(user).then(() => {
             return res.json({
                 status: 'OK',
-            })
-        }, (err: any) => {
-            return res.json({
-                status: 'ERROR',
-                errorMessage: err,
             })
         })
     }

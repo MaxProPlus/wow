@@ -1,26 +1,27 @@
 @import '../../css/variables';
 //@use 'sass:color';
 
-$bg-color: #5B87EF;
+$bg-color: #5b87ef;
 
 .btn {
   display: inline-flex;
   align-items: center;
-  text-align: center;
   padding: .375rem .75rem;
-  color: $color1;
-  font-size: .875rem;
-  text-transform: uppercase;
-  font-weight: 400;
-  word-wrap: normal;
-  background-color: $bg-color;
   border: none;
-  outline: none;
+  background-color: $bg-color;
+  color: $color1;
   cursor: pointer;
+  font-size: .875rem;
+  font-weight: 400;
+  outline: none;
+  text-align: center;
+  text-transform: uppercase;
   transition: background-color .3s ease;
   user-select: none;
+  word-wrap: normal;
 
-  &:focus, &:hover {
+  &:focus,
+  &:hover {
     background-color: darken($bg-color, 5%);
   }
 }

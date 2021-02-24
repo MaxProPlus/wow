@@ -1,12 +1,12 @@
 .form-input {
   width: 100%;
   padding: .375rem .75rem;
-  font-size: 1rem;
-  color: inherit;
-  background-color: #fff;
-  outline: none;
-  background-clip: padding-box;
   border: 1px solid #ced4da;
+  background-clip: padding-box;
+  background-color: #fff;
   border-radius: .25rem;
+  color: inherit;
+  font-size: 1rem;
+  outline: none;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }

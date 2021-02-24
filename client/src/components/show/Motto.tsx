@@ -2,13 +2,11 @@ import React from 'react'
 import styles from './Motto.module.scss'
 
 type P = {
-    children: React.ReactNode
+  children: React.ReactNode
 }
 
 const Motto: React.FC<P> = (props) => {
-    return (
-        <div className={styles.title}>{props.children}</div>
-    )
+  return <div className={styles.title}>{props.children}</div>
 }
 
 export default Motto

@@ -1,10 +1,10 @@
-@import "../../css/variables";
+@import '../../css/variables';
 
 .block {
   padding: .75rem 1.25rem;
   border: 1px solid $border-color;
-  color: #00ff00;
-  background-color: transparentize($border-color, .65);
   margin-bottom: 1rem;
+  background-color: transparentize($border-color, .65);
+  color: #0f0;
   white-space: pre-line;
 }

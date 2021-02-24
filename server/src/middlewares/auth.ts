@@ -4,19 +4,27 @@ import {authProvider} from '../modules/app'
 import {UnauthorizedError} from '../errors'
 
 // прикрепить пользователя к Request
-export const getUser: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    req.user = await authProvider.getUser(TokenStorage.getToken(req))
-    if (!req.user) {
-        throw new UnauthorizedError()
-    }
-    next()
+export const getUser: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  req.user = await authProvider.getUser(TokenStorage.getToken(req))
+  if (!req.user) {
+    throw new UnauthorizedError()
+  }
+  next()
 }
 
 // прикрепить пользователя с правами к Request
-export const getUserWithRight: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
-    req.user = await authProvider.getUserWithRights(TokenStorage.getToken(req))
-    if (!req.user) {
-        throw new UnauthorizedError()
-    }
-    next()
+export const getUserWithRight: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  req.user = await authProvider.getUserWithRights(TokenStorage.getToken(req))
+  if (!req.user) {
+    throw new UnauthorizedError()
+  }
+  next()
 }

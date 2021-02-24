@@ -6,10 +6,10 @@
 
 .block {
   padding: 15px 15px 0;
-  background-color: transparentize($border-color, .65);
   border: 1px solid $border-color;
   border-top: none;
   margin: 0 auto;
+  background-color: transparentize($border-color, .65);
 }
 
 @media (min-width: 768px) {

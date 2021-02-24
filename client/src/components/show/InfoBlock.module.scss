@@ -1,10 +1,10 @@
 @import '../../css/variables';
 
 .description {
-  border: 1px solid $border-color;
-  background-color: transparentize($border-color, .65);
   padding: .375rem .75rem;
+  border: 1px solid $border-color;
+  margin-bottom: 15px;
+  background-color: transparentize($border-color, .65);
   color: $color2;
   white-space: pre-line;
-  margin-bottom: 15px;
 }

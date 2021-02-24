@@ -2,9 +2,9 @@
 import {User} from '../common/entity/types'
 
 declare global {
-    namespace Express {
-        interface Request {
-            user?: User | null
-        }
+  namespace Express {
+    interface Request {
+      user?: User | null
     }
+  }
 }

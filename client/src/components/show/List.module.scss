@@ -1,4 +1,4 @@
-@import "../../css/variables";
+@import '../../css/variables';
 
 .title {
   font-size: 1.5rem;
@@ -6,24 +6,25 @@
 }
 
 .block {
-  border: 1px solid $border-color;
-  background-color: transparentize($border-color, .65);
   padding: 7px 7px 0;
+  border: 1px solid $border-color;
   margin-bottom: 15px;
+  background-color: transparentize($border-color, .65);
 }
 
 .value {
   display: block;
-  border: 1px solid $border-color;
-  background-color: transparentize($border-color, .65);
   padding: 7px;
+  border: 1px solid $border-color;
   margin-bottom: 7px;
+  background-color: transparentize($border-color, .65);
   transition: color .3s ease;
+
   &:hover {
     color: $color3;
   }
 }
 
 .hidden {
-  color: #E54242;
+  color: #e54242;
 }

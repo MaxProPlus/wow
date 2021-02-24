@@ -3,33 +3,35 @@
 .header-top {
   display: flex;
   justify-content: center;
-  background-color: rgba(195, 206, 212, 0.8);
-  color: $border-color;
   padding: .25rem 0;
+  background-color: rgba(195, 206, 212, .8);
+  color: $border-color;
 }
 
 .header-top__inner {
   display: flex;
   width: 95%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 
   .search-form {
+    max-width: 768px;
     flex-grow: 1;
     margin: 0 7px;
-    max-width: 768px;
   }
+
   .search-form__filter {
     display: none;
   }
+
   .search-form__input {
     padding-left: 7px;
   }
 
   .profile {
+    position: relative;
     display: flex;
     align-items: center;
-    position: relative;
 
     > .nickname {
       display: none;
@@ -55,13 +57,16 @@
 
 .header-top__sign {
   display: flex;
+
   a {
     display: block;
   }
+
   span {
     display: none;
     padding: 15px 0;
   }
+
   img {
     display: inline-block;
     height: 1rem;
@@ -75,8 +80,10 @@
     span {
       display: inline-block;
     }
+
     a {
       margin-right: 15px;
+
       &:last-child {
         margin-right: 0;
       }
@@ -85,7 +92,7 @@
 
   .header-top__inner {
     .profile {
-      >.nickname {
+      > .nickname {
         display: block;
       }
     }
@@ -103,8 +110,9 @@
   .header-top__menu {
     display: none;
   }
-  .header-top__inner{
-    >.search-form {
+
+  .header-top__inner {
+    > .search-form {
       margin-left: 0;
     }
   }

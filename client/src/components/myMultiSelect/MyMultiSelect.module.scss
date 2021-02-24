@@ -1,16 +1,16 @@
-@import "../../css/variables";
+@import '../../css/variables';
 
 .select {
-  margin-bottom: 1rem;
-  border: 1px solid $border-color;
-  background-color: rgba(33, 40, 59, 0.35);
   padding: 0 7px;
+  border: 1px solid $border-color;
+  margin-bottom: 1rem;
+  background-color: rgba(33, 40, 59, .35);
   color: $color2;
 }
 
 .select__label {
-  margin-bottom: .5rem;
   display: inline-block;
+  margin-bottom: .5rem;
 }
 
 .select__spinner {
@@ -20,9 +20,9 @@
 
 .select__options {
   position: relative;
+  padding: 5px 7px 0;
   border-top: 1px solid $border-color;
   margin: 0 -7px;
-  padding: 5px 7px 0;
 }
 
 .select__values {
@@ -34,15 +34,16 @@
   width: 100%;
   height: calc(1.5em + .75rem + 2px);
   padding: .375rem .75rem;
+  //background-clip: padding-box;
+  border: none;
+  background: none;
+  color: $color1;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: $color1;
-  background: none;
-  //background-clip: padding-box;
-  border: none;
 
-  &:focus, &:active {
+  &:focus,
+  &:active {
     outline: 0;
   }
 }
@@ -50,9 +51,9 @@
 .select__item {
   padding: .375rem .75rem;
   border: 1px solid $border-color;
-  background-color: rgba(33, 40, 59, 0.35);
-  margin-bottom: 4px;
   margin-right: 4px;
+  margin-bottom: 4px;
+  background-color: rgba(33, 40, 59, .35);
 
   img {
     display: inline;

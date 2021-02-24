@@ -1,9 +1,9 @@
 .header {
+  z-index: 100;
   display: flex;
   justify-content: center;
   background-color: #22293c;
   color: #fff;
-  z-index: 100;
   user-select: none;
 }
 
@@ -13,17 +13,17 @@
 }
 
 .inner {
-  width: 90%;
   display: flex;
-  justify-content: flex-start;
-  align-items: stretch;
+  width: 90%;
   flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   overflow-y: auto;
 }
 
 .logo {
-  font-size: 2rem;
   padding: 10px 1rem 1.5rem;
+  font-size: 2rem;
 
   img {
     height: 2.5rem;
@@ -35,11 +35,11 @@
 }
 
 .item {
-  display: block;
   position: relative;
+  display: block;
+  padding: .375rem .75rem;
   cursor: pointer;
   text-align: center;
-  padding: .375rem .75rem;
   text-transform: uppercase;
 
   &:hover {
@@ -52,7 +52,6 @@
   text-transform: none;
 }
 
-
 .accordion {
   flex-shrink: 0;
 }
@@ -63,7 +62,7 @@
     top: 0;
     bottom: 0;
     max-width: 0;
-    transition: max-width 0.1s ease;
+    transition: max-width .1s ease;
   }
 
   .inner {
@@ -74,4 +73,3 @@
     max-width: 100%;
   }
 }
-

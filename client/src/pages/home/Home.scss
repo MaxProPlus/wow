@@ -1,13 +1,13 @@
 @import '../../css/variables';
 
 .home__title {
-  text-transform: uppercase;
   margin-bottom: 30px;
+  text-transform: uppercase;
 }
 
 .home__top {
+  border-bottom: 2px solid #21283b;
   margin: -15px -15px 0;
-  border-bottom: 2px solid #21283B;
 }
 
 .home__info {
@@ -17,16 +17,15 @@
 
 .slider {
   display: flex;
-  justify-content: flex-start;
-  flex-direction: column-reverse;
   overflow: hidden;
-  border-bottom: 2px solid #21283B;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  border-bottom: 2px solid #21283b;
 }
 
 .slider__list {
   display: flex;
   align-items: stretch;
-
   overflow-x: auto;
   overflow-y: hidden;
 
@@ -36,20 +35,22 @@
 }
 
 .slider__item-active {
-  border-bottom: 2px solid $border-color;
   overflow: hidden;
+  border-bottom: 2px solid $border-color;
+
   .slider-item__bg {
-    border-bottom: none;
     border-right: none;
+    border-bottom: none;
   }
 }
 
-.prev, .next {
+.prev,
+.next {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   z-index: 10;
+  top: 50%;
   padding: 10px;
+  transform: translateY(-50%);
 }
 
 .prev {
@@ -61,15 +62,14 @@
 }
 
 .slider__item {
-
   &:hover .slider-item__title {
-    color: #5B87EF;
+    color: #5b87ef;
   }
 }
 
 .slider-item {
-  display: block;
   position: relative;
+  display: block;
   min-height: 100%;
 }
 
@@ -80,50 +80,56 @@
 }
 
 .slider-item__title {
-  font-size: 1rem;
   position: absolute;
   bottom: .75rem;
   left: 15px;
+  font-size: 1rem;
   transition: color .3s ease;
 }
 
 .slider-item__anons {
-  font-size: .625rem;
-  color: #A0A2A6;
   position: absolute;
   bottom: 2.25rem;
   left: 15px;
+  color: #a0a2a6;
+  font-size: .625rem;
 }
 
 .slider-item__bg {
   position: absolute;
-  left: 0;
+  top: 0;
   right: 0;
   bottom: 0;
-  top: 0;
-  background: linear-gradient(180deg, rgba(33, 40, 59, 0.01) 70.31%, rgba(33, 40, 59, 0.9) 100%);
+  left: 0;
   border-right: 2px solid $border-color;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(33, 40, 59, .01) 70.31%,
+      rgba(33, 40, 59, .9) 100%
+    );
 }
 
 .slider__list .slider__item:last-child {
   .slider-item__bg {
-    border-bottom: none;
-
     border-right: none;
+    border-bottom: none;
   }
 }
 
 .widget {
-  background-color: $color3;
+  display: block;
   padding: 8px 23px;
   margin: 5px 5px 0;
-  display: block;
+  background-color: $color3;
+
   img {
     width: 24px;
   }
+
   span {
-    text-transform: uppercase;
     margin-left: 14px;
+    text-transform: uppercase;
   }
 }
 
@@ -150,30 +156,36 @@
     display: flex;
     justify-content: space-between;
   }
+
   .slider {
     flex-direction: row;
     align-items: flex-start;
     border-bottom: none;
   }
+
   .slider__list {
     display: block;
     flex-basis: 30%;
-    overflow-y: auto;
     overflow-x: unset;
+    overflow-y: auto;
   }
+
   .slider__item-active {
+    overflow: hidden;
     flex-basis: 70%;
     border-right: 2px solid $border-color;
     border-bottom: none;
-    overflow: hidden;
+
     .slider-item {
       display: inline-block;
       width: 100%;
     }
   }
+
   .slider-item__img {
     max-height: unset;
   }
+
   .slider-item__bg {
     border-right: none;
     border-bottom: none;

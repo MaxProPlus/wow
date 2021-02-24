@@ -3,9 +3,8 @@ import {User} from '../../../server/src/common/entity/types'
 
 // Контекст пользователя
 const UserContext = React.createContext({
-    user: new User(), updateLogin: () => {
-    },
+  user: new User(),
+  updateLogin: () => {},
 })
 
 export default UserContext
-

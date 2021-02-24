@@ -2,8 +2,8 @@
 
 .block {
   border: 1px solid $border-color;
-  background-color: transparentize($border-color, .65);
   margin: 0 0 7px;
+  background-color: transparentize($border-color, .65);
 
   img {
     display: block;

@@ -1,0 +1,13 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-idiomatic-order"],
+  "plugins": ["stylelint-scss", "stylelint-order"],
+  "rules": {
+    "order/order": [
+      "custom-properties",
+      "declarations"
+    ],
+    "number-leading-zero": "never",
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true
+  }
+}

@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "build": "node ./util/build.js",
-    "lint": "tslint --project \"tsconfig.json\"",
     "start": "node ./dist/",
-    "start:dev": "nodemon --config nodemon.json"
+    "start:dev": "nodemon --config nodemon.json",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@types/nodemailer": "^6.4.0",
@@ -34,15 +35,20 @@
     "@types/mysql": "^2.15.17",
     "@types/node": "^13.13.1",
     "@types/supertest": "^2.0.8",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^8.0.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "find": "^0.3.0",
     "fs-extra": "^9.0.0",
     "jasmine": "^3.5.0",
     "jsonfile": "^6.0.1",
     "nodemon": "^2.0.3",
+    "prettier": "^2.2.1",
     "supertest": "^4.0.2",
     "ts-node": "^8.9.0",
     "tsconfig-paths": "^3.9.0",
-    "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   }
 }

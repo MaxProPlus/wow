@@ -1,7 +1,7 @@
 export type RouteProps = {
-    scrollTop: () => void
+  scrollTop: () => void
 }
 
 export type MatchId = {
-    id: string
+  id: string
 }

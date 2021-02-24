@@ -2,13 +2,13 @@
   position: absolute;
   z-index: 1;
   top: 2.2rem;
+  right: .5rem;
   left: auto;
-  right: 0.5rem;
   width: 9rem;
-  color: #000;
+  border: 1px solid rgba(34, 36, 38, .15);
   background-color: #fff;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, .08);
-  border: 1px solid rgba(34, 36, 38, .15);
+  color: #000;
 
   > .item {
     display: block;
@@ -19,12 +19,13 @@
     }
   }
 }
+
 @media (min-width: 576px) {
   .dropdown {
     top: 3.4rem;
   }
-
 }
+
 @media screen and (min-width: 992px) {
   .dropdown {
     left: -1.5rem;

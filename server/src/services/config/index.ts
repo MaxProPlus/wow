@@ -18,7 +18,7 @@ const config = {
     auth: {
       user: process.env.SMTP_USER || '',
       pass: process.env.SMTP_PASSWORD || '',
-    }
+    },
   },
 }
 
@@ -28,11 +28,11 @@ class ConfigProvider {
   get = <T>(key: string): T => {
     const arr = key.split('.')
     let r = config
-    arr.forEach(item => {
+    arr.forEach((item) => {
       // @ts-ignore
       r = r[item]
     })
-    return r as any as T
+    return (r as any) as T
   }
 }
 

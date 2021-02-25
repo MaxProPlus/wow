@@ -3,22 +3,18 @@ import {Article, CommentArticle} from '../common/entity/types'
 import Validator from '../common/validator'
 import ArticleProvider from '../providers/article'
 import {ArticleUpload} from '../entity/types'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
+import {Rights} from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 import RequestFile from '../services/requestFile'
 
-class ArticleController extends Controller {
+class ArticleController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
+    private authProvider: AuthProvider,
     private articleProvider: ArticleProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать новость
   create = async (req: Request, res: Response) => {
@@ -36,7 +32,7 @@ class ArticleController extends Controller {
     c.idUser = req.user!.id
 
     // Проверка прав на управление новостью
-    if (!(await this.rightProvider.articleModerator(c.idUser))) {
+    if (!req.user!.rights.includes(Rights.ARTICLE_MODERATOR)) {
       throw new ForbiddenError()
     }
     return this.articleProvider.create(c).then((r) => {
@@ -119,7 +115,7 @@ class ArticleController extends Controller {
     c.idUser = req.user!.id
 
     // Проверка прав на управление новостью
-    if (!(await this.rightProvider.articleModerator(c.idUser))) {
+    if (!req.user!.rights.includes(Rights.ARTICLE_MODERATOR)) {
       throw new ForbiddenError()
     }
     return this.articleProvider.update(c).then((r) => {
@@ -130,7 +126,7 @@ class ArticleController extends Controller {
     })
   }
 
-  // Удалить персонажа
+  // Удалить новость
   remove = async (req: Request, res: Response) => {
     const c = new Article()
     c.id = parseInt(req.params.id)
@@ -140,7 +136,7 @@ class ArticleController extends Controller {
     c.idUser = req.user!.id
 
     // Проверка прав на управление новостью
-    if (!(await this.rightProvider.articleModerator(c.idUser))) {
+    if (!req.user!.rights.includes(Rights.ARTICLE_MODERATOR)) {
       throw new ForbiddenError()
     }
     return this.articleProvider.remove(c).then(() => {
@@ -188,11 +184,19 @@ class ArticleController extends Controller {
       throw new ParseError()
     }
     c.idUser = req.user!.id
-    return this.articleProvider.removeComment(c).then(() => {
-      return res.json({
-        status: 'OK',
+    return this.articleProvider
+      .removeComment(
+        c,
+        !!req.user!.rights.filter(
+          (el) =>
+            el === Rights.ARTICLE_MODERATOR || el === Rights.COMMENT_MODERATOR
+        ).length
+      )
+      .then(() => {
+        return res.json({
+          status: 'OK',
+        })
       })
-    })
   }
 }
 

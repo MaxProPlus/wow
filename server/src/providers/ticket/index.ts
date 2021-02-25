@@ -6,14 +6,10 @@ import {
   TicketType,
 } from '../../common/entity/types'
 import {defaultAvatar} from '../../entity/types'
-import RightProvider from '../right'
 import {ApiError, ForbiddenError} from '../../errors'
 
 class TicketProvider {
-  constructor(
-    private repository: TicketRepository,
-    private rightProvider: RightProvider
-  ) {}
+  constructor(private repository: TicketRepository) {}
 
   // Создать тикет
   create = (ticket: Ticket): Promise<number> => {
@@ -64,12 +60,14 @@ class TicketProvider {
   }
 
   // Создать комментарий на тикет
-  createComment = async (comment: CommentTicket): Promise<number> => {
+  createComment = async (
+    comment: CommentTicket,
+    right: boolean
+  ): Promise<number> => {
     const ticket = await this.repository.selectById(comment.idTicket)
     if (ticket.status === TicketStatus.CLOSE) {
       throw new ApiError('Тикет закрыт', 'TICKET_ERROR')
     }
-    const right = await this.rightProvider.ticketModerator(comment.idUser)
     if (ticket.idUser !== comment.idUser && !right) {
       throw new ForbiddenError()
     }
@@ -79,13 +77,11 @@ class TicketProvider {
   // Получить комментарии к тикету
   getComments = async (
     idTicket: number,
-    idUser: number
+    idUser: number,
+    right: boolean
   ): Promise<CommentTicket[]> => {
     const data = await this.getById(idTicket)
-    if (
-      data[0].idUser !== idUser &&
-      !(await this.rightProvider.ticketModerator(idUser))
-    ) {
+    if (data[0].idUser !== idUser && !right) {
       throw new ForbiddenError()
     }
     const comments = await this.repository.selectCommentsByIdTicket(idTicket)

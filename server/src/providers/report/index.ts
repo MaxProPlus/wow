@@ -9,7 +9,6 @@ import {
 } from '../../common/entity/types'
 import {defaultAvatar, ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Отчет / лог не найден"
@@ -22,7 +21,6 @@ export class ReportNotFoundError extends NotFoundError {
 class ReportProvider {
   constructor(
     private repository: ReportRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -272,13 +270,16 @@ class ReportProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentReport): Promise<number> => {
+  removeComment = async (
+    comment: CommentReport,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const report = await this.repository.selectById(oldComment.idReport)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === report.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

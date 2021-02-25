@@ -3,22 +3,18 @@ import {CommentForum, Forum} from '../common/entity/types'
 import Validator from '../common/validator'
 import {ForumUpload} from '../entity/types'
 import ForumProvider from '../providers/forum'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
+import {Rights} from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 import RequestFile from '../services/requestFile'
 
-class ForumController extends Controller {
+class ForumController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
+    private authProvider: AuthProvider,
     private forumProvider: ForumProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать форум
   create = async (req: Request, res: Response) => {
@@ -169,11 +165,13 @@ class ForumController extends Controller {
       throw new ParseError()
     }
     c.idUser = req.user!.id
-    return this.forumProvider.removeComment(c).then(() => {
-      return res.json({
-        status: 'OK',
+    return this.forumProvider
+      .removeComment(c, req.user!.rights.includes(Rights.COMMENT_MODERATOR))
+      .then(() => {
+        return res.json({
+          status: 'OK',
+        })
       })
-    })
   }
 }
 

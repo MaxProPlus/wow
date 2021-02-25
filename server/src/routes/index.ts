@@ -36,16 +36,16 @@ export default () => {
   router.get('/users', userController.getAll)
 
   // Новости
-  router.post('/articles', [getUser], articleController.create)
+  router.post('/articles', [getUserWithRight], articleController.create)
   router.get('/articles', articleController.getAll)
   router.get('/articles/:id', articleController.getById)
-  router.put('/articles/:id', [getUser], articleController.update)
-  router.delete('/articles/:id', [getUser], articleController.remove)
+  router.put('/articles/:id', [getUserWithRight], articleController.update)
+  router.delete('/articles/:id', [getUserWithRight], articleController.remove)
   router.post('/articles/comments', [getUser], articleController.createComment)
   router.get('/articles/:id/comments', articleController.getComments)
   router.delete(
     '/articles/:idArticle/comments/:idComment',
-    [getUser],
+    [getUserWithRight],
     articleController.removeComment
   )
 
@@ -54,11 +54,11 @@ export default () => {
   router.post('/tickets/comments', [getUser], ticketController.createComment)
   router.get('/ticket_types', [getUser], ticketController.getTypesOfTicket)
   router.get('/tickets/types/:id', [getUser], ticketController.getTicketsByType)
-  router.get('/tickets/:id', [getUser], ticketController.getById)
-  router.post('/tickets/:id', [getUser], ticketController.changeStatus)
+  router.get('/tickets/:id', [getUserWithRight], ticketController.getById)
+  router.post('/tickets/:id', [getUserWithRight], ticketController.changeStatus)
   router.get(
     '/tickets/:idTicket/comments',
-    [getUser],
+    [getUserWithRight],
     ticketController.getComments
   )
 
@@ -76,7 +76,7 @@ export default () => {
   router.get('/characters/:id/comments', characterController.getComments)
   router.delete(
     '/characters/:idCharacter/comments/:idComment',
-    [getUser],
+    [getUserWithRight],
     characterController.removeComment
   )
 
@@ -90,7 +90,7 @@ export default () => {
   router.get('/guilds/:id/comments', guildController.getComments)
   router.delete(
     '/guilds/:idGuild/comments/:idComment',
-    [getUser],
+    [getUserWithRight],
     guildController.removeComment
   )
 
@@ -104,7 +104,7 @@ export default () => {
   router.get('/stories/:id/comments', storyController.getComments)
   router.delete(
     '/stories/:idStory/comments/:idComment',
-    [getUser],
+    [getUserWithRight],
     storyController.removeComment
   )
 
@@ -118,7 +118,7 @@ export default () => {
   router.get('/reports/:id/comments', reportController.getComments)
   router.delete(
     '/reports/:idReport/comments/:idComment',
-    [getUser],
+    [getUserWithRight],
     reportController.removeComment
   )
 
@@ -141,7 +141,7 @@ export default () => {
 
   // Обратная связь
   router.get('/feedback', feedbackController.getAll)
-  router.post('/feedback', [getUser], feedbackController.update)
+  router.post('/feedback', [getUserWithRight], feedbackController.update)
 
   return router
 }

@@ -1,30 +1,23 @@
 import RightRepository from '../../repositories/right'
 
-class RightProvider {
-  private repository: RightRepository
+export enum Rights {
+  TICKET_MODERATOR = 'TICKET_MODERATOR', // Модерация тикетов
+  FEEDBACK_MODERATOR = 'FEEDBACK_MODERATOR', // Модерация списка администраторов
+  ARTICLE_MODERATOR = 'ARTICLE_MODERATOR', // Модерация новостей
+  COMMENT_MODERATOR = 'COMMENT_MODERATOR', // Модерация комментариев
+}
 
-  constructor(connection: any) {
-    this.repository = new RightRepository(connection.getPoolPromise())
+class RightProvider {
+  constructor(private repository: RightRepository) {}
+
+  // Проверка определенного права
+  checkRight = (right: Rights, idUser: number) => {
+    return this.repository.checkRight('TICKET_MODERATOR', idUser)
   }
 
+  // Получить все права
   getRights = (id: number): Promise<string[]> => {
     return this.repository.selectRights(id)
-  }
-
-  ticketModerator = (id: number): Promise<boolean> => {
-    return this.repository.checkRight('TICKET_MODERATOR', id)
-  }
-
-  feedbackModerator = (id: number): Promise<boolean> => {
-    return this.repository.checkRight('FEEDBACK_MODERATOR', id)
-  }
-
-  articleModerator = (id: number): Promise<boolean> => {
-    return this.repository.checkRight('ARTICLE_MODERATOR', id)
-  }
-
-  commentModerator = (id: number): Promise<boolean> => {
-    return this.repository.checkRight('COMMENT_MODERATOR', id)
   }
 }
 

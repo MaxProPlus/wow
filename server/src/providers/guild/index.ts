@@ -9,7 +9,6 @@ import {
 } from '../../common/entity/types'
 import {defaultAvatar, GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Гильдия не найдена"
@@ -22,7 +21,6 @@ export class GuildNotFoundError extends NotFoundError {
 class GuildProvider {
   constructor(
     private repository: GuildRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -203,13 +201,16 @@ class GuildProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentGuild): Promise<number> => {
+  removeComment = async (
+    comment: CommentGuild,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const guild = await this.repository.selectById(oldComment.idGuild)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === guild.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

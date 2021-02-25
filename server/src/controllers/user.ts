@@ -4,9 +4,6 @@ import {User} from '../common/entity/types'
 import Validator from '../common/validator'
 import {Smtp} from '../services/smtp'
 import TokenStorage from '../services/token'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
-import AuthProvider from '../providers/auth'
 import {
   FileError,
   ParseError,
@@ -15,16 +12,12 @@ import {
 } from '../errors'
 import RequestFile from '../services/requestFile'
 
-class UserController extends Controller {
+class UserController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
     private userProvider: UserProvider,
     private smtp: Smtp,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Получить контекст
   getContext = (req: Request, res: Response) => {

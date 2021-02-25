@@ -2,7 +2,6 @@ import ForumRepository from '../../repositories/forum'
 import {CommentForum, Forum, User} from '../../common/entity/types'
 import {defaultAvatar, ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Форум не найден"
@@ -15,7 +14,6 @@ export class ForumNotFoundError extends NotFoundError {
 class ForumProvider {
   constructor(
     private repository: ForumRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -152,13 +150,16 @@ class ForumProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentForum): Promise<number> => {
+  removeComment = async (
+    comment: CommentForum,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const forum = await this.repository.selectById(oldComment.idForum)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === forum.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

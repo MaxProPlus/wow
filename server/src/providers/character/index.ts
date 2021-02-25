@@ -9,7 +9,6 @@ import {
 } from '../../common/entity/types'
 import {CharacterUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Персонаж не найден"
@@ -22,7 +21,6 @@ export class CharacterNotFoundError extends NotFoundError {
 class CharacterProvider {
   constructor(
     private repository: CharacterRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -206,13 +204,16 @@ class CharacterProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentCharacter): Promise<number> => {
+  removeComment = async (
+    comment: CommentCharacter,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const character = await this.repository.selectById(oldComment.idCharacter)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === character.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

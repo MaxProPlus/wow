@@ -9,7 +9,6 @@ import {
 } from '../../common/entity/types'
 import {defaultAvatar, StoryUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Сюжет не найден"
@@ -22,7 +21,6 @@ export class StoryNotFoundError extends NotFoundError {
 class StoryProvider {
   constructor(
     private repository: StoryRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -238,13 +236,16 @@ class StoryProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentStory): Promise<number> => {
+  removeComment = async (
+    comment: CommentStory,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const story = await this.repository.selectById(oldComment.idStory)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === story.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

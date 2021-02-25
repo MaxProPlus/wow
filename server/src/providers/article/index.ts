@@ -2,7 +2,6 @@ import ArticleRepository from '../../repositories/article'
 import {Article, CommentArticle} from '../../common/entity/types'
 import {ArticleUpload, defaultAvatar} from '../../entity/types'
 import Uploader from '../../services/uploader'
-import RightProvider from '../right'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
 // Ошибка "Новость не найдена"
@@ -15,7 +14,6 @@ export class ArticleNotFoundError extends NotFoundError {
 class ArticleProvider {
   constructor(
     private repository: ArticleRepository,
-    private rightProvider: RightProvider,
     private uploader: Uploader
   ) {}
 
@@ -105,14 +103,16 @@ class ArticleProvider {
   }
 
   // Удалить комментарий
-  removeComment = async (comment: CommentArticle): Promise<number> => {
+  removeComment = async (
+    comment: CommentArticle,
+    right: boolean
+  ): Promise<number> => {
     const oldComment = await this.repository.selectCommentById(comment.id)
     const article = await this.repository.selectById(oldComment.idArticle)
     if (
       oldComment.idUser === comment.idUser ||
       comment.idUser === article.idUser ||
-      (await this.rightProvider.commentModerator(comment.idUser)) ||
-      (await this.rightProvider.articleModerator(comment.idUser))
+      right
     ) {
       return this.repository.removeComment(comment.id)
     }

@@ -37,12 +37,14 @@ import AuthController from '../controllers/auth'
 import RegistrationRepository from '../repositories/registration'
 import RegistrationProvider from '../providers/registration'
 import RegistrationController from '../controllers/registration'
+import RightRepository from '../repositories/right'
 
 // Общие провайдеры
 const validator = new Validator()
 
 // Провайдер на проверку прав
-const rightProvider = new RightProvider(db)
+const rightRepository = new RightRepository(db.getPoolPromise())
+const rightProvider = new RightProvider(rightRepository)
 
 // Провайдер, репозиторий на регистрацию
 const registrationRepository = new RegistrationRepository(db.getPoolPromise())
@@ -77,23 +79,12 @@ const userProvider = new UserProvider(
   rightProvider,
   uploader
 )
-export const userController = new UserController(
-  rightProvider,
-  authProvider,
-  userProvider,
-  smtp,
-  validator
-)
+export const userController = new UserController(userProvider, smtp, validator)
 
 // Модуль новостей
 const articleRepository = new ArticleRepository(db.getPoolPromise())
-const articleProvider = new ArticleProvider(
-  articleRepository,
-  rightProvider,
-  uploader
-)
+const articleProvider = new ArticleProvider(articleRepository, uploader)
 export const articleController = new ArticleController(
-  rightProvider,
   authProvider,
   articleProvider,
   validator
@@ -101,23 +92,13 @@ export const articleController = new ArticleController(
 
 // Модуль тикетов
 const ticketRepository = new TicketRepository(db.getPoolPromise())
-const ticketProvider = new TicketProvider(ticketRepository, rightProvider)
-export const ticketController = new TicketController(
-  rightProvider,
-  authProvider,
-  ticketProvider,
-  validator
-)
+const ticketProvider = new TicketProvider(ticketRepository)
+export const ticketController = new TicketController(ticketProvider, validator)
 
 // Модуль персонажей
 const characterRepository = new CharacterRepository(db.getPoolPromise())
-const characterProvider = new CharacterProvider(
-  characterRepository,
-  rightProvider,
-  uploader
-)
+const characterProvider = new CharacterProvider(characterRepository, uploader)
 export const characterController = new CharacterController(
-  rightProvider,
   authProvider,
   characterProvider,
   validator
@@ -125,13 +106,8 @@ export const characterController = new CharacterController(
 
 // Модуль гильдий
 const guildRepository = new GuildRepository(db.getPoolPromise())
-const guildProvider = new GuildProvider(
-  guildRepository,
-  rightProvider,
-  uploader
-)
+const guildProvider = new GuildProvider(guildRepository, uploader)
 export const guildController = new GuildController(
-  rightProvider,
   authProvider,
   guildProvider,
   validator
@@ -139,13 +115,8 @@ export const guildController = new GuildController(
 
 // Модуль сюжетов
 const storyRepository = new StoryRepository(db.getPoolPromise())
-const storyProvider = new StoryProvider(
-  storyRepository,
-  rightProvider,
-  uploader
-)
+const storyProvider = new StoryProvider(storyRepository, uploader)
 export const storyController = new StoryController(
-  rightProvider,
   authProvider,
   storyProvider,
   validator
@@ -153,13 +124,8 @@ export const storyController = new StoryController(
 
 // Модуль отчетов
 const reportRepository = new ReportRepository(db.getPoolPromise())
-const reportProvider = new ReportProvider(
-  reportRepository,
-  rightProvider,
-  uploader
-)
+const reportProvider = new ReportProvider(reportRepository, uploader)
 export const reportController = new ReportController(
-  rightProvider,
   authProvider,
   reportProvider,
   validator
@@ -167,13 +133,8 @@ export const reportController = new ReportController(
 
 // Модуль форумов
 const forumRepository = new ForumRepository(db.getPoolPromise())
-const forumProvider = new ForumProvider(
-  forumRepository,
-  rightProvider,
-  uploader
-)
+const forumProvider = new ForumProvider(forumRepository, uploader)
 export const forumController = new ForumController(
-  rightProvider,
   authProvider,
   forumProvider,
   validator
@@ -182,11 +143,7 @@ export const forumController = new ForumController(
 // Модуль обратной связи
 const feedbackRepository = new FeedbackRepository(db.getPoolPromise())
 const feedbackProvider = new FeedbackProvider(feedbackRepository)
-export const feedbackController = new FeedbackController(
-  rightProvider,
-  authProvider,
-  feedbackProvider
-)
+export const feedbackController = new FeedbackController(feedbackProvider)
 
 // Модуль материалов
 const materialRepository = new MaterialRepository(db.getPoolPromise())

@@ -3,22 +3,18 @@ import {Character, CommentCharacter} from '../common/entity/types'
 import Validator from '../common/validator'
 import CharacterProvider from '../providers/character'
 import {CharacterUpload} from '../entity/types'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 import RequestFile from '../services/requestFile'
+import {Rights} from '../providers/right'
 
-class CharacterController extends Controller {
+class CharacterController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
+    private authProvider: AuthProvider,
     private characterProvider: CharacterProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать персонажа
   create = async (req: Request, res: Response) => {
@@ -185,11 +181,13 @@ class CharacterController extends Controller {
       throw new ParseError()
     }
     c.idUser = req.user!.id
-    return this.characterProvider.removeComment(c).then(() => {
-      return res.json({
-        status: 'OK',
+    return this.characterProvider
+      .removeComment(c, req.user!.rights.includes(Rights.COMMENT_MODERATOR))
+      .then(() => {
+        return res.json({
+          status: 'OK',
+        })
       })
-    })
   }
 }
 

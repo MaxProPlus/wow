@@ -3,22 +3,18 @@ import {CommentStory, Story} from '../common/entity/types'
 import Validator from '../common/validator'
 import {StoryUpload} from '../entity/types'
 import StoryProvider from '../providers/story'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
+import {Rights} from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 import RequestFile from '../services/requestFile'
 
-class StoryController extends Controller {
+class StoryController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
+    private authProvider: AuthProvider,
     private storyProvider: StoryProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать сюжет
   create = async (req: Request, res: Response) => {
@@ -169,11 +165,13 @@ class StoryController extends Controller {
       throw new ParseError()
     }
     c.idUser = req.user!.id
-    return this.storyProvider.removeComment(c).then(() => {
-      return res.json({
-        status: 'OK',
+    return this.storyProvider
+      .removeComment(c, req.user!.rights.includes(Rights.COMMENT_MODERATOR))
+      .then(() => {
+        return res.json({
+          status: 'OK',
+        })
       })
-    })
   }
 }
 

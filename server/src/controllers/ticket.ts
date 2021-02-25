@@ -2,20 +2,14 @@ import {Request, Response} from 'express'
 import {CommentTicket, Ticket} from '../common/entity/types'
 import Validator from '../common/validator'
 import TicketProvider from '../providers/ticket'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
-import AuthProvider from '../providers/auth'
+import {Rights} from '../providers/right'
 import {ForbiddenError, ParseError, ValidationError} from '../errors'
 
-class TicketController extends Controller {
+class TicketController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
     private ticketProvider: TicketProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать тикет
   create = async (req: Request, res: Response) => {
@@ -40,7 +34,7 @@ class TicketController extends Controller {
       throw new ParseError()
     }
     const idUser = req.user!.id
-    const ticketModerator = await this.rightProvider.ticketModerator(idUser)
+    const ticketModerator = req.user!.rights.includes(Rights.TICKET_MODERATOR)
     return this.ticketProvider.getById(idTicket).then(([ticket, comments]) => {
       if (ticket.idUser !== idUser && !ticketModerator) {
         throw new ForbiddenError()
@@ -58,8 +52,7 @@ class TicketController extends Controller {
       throw new ParseError()
     }
     const idUser = req.user!.id
-    const ticketModerator = await this.rightProvider.ticketModerator(idUser)
-    if (!ticketModerator) {
+    if (!req.user!.rights.includes(Rights.TICKET_MODERATOR)) {
       throw new ForbiddenError()
     }
     const err = this.validator.validateTicketStatus(req.body.status)
@@ -111,12 +104,14 @@ class TicketController extends Controller {
     if (err) {
       throw new ValidationError(err)
     }
-    return this.ticketProvider.createComment(c).then((r) => {
-      return res.json({
-        status: 'OK',
-        results: [r],
+    return this.ticketProvider
+      .createComment(c, req.user!.rights.includes(Rights.TICKET_MODERATOR))
+      .then((r) => {
+        return res.json({
+          status: 'OK',
+          results: [r],
+        })
       })
-    })
   }
 
   // Получить комментарий к тикету по id
@@ -126,12 +121,18 @@ class TicketController extends Controller {
       throw new ParseError()
     }
     const idUser = req.user!.id
-    return this.ticketProvider.getComments(idTicket, idUser).then((r) => {
-      return res.json({
-        status: 'OK',
-        results: r,
+    return this.ticketProvider
+      .getComments(
+        idTicket,
+        idUser,
+        req.user!.rights.includes(Rights.TICKET_MODERATOR)
+      )
+      .then((r) => {
+        return res.json({
+          status: 'OK',
+          results: r,
+        })
       })
-    })
   }
 }
 

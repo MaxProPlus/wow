@@ -3,22 +3,18 @@ import {CommentGuild, Guild} from '../common/entity/types'
 import Validator from '../common/validator'
 import {GuildUpload} from '../entity/types'
 import GuildProvider from '../providers/guild'
-import Controller from '../core/controller'
-import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
 import RequestFile from '../services/requestFile'
+import {Rights} from '../providers/right'
 
-class GuildController extends Controller {
+class GuildController {
   constructor(
-    rightProvider: RightProvider,
-    authProvider: AuthProvider,
+    private authProvider: AuthProvider,
     private guildProvider: GuildProvider,
     private validator: Validator
-  ) {
-    super(rightProvider, authProvider)
-  }
+  ) {}
 
   // Создать гильдию
   create = async (req: Request, res: Response) => {
@@ -169,11 +165,13 @@ class GuildController extends Controller {
       throw new ParseError()
     }
     c.idUser = req.user!.id
-    return this.guildProvider.removeComment(c).then(() => {
-      return res.json({
-        status: 'OK',
+    return this.guildProvider
+      .removeComment(c, req.user!.rights.includes(Rights.COMMENT_MODERATOR))
+      .then(() => {
+        return res.json({
+          status: 'OK',
+        })
       })
-    })
   }
 }
 

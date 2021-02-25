@@ -2,13 +2,13 @@ import {Request, Response} from 'express'
 import {CommentForum, Forum} from '../common/entity/types'
 import Validator from '../common/validator'
 import {ForumUpload} from '../entity/types'
-import {UploadedFile} from 'express-fileupload'
 import ForumProvider from '../providers/forum'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
+import RequestFile from '../services/requestFile'
 
 class ForumController extends Controller {
   constructor(
@@ -22,15 +22,12 @@ class ForumController extends Controller {
 
   // Создать форум
   create = async (req: Request, res: Response) => {
-    if (
-      !req.files ||
-      Object.keys(req.files).length < 1 ||
-      !req.files.fileAvatar
-    ) {
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (!fileAvatar) {
       throw new FileError('Аватарка форума не прикреплена')
     }
     const c: ForumUpload = req.body
-    c.fileAvatar = req.files.fileAvatar as UploadedFile
+    c.fileAvatar = fileAvatar
     let err = this.validator.validateForum(c)
     err += this.validator.validateImg(c.fileAvatar)
     if (err) {
@@ -101,16 +98,12 @@ class ForumController extends Controller {
     c.id = id
     let err = this.validator.validateForum(c)
 
-    if (
-      !(
-        !req.files ||
-        Object.keys(req.files).length < 1 ||
-        !req.files.fileAvatar
-      )
-    ) {
-      c.fileAvatar = req.files.fileAvatar as UploadedFile
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (fileAvatar) {
+      c.fileAvatar = fileAvatar
       err += this.validator.validateImg(c.fileAvatar)
     }
+
     if (err) {
       throw new ValidationError(err)
     }

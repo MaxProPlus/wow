@@ -2,13 +2,13 @@ import {Request, Response} from 'express'
 import {CommentStory, Story} from '../common/entity/types'
 import Validator from '../common/validator'
 import {StoryUpload} from '../entity/types'
-import {UploadedFile} from 'express-fileupload'
 import StoryProvider from '../providers/story'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
+import RequestFile from '../services/requestFile'
 
 class StoryController extends Controller {
   constructor(
@@ -22,15 +22,12 @@ class StoryController extends Controller {
 
   // Создать сюжет
   create = async (req: Request, res: Response) => {
-    if (
-      !req.files ||
-      Object.keys(req.files).length < 1 ||
-      !req.files.fileAvatar
-    ) {
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (!fileAvatar) {
       throw new FileError('Аватарка сюжета не прикреплена')
     }
     const c: StoryUpload = req.body
-    c.fileAvatar = req.files.fileAvatar as UploadedFile
+    c.fileAvatar = fileAvatar
     let err = this.validator.validateStory(c)
     err += this.validator.validateImg(c.fileAvatar)
     if (err) {
@@ -101,16 +98,12 @@ class StoryController extends Controller {
     c.id = id
     let err = this.validator.validateStory(c)
 
-    if (
-      !(
-        !req.files ||
-        Object.keys(req.files).length < 1 ||
-        !req.files.fileAvatar
-      )
-    ) {
-      c.fileAvatar = req.files.fileAvatar as UploadedFile
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (fileAvatar) {
+      c.fileAvatar = fileAvatar
       err += this.validator.validateImg(c.fileAvatar)
     }
+
     if (err) {
       throw new ValidationError(err)
     }

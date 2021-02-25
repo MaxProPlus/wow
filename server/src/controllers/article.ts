@@ -3,12 +3,12 @@ import {Article, CommentArticle} from '../common/entity/types'
 import Validator from '../common/validator'
 import ArticleProvider from '../providers/article'
 import {ArticleUpload} from '../entity/types'
-import {UploadedFile} from 'express-fileupload'
 import Controller from '../core/controller'
 import RightProvider from '../providers/right'
 import AuthProvider from '../providers/auth'
 import TokenStorage from '../services/token'
 import {FileError, ForbiddenError, ParseError, ValidationError} from '../errors'
+import RequestFile from '../services/requestFile'
 
 class ArticleController extends Controller {
   constructor(
@@ -22,15 +22,12 @@ class ArticleController extends Controller {
 
   // Создать новость
   create = async (req: Request, res: Response) => {
-    if (
-      !req.files ||
-      Object.keys(req.files).length < 1 ||
-      !req.files.fileAvatar
-    ) {
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (!fileAvatar) {
       throw new FileError('Аватарка новости не прикрепленна')
     }
     const c: ArticleUpload = req.body
-    c.fileAvatar = req.files.fileAvatar as UploadedFile
+    c.fileAvatar = fileAvatar
     let err = this.validator.validateArticle(c)
     err += this.validator.validateImg(c.fileAvatar)
     if (err) {
@@ -110,16 +107,12 @@ class ArticleController extends Controller {
     c.id = id
     let err = this.validator.validateArticle(c)
 
-    if (
-      !(
-        !req.files ||
-        Object.keys(req.files).length < 1 ||
-        !req.files.fileAvatar
-      )
-    ) {
-      c.fileAvatar = req.files.fileAvatar as UploadedFile
+    const fileAvatar = RequestFile.get(req, 'fileAvatar')
+    if (fileAvatar) {
+      c.fileAvatar = fileAvatar
       err += this.validator.validateImg(c.fileAvatar)
     }
+
     if (err) {
       throw new ValidationError(err)
     }

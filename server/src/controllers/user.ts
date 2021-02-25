@@ -2,7 +2,6 @@ import {Request, Response} from 'express'
 import UserProvider from '../providers/account'
 import {User} from '../common/entity/types'
 import Validator from '../common/validator'
-import {UploadedFile} from 'express-fileupload'
 import {Smtp} from '../services/smtp'
 import TokenStorage from '../services/token'
 import Controller from '../core/controller'
@@ -14,6 +13,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from '../errors'
+import RequestFile from '../services/requestFile'
 
 class UserController extends Controller {
   constructor(
@@ -102,20 +102,19 @@ class UserController extends Controller {
 
   // Загрузка аватарки
   updateAvatar = async (req: Request, res: Response) => {
-    if (!req.files || Object.keys(req.files).length === 0) {
+    const fileAvatar = RequestFile.get(req, 'avatar')
+    if (!fileAvatar) {
       throw new FileError('Аватарка не прикреплена')
     }
-    const err = this.validator.validateImg(req.files.avatar as UploadedFile)
+    const err = this.validator.validateImg(fileAvatar)
     if (err) {
       throw new ValidationError(err)
     }
-    return this.userProvider
-      .updateAvatar(req.user!.id, req.files.avatar)
-      .then(() => {
-        return res.json({
-          status: 'OK',
-        })
+    return this.userProvider.updateAvatar(req.user!.id, fileAvatar).then(() => {
+      return res.json({
+        status: 'OK',
       })
+    })
   }
 }
 

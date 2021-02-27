@@ -46,7 +46,7 @@ class GuildController {
     }
     return this.guildProvider.getById(id).then(async ([guild, comments]) => {
       if (guild.closed) {
-        const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+        const user = await this.authProvider.getUser(TokenStorage.get(req))
         if (!user || (user && user.id !== guild.idUser)) {
           throw new ForbiddenError()
         }

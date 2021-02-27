@@ -46,7 +46,7 @@ class StoryController {
     }
     return this.storyProvider.getById(id).then(async ([story, comments]) => {
       if (story.closed) {
-        const user = await this.authProvider.getUser(TokenStorage.getToken(req))
+        const user = await this.authProvider.getUser(TokenStorage.get(req))
         if (!user || (user && user.id !== story.idUser)) {
           throw new ForbiddenError()
         }

@@ -56,7 +56,7 @@ class RegistrationController {
       throw new ValidationError(err)
     }
     const dbUser = await this.authProvider.getUserByTokenAndPassword(
-      TokenStorage.getToken(req),
+      TokenStorage.get(req),
       user.password
     )
     if (!dbUser) {
@@ -75,7 +75,7 @@ class RegistrationController {
   updatePassword = async (req: Request, res: Response) => {
     const user: UserPassword = req.body
     const dbUser = await this.authProvider.getUserByTokenAndPassword(
-      TokenStorage.getToken(req),
+      TokenStorage.get(req),
       user.passwordAccept
     )
     if (!dbUser) {

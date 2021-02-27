@@ -21,7 +21,7 @@ class UserController {
 
   // Получить контекст
   getContext = (req: Request, res: Response) => {
-    return this.userProvider.getContext(TokenStorage.getToken(req)).then(
+    return this.userProvider.getContext(TokenStorage.get(req)).then(
       (r) => {
         return res.json({
           status: 'OK',
@@ -30,7 +30,7 @@ class UserController {
       },
       (err: Error) => {
         if (err instanceof UnauthorizedError) {
-          res.clearCookie('token')
+          TokenStorage.clear(res)
         }
         throw err
       }

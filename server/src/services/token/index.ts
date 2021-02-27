@@ -2,13 +2,18 @@ import {Request, Response} from 'express'
 
 class TokenStorage {
   // Получить токен
-  static getToken = (req: Request) => {
+  static get = (req: Request) => {
     return req.cookies.token
   }
 
   // Установить токен
-  static setToken = (res: Response, token: string) => {
+  static set = (res: Response, token: string) => {
     res.cookie('token', token)
+  }
+
+  // Очистить токен
+  static clear = (res: Response) => {
+    res.clearCookie('token')
   }
 }
 

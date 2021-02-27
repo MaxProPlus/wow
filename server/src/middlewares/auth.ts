@@ -9,7 +9,7 @@ export const getUser: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  req.user = await authProvider.getUser(TokenStorage.getToken(req))
+  req.user = await authProvider.getUser(TokenStorage.get(req))
   if (!req.user) {
     throw new UnauthorizedError()
   }
@@ -22,7 +22,7 @@ export const getUserWithRight: RequestHandler = async (
   res: Response,
   next: NextFunction
 ) => {
-  req.user = await authProvider.getUserWithRights(TokenStorage.getToken(req))
+  req.user = await authProvider.getUserWithRights(TokenStorage.get(req))
   if (!req.user) {
     throw new UnauthorizedError()
   }

@@ -54,7 +54,7 @@ class ArticleController {
       .then(async ([article, comments]) => {
         if (article.closed) {
           const user = await this.authProvider.getUser(
-            TokenStorage.getToken(req)
+            TokenStorage.get(req)
           )
           if (!user || (user && user.id !== article.idUser)) {
             throw new ForbiddenError()

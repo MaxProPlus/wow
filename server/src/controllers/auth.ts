@@ -13,7 +13,7 @@ class AuthController {
     const about = new About()
     about.ip = req.ip
     return this.authProvider.login(user, about).then((r) => {
-      TokenStorage.setToken(res, r)
+      TokenStorage.set(res, r)
       return res.json({
         status: 'OK',
       })
@@ -22,8 +22,8 @@ class AuthController {
 
   // Выход
   logout = (req: Request, res: Response) => {
-    res.clearCookie('token')
-    this.authProvider.logout(TokenStorage.getToken(req))
+    TokenStorage.clear(res)
+    this.authProvider.logout(TokenStorage.get(req))
     return res.json({
       status: 'OK',
     })

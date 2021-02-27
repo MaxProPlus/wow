@@ -49,7 +49,7 @@ class CharacterController {
       .then(async ([character, comments]) => {
         if (character.closed) {
           const user = await this.authProvider.getUser(
-            TokenStorage.getToken(req)
+            TokenStorage.get(req)
           )
           if (!user || (user && user.id !== character.idUser)) {
             throw new ForbiddenError()

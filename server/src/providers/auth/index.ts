@@ -3,11 +3,11 @@ import {User} from '../../common/entity/types'
 import {About, Token} from '../../entity/types'
 import Hash from '../../services/hash'
 import RegistrationRepository from '../../repositories/registration'
-import {ApiError} from '../../errors'
+import {ApiError, Errors} from '../../errors'
 
 // Ошибки аутентификации
 export class AuthError extends ApiError {
-  constructor(message: string, name = 'ERROR_AUTH') {
+  constructor(message: string, name = Errors.ERROR_AUTH) {
     super(message, name)
   }
 }

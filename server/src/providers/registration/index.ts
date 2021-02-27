@@ -2,12 +2,12 @@ import {User, UserPassword} from '../../common/entity/types'
 import RegistrationRepository from '../../repositories/registration'
 import Hash from '../../services/hash'
 import {Smtp} from '../../services/smtp'
-import {ApiError} from '../../errors'
+import {ApiError, Errors} from '../../errors'
 import ConfigProvider from '../../services/config'
 
 // Ошибка регистрации
 export class RegistrationError extends ApiError {
-  constructor(message: string, name = 'REGISTRATION_ERROR') {
+  constructor(message: string, name = Errors.ERROR_REGISTRATION) {
     super(message, name)
   }
 }

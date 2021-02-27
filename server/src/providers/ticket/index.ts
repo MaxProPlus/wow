@@ -6,7 +6,7 @@ import {
   TicketType,
 } from '../../common/entity/types'
 import {defaultAvatar} from '../../entity/types'
-import {ApiError, ForbiddenError} from '../../errors'
+import {ApiError, Errors, ForbiddenError} from '../../errors'
 
 class TicketProvider {
   constructor(private repository: TicketRepository) {}
@@ -66,7 +66,7 @@ class TicketProvider {
   ): Promise<number> => {
     const ticket = await this.repository.selectById(comment.idTicket)
     if (ticket.status === TicketStatus.CLOSE) {
-      throw new ApiError('Тикет закрыт', 'TICKET_ERROR')
+      throw new ApiError('Тикет закрыт', Errors.ERROR_TICKET)
     }
     if (ticket.idUser !== comment.idUser && !right) {
       throw new ForbiddenError()

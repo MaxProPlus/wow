@@ -1,6 +1,6 @@
 import {createTransport, SentMessageInfo} from 'nodemailer'
 import Mail from 'nodemailer/lib/mailer'
-import {ApiError} from '../../errors'
+import {ApiError, Errors} from '../../errors'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import ConfigProvider from '../config'
 import {logger} from '../../modules/core'
@@ -10,7 +10,7 @@ export class SmtpError extends ApiError {
   constructor() {
     super(
       'Ошибка при отправке сообщения. Если ошибка повторится, то свяжитесь с администрацией',
-      'ERROR_SMTP'
+      Errors.ERROR_SMTP
     )
   }
 }

@@ -21,6 +21,7 @@ import InputCheckBox from '../../components/form/inputCheckBox/InputCheckBox'
 import Button from '../../components/button/Button'
 import ArticleApi from '../../api/ArticleApi'
 import Page from '../../components/page/Page'
+import {Rights} from '../../../../server/src/providers/right'
 
 type P = RouteComponentProps & RouteProps
 
@@ -105,7 +106,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
   render() {
     if (
       this.context.user.id > 0 &&
-      !this.context.user.rights.includes('ARTICLE_MODERATOR')
+      !this.context.user.rights.includes(Rights.ARTICLE_MODERATOR)
     ) {
       return (
         <Page>

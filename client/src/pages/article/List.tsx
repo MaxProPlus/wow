@@ -13,6 +13,7 @@ import './List.scss'
 import stylesTitle from '../../css/listTitle.module.scss'
 import stylesButton from '../../components/list/SearchBlock.module.scss'
 import DateFormatter from '../../utils/date'
+import {Rights} from '../../../../server/src/providers/right'
 
 type P = RouteComponentProps
 
@@ -124,7 +125,7 @@ class ArticleList extends Component<P, S> {
           title="Последние обновления"
           className={`${stylesTitle.header} page-article-list__title`}
         >
-          {this.context.user.rights.includes('ARTICLE_MODERATOR') && (
+          {this.context.user.rights.includes(Rights.ARTICLE_MODERATOR) && (
             <Button to="/article/create">
               <img className={stylesButton.icon} src={penIcon} alt="" />
               <span className={stylesButton.text}>Создать новость</span>

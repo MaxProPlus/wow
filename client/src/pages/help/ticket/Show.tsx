@@ -16,6 +16,7 @@ import CommentForm from '../../../components/commentFrom/CommentForm'
 import {MatchId} from '../../../types/RouteProps'
 import UserContext from '../../../contexts/userContext'
 import CommentComponent from '../../../components/comment/Comment'
+import {Rights} from '../../../../../server/src/providers/right'
 import './Show.scss'
 
 type P = RouteComponentProps<MatchId>
@@ -162,7 +163,7 @@ class TicketPage extends React.Component<P, S> {
               </span>{' '}
               Статус заявки: {ticketStatusToString(this.state.ticket.status)}
             </div>
-            {this.context.user.rights.includes('TICKET_MODERATOR') && (
+            {this.context.user.rights.includes(Rights.TICKET_MODERATOR) && (
               <Select
                 label="Статус заявки:"
                 value={this.state.status}

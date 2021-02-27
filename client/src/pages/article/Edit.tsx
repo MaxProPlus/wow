@@ -18,6 +18,7 @@ import Button from '../../components/button/Button'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
 import ArticleApi from '../../api/ArticleApi'
 import Page from '../../components/page/Page'
+import {Rights} from '../../../../server/src/providers/right'
 
 type P = RouteProps & RouteComponentProps<MatchId>
 
@@ -168,7 +169,7 @@ class ArticleEdit extends React.Component<P, S> {
     }
     if (
       this.context.user.id > 0 &&
-      !this.context.user.rights.includes('ARTICLE_MODERATOR')
+      !this.context.user.rights.includes(Rights.ARTICLE_MODERATOR)
     ) {
       return (
         <Page>

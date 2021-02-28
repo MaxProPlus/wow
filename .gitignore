@@ -2,6 +2,10 @@
 /client/node_modules
 /server/node_modules
 
+# Test
+/coverage
+/.nyc_output
+
 # ide
 /client/.idea
 /server/.idea

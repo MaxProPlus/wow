@@ -132,7 +132,7 @@ class ForumProvider {
   // Создать комментарий
   createComment = async (comment: CommentForum): Promise<number> => {
     const c = await this.repository.selectById(comment.idForum)
-    if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+    if ((c.idUser !== comment.idUser) && (c.comment || c.closed)) {
       throw new ForbiddenError('Комментирование запрещено')
     }
     return this.repository.insertComment(comment)

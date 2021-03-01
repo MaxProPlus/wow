@@ -73,19 +73,19 @@ class ArticleProvider {
   }
 
   // Удалить новость
-  remove = async (character: Article): Promise<number> => {
-    const oldArticle = await this.repository.selectById(character.id)
-    if (oldArticle.idUser !== character.idUser) {
+  remove = async (article: Article): Promise<number> => {
+    const oldArticle = await this.repository.selectById(article.id)
+    if (oldArticle.idUser !== article.idUser) {
       throw new ForbiddenError()
     }
     this.uploader.remove(oldArticle.urlAvatar)
-    return this.repository.remove(character.id)
+    return this.repository.remove(article.id)
   }
 
   // Создать комментарий к новости
   createComment = async (comment: CommentArticle): Promise<number> => {
     const c = await this.repository.selectById(comment.idArticle)
-    if (c.comment || (c.closed && c.idUser !== comment.idUser)) {
+    if ((c.idUser !== comment.idUser) && (c.comment || c.closed)) {
       throw new ForbiddenError('Комментирование запрещено')
     }
     return this.repository.insertComment(comment)

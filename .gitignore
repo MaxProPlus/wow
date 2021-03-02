@@ -1,19 +1,16 @@
 # dependencies
-/client/node_modules
-/server/node_modules
+/*/node_modules
 
 # Test
-/coverage
-/.nyc_output
+/*/coverage
 
 # ide
-/client/.idea
-/server/.idea
+/*/.idea
 /server/src/common/.idea
 
 # env
-/server/dev.env
-/server/prod.env
+/*/.env.local
+/*/.env.*.local
 
 # production
 /client/build

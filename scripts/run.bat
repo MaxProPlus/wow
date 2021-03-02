@@ -1,4 +1,4 @@
-#!/bin/bash
+@echo off
 
 cd ../server
-npm run start
+call node ./dist/

@@ -1,6 +1,6 @@
 const config = {
-  env: process.env.NODE_ENV || 'development',
-  port: +process.env.PORT! || 3001,
+  env: process.env.NODE_ENV || 'production',
+  port: +process.env.PORT! || 5000,
   host: process.env.HOST || 'localhost',
   db: {
     connectionLimit: +process.env.DB_CONNECTION_LIMIT! || 20,

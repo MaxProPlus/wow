@@ -390,10 +390,3 @@ export class Article {
   hidden = 0 // Скрыть из общих разделов(материал будет доступен по прямой ссылкуе и для прикрепления к другим материалам)
   comment = 0 // Запретить комментарии
 }
-
-export const defaultCharacterAvatar = '/characterAvatar/standard.png'
-export const defaultGuildAvatar = '/guildAvatar/standard.png'
-export const defaultStoryAvatar = '/storyAvatar/standard.png'
-export const defaultReportAvatar = '/reportAvatar/standard.png'
-export const defaultForumAvatar = '/forumAvatar/standard.png'
-export const defaultArticleAvatar = '/articleAvatar/standard.png'

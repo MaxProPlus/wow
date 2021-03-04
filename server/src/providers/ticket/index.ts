@@ -5,7 +5,6 @@ import {
   TicketStatus,
   TicketType,
 } from '../../common/entity/types'
-import {defaultAvatar} from '../../entity/types'
 import {ApiError, Errors, ForbiddenError} from '../../errors'
 
 class TicketProvider {
@@ -20,11 +19,6 @@ class TicketProvider {
   getById = async (idTicket: number): Promise<[Ticket, CommentTicket[]]> => {
     const ticket = await this.repository.selectById(idTicket)
     const comments = await this.repository.selectCommentsByIdTicket(idTicket)
-    comments.forEach((c: CommentTicket) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
     return [ticket, comments]
   }
 
@@ -84,13 +78,7 @@ class TicketProvider {
     if (data[0].idUser !== idUser && !right) {
       throw new ForbiddenError()
     }
-    const comments = await this.repository.selectCommentsByIdTicket(idTicket)
-    comments.forEach((c: CommentTicket) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+    return await this.repository.selectCommentsByIdTicket(idTicket)
   }
 }
 

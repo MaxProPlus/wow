@@ -9,6 +9,7 @@ import {User} from '../../../../server/src/common/entity/types'
 import {RouteComponentProps} from 'react-router-dom'
 import {MatchId} from '../../types/RouteProps'
 import Page from '../../components/page/Page'
+import defaultAvatar from 'img/default.png'
 
 type P = RouteComponentProps<MatchId>
 
@@ -53,6 +54,9 @@ class ProfilePage extends React.Component<P, S> {
       .getUser(id)
       .then(
         (r) => {
+          if (!r.urlAvatar) {
+            r.urlAvatar = defaultAvatar
+          }
           this.setState({
             user: r,
           })

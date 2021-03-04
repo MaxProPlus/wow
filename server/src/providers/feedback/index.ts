@@ -1,20 +1,12 @@
 import FeedbackRepository from '../../repositories/feedback'
 import {Feedback} from '../../common/entity/types'
-import {defaultAvatar} from '../../entity/types'
 
 class FeedbackProvider {
   constructor(private repository: FeedbackRepository) {}
 
   // Получить список администраторов
   getAll = (): Promise<Feedback[]> => {
-    return this.repository.selectAll().then((r) => {
-      r.forEach((el) => {
-        if (!el.urlAvatar) {
-          el.urlAvatar = defaultAvatar
-        }
-      })
-      return r
-    })
+    return this.repository.selectAll()
   }
 
   // Обновить список администраторов

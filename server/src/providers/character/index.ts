@@ -7,7 +7,7 @@ import {
   Story,
   User,
 } from '../../common/entity/types'
-import {CharacterUpload, defaultAvatar} from '../../entity/types'
+import {CharacterUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -193,14 +193,8 @@ class CharacterProvider {
   }
 
   // Получить комментарии к персонажу
-  getComments = async (id: number): Promise<CommentCharacter[]> => {
-    const comments = await this.repository.selectCommentsByIdCharacter(id)
-    comments.forEach((c: CommentCharacter) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentCharacter[]> => {
+    return this.repository.selectCommentsByIdCharacter(id)
   }
 
   // Удалить комментарий

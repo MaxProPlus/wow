@@ -1,6 +1,6 @@
 import ArticleRepository from '../../repositories/article'
 import {Article, CommentArticle} from '../../common/entity/types'
-import {ArticleUpload, defaultAvatar} from '../../entity/types'
+import {ArticleUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -92,14 +92,8 @@ class ArticleProvider {
   }
 
   // Получить комментарии к новости
-  getComments = async (id: number): Promise<CommentArticle[]> => {
-    const comments = await this.repository.selectCommentsByIdArticle(id)
-    comments.forEach((c: CommentArticle) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentArticle[]> => {
+    return this.repository.selectCommentsByIdArticle(id)
   }
 
   // Удалить комментарий

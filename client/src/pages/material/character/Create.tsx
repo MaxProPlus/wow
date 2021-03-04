@@ -7,7 +7,6 @@ import {
   Character,
   characterActiveToString,
   characterStatusToString,
-  defaultCharacterAvatar,
   sexToString,
   User,
 } from '../../../../../server/src/common/entity/types'
@@ -35,6 +34,7 @@ import {CommonS, handleFormData} from './Common'
 import {RouteProps} from '../../../types/RouteProps'
 import UserApi from '../../../api/UserApi'
 import Page from '../../../components/page/Page'
+import default190x260 from 'img/default190x260.png'
 
 type P = RouteComponentProps & RouteProps
 
@@ -229,7 +229,7 @@ class CharacterCreate extends React.Component<P, CommonS> {
                   <Col>
                     <MyCropper
                       label="Загрузите изображение персонажа"
-                      src={defaultCharacterAvatar}
+                      src={default190x260}
                       ratio={190 / 260}
                       onChange={this.handleImageChange}
                     />

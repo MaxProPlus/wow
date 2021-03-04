@@ -1,6 +1,6 @@
 import ForumRepository from '../../repositories/forum'
 import {CommentForum, Forum, User} from '../../common/entity/types'
-import {defaultAvatar, ForumUpload} from '../../entity/types'
+import {ForumUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -139,14 +139,8 @@ class ForumProvider {
   }
 
   // Получить комментарии
-  getComments = async (id: number): Promise<CommentForum[]> => {
-    const comments = await this.repository.selectCommentsByIdForum(id)
-    comments.forEach((c) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentForum[]> => {
+    return this.repository.selectCommentsByIdForum(id)
   }
 
   // Удалить комментарий

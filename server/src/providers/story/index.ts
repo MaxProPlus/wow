@@ -1,13 +1,6 @@
 import StoryRepository from '../../repositories/story'
-import {
-  Character,
-  CommentStory,
-  Guild,
-  Report,
-  Story,
-  User,
-} from '../../common/entity/types'
-import {defaultAvatar, StoryUpload} from '../../entity/types'
+import {Character, CommentStory, Guild, Report, Story, User} from '../../common/entity/types'
+import {StoryUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -225,14 +218,8 @@ class StoryProvider {
   }
 
   // Получить комментарии
-  getComments = async (id: number): Promise<CommentStory[]> => {
-    const comments = await this.repository.selectCommentsByIdStory(id)
-    comments.forEach((c: CommentStory) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentStory[]> => {
+    return this.repository.selectCommentsByIdStory(id)
   }
 
   // Удалить комментарий

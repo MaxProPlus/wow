@@ -3,11 +3,7 @@ import Spinner from '../../../components/spinner/Spinner'
 import Button from '../../../components/button/Button'
 import InputField from '../../../components/form/inputField/InputField'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import {
-  defaultForumAvatar,
-  Forum,
-  User,
-} from '../../../../../server/src/common/entity/types'
+import {Forum, User} from '../../../../../server/src/common/entity/types'
 import Validator from '../../../../../server/src/common/validator'
 import history from '../../../utils/history'
 import UserContext from '../../../contexts/userContext'
@@ -31,6 +27,7 @@ import ForumApi from '../../../api/ForumApi'
 import {RouteProps} from '../../../types/RouteProps'
 import UserApi from '../../../api/UserApi'
 import Page from '../../../components/page/Page'
+import default260x190 from 'img/default260x190.png'
 
 type P = RouteComponentProps & RouteProps
 
@@ -189,7 +186,7 @@ class ForumCreate extends React.Component<P, CommonS> {
               <Col md={6}>
                 <MyCropper
                   label="Загрузите изображение форума"
-                  src={defaultForumAvatar}
+                  src={default260x190}
                   ratio={260 / 190}
                   onChange={this.handleImageChange}
                 />

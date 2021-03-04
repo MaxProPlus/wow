@@ -5,7 +5,6 @@ import InputField from '../../../components/form/inputField/InputField'
 import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import {
   Character,
-  defaultReportAvatar,
   Guild,
   Report,
   Story,
@@ -37,6 +36,7 @@ import UserApi from '../../../api/UserApi'
 import StoryApi from '../../../api/StoryApi'
 import GuildApi from '../../../api/GuildApi'
 import Page from '../../../components/page/Page'
+import default260x190 from 'img/default260x190.png'
 
 type P = RouteComponentProps & RouteProps
 
@@ -292,7 +292,7 @@ class ReportCreate extends React.Component<P, CommonS> {
               <Col md={6}>
                 <MyCropper
                   label="Загрузите изображение отчета / лога"
-                  src={defaultReportAvatar}
+                  src={default260x190}
                   ratio={260 / 190}
                   onChange={this.handleImageChange}
                 />

@@ -8,7 +8,6 @@ import AlertDanger from '../../../components/alert-danger/AlertDanger'
 import Button from '../../../components/button/Button'
 import {
   Character,
-  defaultStoryAvatar,
   Guild,
   Story,
   storyStatusToString,
@@ -37,6 +36,7 @@ import GuildApi from '../../../api/GuildApi'
 import {RouteProps} from '../../../types/RouteProps'
 import UserApi from '../../../api/UserApi'
 import Page from '../../../components/page/Page'
+import default260x190 from 'img/default260x190.png'
 
 type P = RouteComponentProps & RouteProps
 
@@ -258,7 +258,7 @@ class StoryCreate extends React.Component<P, CommonS> {
               <Col md={6}>
                 <MyCropper
                   label="Загрузите изображение сюжета"
-                  src={defaultStoryAvatar}
+                  src={default260x190}
                   ratio={260 / 190}
                   onChange={this.handleImageChange}
                 />

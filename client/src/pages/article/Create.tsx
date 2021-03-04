@@ -3,10 +3,7 @@ import {RouteProps} from '../../types/RouteProps'
 import {CommonS, handleFormData} from './Common'
 import UserContext from '../../contexts/userContext'
 import Validator from '../../../../server/src/common/validator'
-import {
-  Article,
-  defaultArticleAvatar,
-} from '../../../../server/src/common/entity/types'
+import {Article} from '../../../../server/src/common/entity/types'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
 import Helper from '../../utils/helper'
 import Spinner from '../../components/spinner/Spinner'
@@ -22,6 +19,7 @@ import Button from '../../components/button/Button'
 import ArticleApi from '../../api/ArticleApi'
 import Page from '../../components/page/Page'
 import {Rights} from '../../../../server/src/providers/right'
+import default260x190 from 'img/default260x190.png'
 
 type P = RouteComponentProps & RouteProps
 
@@ -130,7 +128,7 @@ class ArticleCreate extends React.Component<P, CommonS> {
               <Col md={6}>
                 <MyCropper
                   label="Загрузите изображение новости"
-                  src={defaultArticleAvatar}
+                  src={default260x190}
                   ratio={260 / 190}
                   onChange={this.handleImageChange}
                 />

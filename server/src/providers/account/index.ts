@@ -1,7 +1,6 @@
 import UserRepository from '../../repositories/user'
 import Uploader from '../../services/uploader'
 import {User} from '../../common/entity/types'
-import {defaultAvatar} from '../../entity/types'
 import RightProvider from '../right'
 import {Smtp} from '../../services/smtp'
 
@@ -16,21 +15,13 @@ class UserProvider {
   // Получить контекст
   getContext = async (token: string): Promise<User> => {
     const user: User = await this.repository.getContext(token)
-    if (!user.urlAvatar) {
-      user.urlAvatar = defaultAvatar
-    }
     user.rights = await this.rightProvider.getRights(user.id)
     return user
   }
 
   // Получить пользователя по id
   getById = (id: number): Promise<User> => {
-    return this.repository.selectById(id).then((user) => {
-      if (!user.urlAvatar) {
-        user.urlAvatar = defaultAvatar
-      }
-      return user
-    })
+    return this.repository.selectById(id)
   }
 
   // Получить информацию о пользователе

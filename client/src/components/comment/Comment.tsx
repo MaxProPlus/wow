@@ -4,6 +4,7 @@ import {Comment as CommentType} from '../../../../server/src/common/entity/types
 import AvatarImg from '../avatar-img/AvatarImg'
 import './Comment.scss'
 import DateFormatter from '../../utils/date'
+import defaultAvatar from 'img/default.png'
 
 type P = CommentType & {
   onClickRemove?: () => void
@@ -14,7 +15,7 @@ const CommentComponent: React.FC<P> = (props) => {
     <div className="comment-item">
       <div className="d-flex justify-content-between">
         <Link to={'/profile/' + props.idUser}>
-          <AvatarImg url={props.authorUrlAvatar} />
+          <AvatarImg url={props.authorUrlAvatar || defaultAvatar} />
         </Link>
         <div className="flex-grow-1">
           <div className="comment-author__nickname">

@@ -7,7 +7,7 @@ import {
   Story,
   User,
 } from '../../common/entity/types'
-import {defaultAvatar, GuildUpload} from '../../entity/types'
+import {GuildUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -190,14 +190,8 @@ class GuildProvider {
   }
 
   // Получить комментарии
-  getComments = async (id: number): Promise<CommentGuild[]> => {
-    const comments = await this.repository.selectCommentsByIdGuild(id)
-    comments.forEach((c: CommentGuild) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentGuild[]> => {
+    return this.repository.selectCommentsByIdGuild(id)
   }
 
   // Удалить комментарий

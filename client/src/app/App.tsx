@@ -10,6 +10,7 @@ import HeaderTop from './headerTop/HeaderTop'
 import Routes from './Routes'
 import Cookie from '../utils/cookie'
 import HeaderLeft from './headerLeft/HeaderLeft'
+import defaultAvatar from 'img/default.png'
 
 type S = {
   isLoaded: boolean
@@ -48,6 +49,9 @@ class App extends React.Component<{}, S> {
     return this.userApi.getContext().then(
       (user) => {
         this.setState((state) => {
+          if (!user.urlAvatar) {
+            user.urlAvatar = defaultAvatar
+          }
           return {
             user: {
               ...state.user,

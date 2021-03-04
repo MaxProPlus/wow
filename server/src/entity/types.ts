@@ -8,8 +8,6 @@ import {
 } from '../common/entity/types'
 import {UploadedFile} from 'express-fileupload'
 
-export const defaultAvatar = '/avatar/standard.png'
-
 export class Token {
   id = 0
   idUser = 0

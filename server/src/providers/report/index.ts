@@ -1,13 +1,6 @@
 import ReportRepository from '../../repositories/report'
-import {
-  Character,
-  CommentReport,
-  Guild,
-  Report,
-  Story,
-  User,
-} from '../../common/entity/types'
-import {defaultAvatar, ReportUpload} from '../../entity/types'
+import {Character, CommentReport, Guild, Report, Story, User} from '../../common/entity/types'
+import {ReportUpload} from '../../entity/types'
 import Uploader from '../../services/uploader'
 import {ForbiddenError, NotFoundError} from '../../errors'
 
@@ -259,14 +252,8 @@ class ReportProvider {
   }
 
   // Получить комментарии
-  getComments = async (id: number): Promise<CommentReport[]> => {
-    const comments = await this.repository.selectCommentsByIdReport(id)
-    comments.forEach((c) => {
-      if (!c.authorUrlAvatar) {
-        c.authorUrlAvatar = defaultAvatar
-      }
-    })
-    return comments
+  getComments = (id: number): Promise<CommentReport[]> => {
+    return this.repository.selectCommentsByIdReport(id)
   }
 
   // Удалить комментарий

@@ -6,6 +6,7 @@ import iconDs from './img/ds.svg'
 import iconMail from './img/mail.svg'
 import iconVk from './img/vk.svg'
 import iconTg from './img/tg.svg'
+import defaultAvatar from 'img/default.png'
 
 type P = {
   idUser: number
@@ -32,7 +33,7 @@ const Block = ({
     <Row className={styles.block}>
       <Col md={2}>
         <Link to={'/profile/' + idUser}>
-          <img src={urlAvatar} alt="" />
+          <img src={urlAvatar || defaultAvatar} alt="" />
         </Link>
       </Col>
       <Col md={6}>

@@ -1,17 +1,14 @@
-// @ts-ignore
-import mysql2 from 'mysql2'
-import {Pool, PoolConfig} from 'mysql'
+import mysql2, {Pool, PoolOptions} from 'mysql2'
 
 // Обертка для работы с бд
 export class DB {
   private pool: Pool
-  constructor(db: PoolConfig) {
+  constructor(db: PoolOptions) {
     this.pool = mysql2.createPool(db)
   }
 
   // Получить пул соединений обернутый промисом mysql2
   getPoolPromise = () => {
-    // @ts-ignore
     return this.pool.promise()
   }
 }

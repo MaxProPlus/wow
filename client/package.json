@@ -1,7 +1,14 @@
 {
-  "name": "web-node-wow-client",
+  "name": "wow-client",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,scss}\" && stylelint \"src/**/*.scss\" --fix"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -22,7 +29,7 @@
     "react-cropper": "^2.1.0",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^4.0.3",
     "typescript": "^3.9.7",
     "typescript-plugin-css-modules": "^2.4.0"
   },
@@ -33,13 +40,6 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-order": "^4.1.0",
     "stylelint-scss": "^3.19.0"
-  },
-  "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,scss}\" && stylelint \"src/**/*.scss\" --fix"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {

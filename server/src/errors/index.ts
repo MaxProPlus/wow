@@ -18,7 +18,7 @@ export enum Errors {
 export class ApiError extends Error {
   constructor(message: string, name = Errors.ERROR) {
     super(message)
-    super.name = name
+    this.name = name
   }
 }
 

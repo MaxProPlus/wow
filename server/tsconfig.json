@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
+    "target": "es2017",
     "module": "CommonJS",
-    "outDir": "dist",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "removeComments": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
-    "moduleResolution": "node",
     "types": [
       "node",
       "jest"
@@ -19,7 +16,9 @@
     "typeRoots": [
       "node_modules/@types",
       "src/@types"
-    ]
+    ],
+    "baseUrl": "./",
+    "outDir": "dist"
   },
   "include": [
     "src"

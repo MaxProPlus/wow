@@ -3,8 +3,7 @@ import {TicketType} from '../../../../../../server/src/common/entity/types'
 import Spinner from '../../../../components/spinner/Spinner'
 import icon from './img/ticket.svg'
 import PageTitle from '../../../../components/pageTitle/PageTitle'
-import AlertDanger from '../../../../components/alert-danger/AlertDanger'
-import styles from '../../../../css/listTitle.module.scss'
+import AlertDanger from '../../../../components/alertDanger/AlertDanger'
 import BlockReport from '../../../../components/list/BlockReport'
 import TicketApi from '../../../../api/TicketApi'
 import UserContext from '../../../../contexts/userContext'
@@ -76,7 +75,7 @@ class TicketTypeList extends Component<P, S> {
             to={{pathname: '/login', state: {from: this.props.location}}}
           />
         )}
-        <PageTitle title="Тикеты" icon={icon} className={styles.header}>
+        <PageTitle title="Тикеты" icon={icon} className="page-title_sm-hidden">
           <ButtonIcon href="/help/ticket/create" icon={penIcon}>
             Новый запрос
           </ButtonIcon>

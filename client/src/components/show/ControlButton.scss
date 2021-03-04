@@ -1,10 +1,10 @@
 $bg-color: #e54242;
 
-.icon {
+.control-button__icon {
   height: 1.25rem;
 }
 
-.trash {
+.btn.control-button__trash {
   background-color: $bg-color;
 
   &:focus,
@@ -13,16 +13,16 @@ $bg-color: #e54242;
   }
 }
 
-.text {
+.control-button__text {
   display: none;
 }
 
 @media (min-width: 768px) {
-  .icon {
+  .control-button__icon {
     margin-right: 7px;
   }
 
-  .text {
+  .control-button__text {
     display: inline;
   }
 }

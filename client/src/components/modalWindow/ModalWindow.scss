@@ -1,6 +1,6 @@
 @import '../../css/variables';
 
-.wrapper {
+.modal-window__wrapper {
   position: fixed;
   z-index: 15;
   top: 0;
@@ -10,7 +10,7 @@
   background-color: rgba(255, 255, 255, .5);
 }
 
-.window {
+.modal-window {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -20,7 +20,7 @@
   transform: translate(-50%, -50%);
 }
 
-.title {
+.modal-window__title {
   padding: 0 15px;
   border-bottom: 2px solid $border-color;
   margin: -15px -15px 15px;

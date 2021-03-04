@@ -1,6 +1,6 @@
 import React from 'react'
-import styles from './Button.module.scss'
 import {Link} from 'react-router-dom'
+import './Button.scss'
 
 type P = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
@@ -12,15 +12,15 @@ type P = {
 }
 
 const Button: React.FC<P> = (props) => {
-  let className = styles.btn
+  let className = 'btn'
   if (props.className) {
     className += ' ' + props.className
   }
-  if (!!props.block) {
-    className += ' ' + styles.btnBlock
+  if (props.block) {
+    className += ' btn-block'
   }
-  let Tag: React.ElementType = !!props.to ? Link : 'button'
-  if (!!props.as) {
+  let Tag: React.ElementType = props.to ? Link : 'button'
+  if (props.as) {
     Tag = props.as
   }
   return (

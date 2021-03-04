@@ -11,8 +11,7 @@ import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/char.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import SearchBlock from '../../../components/list/SearchBlock'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import Block from '../../../components/list/Block'
 import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
@@ -172,7 +171,11 @@ class CharacterList extends Component<P, S> {
     return (
       <Page>
         {!this.state.isLoaded && <Spinner />}
-        <PageTitle title="Персонажи" icon={icon} className={styles.header}>
+        <PageTitle
+          title="Персонажи"
+          icon={icon}
+          className="page-title_sm-hidden"
+        >
           <SearchBlock
             href="/material/character/create"
             id="title"

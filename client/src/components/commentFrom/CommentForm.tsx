@@ -5,7 +5,7 @@ import AvatarImg from '../../components/avatar-img/AvatarImg'
 import Button from '../../components/button/Button'
 import Input from '../../components/input/Input'
 import Spinner from '../../components/spinner/Spinner'
-import AlertDanger from '../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../components/alertDanger/AlertDanger'
 import Validator from '../../../../server/src/common/validator'
 import {Comment} from '../../../../server/src/common/entity/types'
 

@@ -4,7 +4,7 @@ import UserContext from '../../../contexts/userContext'
 import Spinner from '../../../components/spinner/Spinner'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
 import Form from '../../../components/form/Form'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import Button from '../../../components/button/Button'
 import {
   Character,

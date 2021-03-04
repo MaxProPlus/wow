@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './ModalWindow.module.scss'
+import './ModalWindow.scss'
 
 type P = {
   title: string
@@ -12,9 +12,9 @@ const ModalWindow: React.FC<P> = ({title, children, show}) => {
     return null
   }
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.window}>
-        <div className={styles.title}>{title}</div>
+    <div className="modal-window__wrapper">
+      <div className="modal-window">
+        <div className="modal-window__title">{title}</div>
         {children}
       </div>
     </div>

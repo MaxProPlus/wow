@@ -1,7 +1,7 @@
 import React, {ChangeEvent, Component} from 'react'
 import {RouteComponentProps} from 'react-router-dom'
 import {Article} from '../../../../server/src/common/entity/types'
-import AlertDanger from '../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../components/alertDanger/AlertDanger'
 import Button from '../../components/button/Button'
 import Spinner from '../../components/spinner/Spinner'
 import PageTitle from '../../components/pageTitle/PageTitle'
@@ -10,7 +10,6 @@ import ArticleApi from '../../api/ArticleApi'
 import penIcon from '../../img/pen.svg'
 import UserContext from '../../contexts/userContext'
 import './List.scss'
-import stylesTitle from '../../css/listTitle.module.scss'
 import stylesButton from '../../components/list/SearchBlock.module.scss'
 import DateFormatter from '../../utils/date'
 import {Rights} from '../../../../server/src/providers/right'
@@ -123,7 +122,7 @@ class ArticleList extends Component<P, S> {
         {!this.state.isLoaded && <Spinner />}
         <PageTitle
           title="Последние обновления"
-          className={`${stylesTitle.header} page-article-list__title`}
+          className={`page-title_sm-hidden page-article-list__title`}
         >
           {this.context.user.rights.includes(Rights.ARTICLE_MODERATOR) && (
             <Button to="/article/create">

@@ -1,13 +1,13 @@
 @import './variables';
 
-.header {
+.page-title.page-title_sm-hidden {
   h1 > span {
     display: none;
   }
 }
 
 @media (min-width: 576px) {
-  .header {
+  .page-title.page-title_sm-hidden {
     justify-content: space-between;
 
     h1 > span {

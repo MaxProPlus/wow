@@ -10,7 +10,7 @@ import {
 } from '../../../../../server/src/common/entity/types'
 import UserContext from '../../../contexts/userContext'
 import CharacterApi from '../../../api/CharacterApi'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import CommentForm from '../../../components/commentFrom/CommentForm'
 import CommentComponent from '../../../components/comment/Comment'
 import {Col, Row} from 'react-bootstrap'

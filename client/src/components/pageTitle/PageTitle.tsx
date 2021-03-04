@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './PageTitle.module.scss'
+import './PageTitle.scss'
 
 type P = {
   icon?: string
@@ -8,8 +8,8 @@ type P = {
   className?: string
 }
 const PageTitle: React.FC<P> = ({title, icon, children, className}) => {
-  let blockClass = styles.block
-  if (!!className) {
+  let blockClass = 'page-title'
+  if (className) {
     blockClass += ' ' + className
   }
 

@@ -3,7 +3,7 @@ import {Link, RouteComponentProps} from 'react-router-dom'
 import UserApi from '../../../api/UserApi'
 import UserContext from '../../../contexts/userContext'
 import Spinner from '../../../components/spinner/Spinner'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import {User} from '../../../../../server/src/common/entity/types'
 import InputField from '../../../components/form/inputField/InputField'
 import Form from '../../../components/form/Form'
@@ -132,7 +132,7 @@ class SignIn extends Component<P, S> {
               onChange={this.handleChange}
             />
             <div className="form-group">
-              <Button className="btn-block">Вход</Button>
+              <Button block>Вход</Button>
             </div>
             <div className="suggest">
               Ещё нет аккаунта? <Link to="/signup">Зарегистрируйтесь</Link>

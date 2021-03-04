@@ -7,7 +7,7 @@ import {
 } from '../../../../server/src/common/entity/types'
 import UserContext from '../../contexts/userContext'
 import history from '../../utils/history'
-import AlertDanger from 'components/alert-danger/AlertDanger'
+import AlertDanger from 'components/alertDanger/AlertDanger'
 import Spinner from '../../components/spinner/Spinner'
 import ConfirmationWindow from '../../components/confirmationWindow/ConfirmationWindow'
 import PageTitle from '../../components/pageTitle/PageTitle'

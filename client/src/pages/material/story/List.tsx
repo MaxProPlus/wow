@@ -2,13 +2,12 @@ import React, {ChangeEvent, Component} from 'react'
 import {Story} from '../../../../../server/src/common/entity/types'
 import Button from '../../../components/button/Button'
 import {Col, Row} from 'react-bootstrap'
-import styles from '../../../css/listTitle.module.scss'
 import icon from './img/icon.svg'
 import StoryApi from '../../../api/StoryApi'
 import Spinner from '../../../components/spinner/Spinner'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import SearchBlock from '../../../components/list/SearchBlock'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import Block from '../../../components/list/Block'
 import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
@@ -142,7 +141,7 @@ class StoryList extends Component<P, S> {
     return (
       <Page>
         {!this.state.isLoaded && <Spinner />}
-        <PageTitle className={styles.header} title="Сюжеты" icon={icon}>
+        <PageTitle className="page-title_sm-hidden" title="Сюжеты" icon={icon}>
           <SearchBlock
             href="/material/story/create"
             id="title"
@@ -170,7 +169,7 @@ class StoryList extends Component<P, S> {
             </Col>
             <Col md={6}>
               <Row className="h-100">
-                <Col md={6}/>
+                <Col md={6} />
                 <Col md={6} className="d-flex align-items-end">
                   <Button block className="mb-3">
                     Найти

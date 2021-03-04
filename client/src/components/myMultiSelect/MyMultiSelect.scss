@@ -1,6 +1,6 @@
 @import '../../css/variables';
 
-.select {
+.my-multi-select {
   padding: 0 7px;
   border: 1px solid $border-color;
   margin-bottom: 1rem;
@@ -8,28 +8,28 @@
   color: $color2;
 }
 
-.select__label {
+.my-multi-select__label {
   display: inline-block;
   margin-bottom: .5rem;
 }
 
-.select__spinner {
+.my-multi-select__spinner {
   min-width: 100px;
   min-height: 100px;
 }
 
-.select__options {
+.my-multi-select__options {
   position: relative;
   padding: 5px 7px 0;
   border-top: 1px solid $border-color;
   margin: 0 -7px;
 }
 
-.select__values {
+.my-multi-select__values {
   border-top: none;
 }
 
-.select__input {
+.my-multi-select__input {
   display: block;
   width: 100%;
   height: calc(1.5em + .75rem + 2px);
@@ -48,7 +48,7 @@
   }
 }
 
-.select__item {
+.my-multi-select__item {
   padding: .375rem .75rem;
   border: 1px solid $border-color;
   margin-right: 4px;
@@ -64,6 +64,6 @@
   }
 }
 
-.select__option {
+.my-multi-select__option {
   cursor: pointer;
 }

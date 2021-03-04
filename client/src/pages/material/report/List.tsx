@@ -6,8 +6,7 @@ import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/report.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import SearchBlock from '../../../components/list/SearchBlock'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
@@ -144,7 +143,11 @@ class ReportList extends Component<P, S> {
     return (
       <Page className="page-list-report">
         {!this.state.isLoaded && <Spinner />}
-        <PageTitle title="Отчеты и логи" icon={icon} className={styles.header}>
+        <PageTitle
+          title="Отчеты и логи"
+          icon={icon}
+          className="page-title_sm-hidden"
+        >
           <SearchBlock
             href="/material/report/create"
             id="title"

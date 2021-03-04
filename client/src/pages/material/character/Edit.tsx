@@ -2,7 +2,7 @@ import React, {ChangeEvent} from 'react'
 import Spinner from '../../../components/spinner/Spinner'
 import Button from '../../../components/button/Button'
 import InputField from '../../../components/form/inputField/InputField'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import {
   Character,
   characterActiveToString,

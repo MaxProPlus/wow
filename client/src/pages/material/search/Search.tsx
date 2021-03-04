@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import Button from '../../../components/button/Button'
 import Spinner from '../../../components/spinner/Spinner'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import BlockReport from '../../../components/list/BlockReport'
 import {RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'

@@ -6,7 +6,7 @@ import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/forum.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
 import SearchBlock from '../../../components/list/SearchBlock'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import SearchFilter from '../../../components/list/SearchFilter'
 import Form from '../../../components/form/Form'
 import InputField from '../../../components/form/inputField/InputField'
@@ -15,7 +15,6 @@ import ForumApi from '../../../api/ForumApi'
 import {RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'
 import DateFormatter from '../../../utils/date'
-import styles from '../../../css/listTitle.module.scss'
 
 type P = RouteComponentProps
 
@@ -147,7 +146,7 @@ class ForumList extends Component<P, S> {
         <PageTitle
           title="Последние обсуждения"
           icon={icon}
-          className={styles.header}
+          className="page-title_sm-hidden"
         >
           <SearchBlock
             href="/material/forum/create"

@@ -1,14 +1,11 @@
 @import '../../css/variables';
-//@use 'sass:color';
-
-$bg-color: #5b87ef;
 
 .btn {
   display: inline-flex;
   align-items: center;
   padding: .375rem .75rem;
   border: none;
-  background-color: $bg-color;
+  background-color: $color3;
   color: $color1;
   cursor: pointer;
   font-size: .875rem;
@@ -22,11 +19,11 @@ $bg-color: #5b87ef;
 
   &:focus,
   &:hover {
-    background-color: darken($bg-color, 5%);
+    background-color: darken($color3, 5%);
   }
 }
 
-.btnBlock {
+.btn-block {
   display: block;
   width: 100%;
 }

@@ -1,8 +1,8 @@
 import React, {ChangeEvent, FC} from 'react'
-import styles from './MyMultiSelect.module.scss'
 import closeSvg from './img/close.svg'
 import Spinner from '../spinner/Spinner'
 import {MyMultiSelectInputEvent, MyMultiSelectListEvent} from './types'
+import './MyMultiSelect.scss'
 
 type P = {
   id: string
@@ -70,14 +70,12 @@ class MyMultiSelect extends React.Component<P, S> {
   render() {
     return (
       <div>
-        <label className={styles.select__label} htmlFor={this.props.id}>
+        <label className="my-multi-select__label" htmlFor={this.props.id}>
           {this.props.label}
         </label>
-        <div className={styles.select}>
+        <div className="my-multi-select">
           {!!this.props.value.length && (
-            <div
-              className={`d-flex flex-wrap ${styles.select__options} + ${styles.select__values}`}
-            >
+            <div className="d-flex flex-wrap my-multi-select__options my-multi-select__values">
               {this.props.value.map((el) => (
                 <BlockValue
                   key={el.value}
@@ -92,7 +90,7 @@ class MyMultiSelect extends React.Component<P, S> {
 
           <input
             id={this.props.id}
-            className={styles.select__input}
+            className="my-multi-select__input"
             placeholder={this.props.placeholder}
             type="text"
             value={this.state.inputValue}
@@ -100,18 +98,12 @@ class MyMultiSelect extends React.Component<P, S> {
           />
 
           {!this.state.isLoaded && (
-            <div
-              className={`${styles.select__options} ${styles.select__spinner}`}
-            >
+            <div className="my-multi-select__options my-multi-select__spinner">
               <Spinner />
             </div>
           )}
           {!!this.props.options.length && this.state.isLoaded && (
-            <div
-              className={
-                'd-flex flex-column align-items-start ' + styles.select__options
-              }
-            >
+            <div className="d-flex flex-column align-items-start my-multi-select__options">
               {this.props.options.map((el) => (
                 <BlockOptions
                   key={el.value}
@@ -142,7 +134,7 @@ const BlockValue: FC<BlockValueP> = ({
   onClose,
 }: BlockValueP) => {
   return (
-    <span className={styles.select__item}>
+    <span className="my-multi-select__item">
       {children}
       <img onClick={() => onClose(value)} src={closeSvg} alt="" />
     </span>
@@ -163,7 +155,7 @@ const BlockOptions: FC<BlockOptionsP> = ({
 }: BlockOptionsP) => {
   return (
     <span
-      className={`${styles.select__item} ${styles.select__option}`}
+      className="my-multi-select__item my-multi-select__option"
       onClick={() => onClick(value, children)}
     >
       {children}

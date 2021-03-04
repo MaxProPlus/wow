@@ -2,7 +2,7 @@ import React from 'react'
 import {Link, RouteComponentProps} from 'react-router-dom'
 import UserApi from '../../../api/UserApi'
 import UserContext from '../../../contexts/userContext'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import Validator from '../../../../../server/src/common/validator'
 import {User} from '../../../../../server/src/common/entity/types'
 import InputField from '../../../components/form/inputField/InputField'
@@ -122,7 +122,7 @@ class SignUp extends React.Component<P, S> {
               onChange={this.handleChange}
             />
             <div className="form-group">
-              <Button className="btn-block">Регистрация</Button>
+              <Button block>Регистрация</Button>
             </div>
             <div className="suggest">
               Уже зарегистрированы? <Link to="/login">Войдите</Link>

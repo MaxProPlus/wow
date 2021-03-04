@@ -3,8 +3,7 @@ import {Feedback} from '../../../../../server/src/common/entity/types'
 import Spinner from '../../../components/spinner/Spinner'
 import icon from './img/icon.svg'
 import PageTitle from '../../../components/pageTitle/PageTitle'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
-import styles from '../../../css/listTitle.module.scss'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import {RouteComponentProps} from 'react-router-dom'
 import FeedbackApi from '../../../api/FeedbackApi'
 import Block from './Block'
@@ -66,7 +65,7 @@ class FeedbackList extends Component<P, S> {
         <PageTitle
           title="Обратная связь"
           icon={icon}
-          className={styles.header}
+          className="page-title_sm-hidden"
         />
         {this.state.list.length > 0
           ? this.state.list.map((el) => <Block key={el.id} {...el} />)

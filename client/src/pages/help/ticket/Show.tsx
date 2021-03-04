@@ -10,7 +10,7 @@ import {
 import history from '../../../utils/history'
 import {Redirect, RouteComponentProps} from 'react-router-dom'
 import Page from '../../../components/page/Page'
-import AlertDanger from '../../../components/alert-danger/AlertDanger'
+import AlertDanger from '../../../components/alertDanger/AlertDanger'
 import Select from '../../../components/form/select/Select'
 import CommentForm from '../../../components/commentFrom/CommentForm'
 import {MatchId} from '../../../types/RouteProps'

@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './ConfirmationWindow.module.scss'
+import './ConfirmationWindow.scss'
 import ModalWindow from '../modalWindow/ModalWindow'
 import Button from '../button/Button'
 
@@ -21,11 +21,11 @@ const ConfirmationWindow: React.FC<P> = ({
   }
   return (
     <ModalWindow title={title} show={true}>
-      <div className={styles.body}>
-        <Button className={styles.btn} onClick={onDecline}>
+      <div className="confirmation-window__body">
+        <Button className="confirmation-window__btn " onClick={onDecline}>
           Нет
         </Button>
-        <Button className={styles.btn} onClick={onAccept}>
+        <Button className="confirmation-window__btn " onClick={onAccept}>
           Да
         </Button>
       </div>

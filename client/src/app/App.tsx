@@ -116,6 +116,7 @@ class App extends React.Component<{}, S> {
           value={{user: this.state.user, updateLogin: this.updateLogin}}
         >
           <div className="app">
+            <div className="app__bg" />
             <HeaderLeft
               ref={this.setWrapperRef}
               showMenu={this.state.showMenu}

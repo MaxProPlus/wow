@@ -7,7 +7,7 @@
 
 .home__top {
   border-bottom: 2px solid #21283b;
-  margin: -15px -15px 0;
+  margin: -15px -15px -2px;
 }
 
 .home__info {
@@ -61,12 +61,6 @@
   right: 5%;
 }
 
-.slider__item {
-  &:hover .slider-item__title {
-    color: #5b87ef;
-  }
-}
-
 .slider-item {
   position: relative;
   display: block;
@@ -108,6 +102,12 @@
       rgba(33, 40, 59, .01) 70.31%,
       rgba(33, 40, 59, .9) 100%
     );
+}
+
+.slider__item {
+  &:hover .slider-item__title {
+    color: #5b87ef;
+  }
 }
 
 .slider__list .slider__item:last-child {

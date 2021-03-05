@@ -16,6 +16,7 @@ type S = {
   showStart: boolean
   showMaterial: boolean
   showHelp: boolean
+  headerWidth: number
   path: string
 }
 
@@ -28,6 +29,7 @@ class HeaderLeft extends Component<P, S> {
       showStart: false,
       showMaterial: false,
       showHelp: false,
+      headerWidth: 166,
       path: history.location.pathname,
     }
   }
@@ -74,6 +76,10 @@ class HeaderLeft extends Component<P, S> {
     })
   }
 
+  onLoad = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    this.setState({headerWidth: e.currentTarget.scrollWidth})
+  }
+
   render() {
     return (
       <header
@@ -83,8 +89,9 @@ class HeaderLeft extends Component<P, S> {
             ? `${styles.header} ${styles.show}`
             : styles.header
         }
+        style={{width: `${this.state.headerWidth + 20}px`}}
       >
-        <div className={styles.inner}>
+        <div className={styles.inner} onLoad={this.onLoad}>
           <Link onClick={this.props.hideMenu} className={styles.logo} to="/">
             <img src={logo} alt="Equilibrium" />
           </Link>

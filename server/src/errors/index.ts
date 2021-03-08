@@ -2,6 +2,7 @@
 export enum Errors {
   ERROR = 'ERROR',
   ERROR_DB = 'ERROR_DB',
+  ERROR_FS = 'ERROR_FS',
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
   NOT_FOUND = 'NOT_FOUND',
@@ -25,6 +26,13 @@ export class ApiError extends Error {
 // Ошибка базы данных
 export class DBError extends ApiError {
   constructor(message = 'Ошибка запроса к бд', name = Errors.ERROR_DB) {
+    super(message, name)
+  }
+}
+
+// Ошибка фс
+export class FSError extends ApiError {
+  constructor(message = 'Ошибка файловой системы', name = Errors.ERROR_FS) {
     super(message, name)
   }
 }

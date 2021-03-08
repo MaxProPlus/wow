@@ -19,17 +19,14 @@ class ForumProvider {
 
   // Создать форум
   create = async (c: ForumUpload): Promise<number> => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'forumAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'forumAvatar')
 
+    const id = await this.repository.insert(c)
     await Promise.all(
       c.coauthors.map(async (el: number) => {
         return this.repository.insertCoauthor(id, el)
       })
     )
-
-    const id = await this.repository.insert(c)
-    await c.fileAvatar.mv(infoAvatar.path)
     return id
   }
 
@@ -104,12 +101,9 @@ class ForumProvider {
 
     // Обновить аватарку
     c.urlAvatar = old.urlAvatar
-    let infoAvatar
     if (c.fileAvatar) {
       this.uploader.remove(old.urlAvatar)
-      infoAvatar = this.uploader.getInfo(c.fileAvatar, 'reportAvatar')
-      c.urlAvatar = infoAvatar.url
-      p.push(c.fileAvatar.mv(infoAvatar.path))
+      c.urlAvatar = await this.uploader.move(c.fileAvatar, 'forumAvatar')
     }
     await Promise.all<any>(p)
     return this.repository.update(c)

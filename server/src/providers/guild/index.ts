@@ -26,8 +26,7 @@ class GuildProvider {
 
   // Создать гильдию
   create = async (c: GuildUpload): Promise<number> => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'guildAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'guildAvatar')
 
     const id = await this.repository.insert(c)
     const p = []
@@ -45,7 +44,6 @@ class GuildProvider {
         })
       )
     )
-    p.push(c.fileAvatar.mv(infoAvatar.path))
     await Promise.all<any>(p)
     return id
   }
@@ -155,12 +153,9 @@ class GuildProvider {
 
     guild.urlAvatar = old.urlAvatar
     // Обновить аватарку
-    let infoAvatar
     if (guild.fileAvatar) {
       this.uploader.remove(old.urlAvatar)
-      infoAvatar = this.uploader.getInfo(guild.fileAvatar, 'guildAvatar')
-      guild.urlAvatar = infoAvatar.url
-      p.push(guild.fileAvatar.mv(infoAvatar.path))
+      guild.urlAvatar = await this.uploader.move(guild.fileAvatar, 'articleAvatar')
     }
     await Promise.all<any>(p)
     return this.repository.update(guild)

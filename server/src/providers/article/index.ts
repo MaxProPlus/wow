@@ -19,12 +19,9 @@ class ArticleProvider {
 
   // Создать новость
   create = async (c: ArticleUpload): Promise<number> => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'articleAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'articleAvatar')
 
-    const id = await this.repository.insert(c)
-    await c.fileAvatar.mv(infoAvatar.path)
-    return id
+    return await this.repository.insert(c)
   }
 
   // Получить новость по id
@@ -60,13 +57,10 @@ class ArticleProvider {
     const oldArticle = await this.repository.selectById(c.id)
 
     c.urlAvatar = oldArticle.urlAvatar
-    let infoAvatar
     // Если загружена новая аватарка, то обновляем ее
     if (c.fileAvatar) {
       this.uploader.remove(oldArticle.urlAvatar)
-      infoAvatar = this.uploader.getInfo(c.fileAvatar, 'articleAvatar')
-      c.urlAvatar = infoAvatar.url
-      await c.fileAvatar.mv(infoAvatar.path)
+      c.urlAvatar = await this.uploader.move(c.fileAvatar, 'articleAvatar')
     }
 
     return this.repository.update(c)

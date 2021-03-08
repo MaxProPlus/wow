@@ -17,7 +17,10 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cookieParser())
-app.use(fileUpload())
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: '/tmp/wow/uploads',
+}))
 
 // Show routes called in console during development
 if (configProvider.get<string>('env') === 'development') {
@@ -37,7 +40,7 @@ app.use(apiErrorMiddleware)
 // Статика фронта
 app.use(express.static(path.join(__dirname, '../../client/build')))
 // Статика загруженных файлов
-app.use(express.static(path.join(__dirname, '../upload')))
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
 // Единый вход фронта
 app.get('*', (req: Request, res: Response) => {

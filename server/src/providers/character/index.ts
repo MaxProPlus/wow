@@ -26,8 +26,7 @@ class CharacterProvider {
 
   // Создать персонажа
   create = async (c: CharacterUpload) => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'characterAvatar')
 
     const id = await this.repository.insert(c)
     const p: Promise<any>[] = []
@@ -45,7 +44,6 @@ class CharacterProvider {
         })
       )
     )
-    p.push(c.fileAvatar.mv(infoAvatar.path))
     await Promise.all(p)
     return id
   }
@@ -160,13 +158,10 @@ class CharacterProvider {
     )
 
     c.urlAvatar = oldCharacter.urlAvatar
-    let infoAvatar
     // Если загружена новая аватарка, то обновляем ее
     if (c.fileAvatar) {
       this.uploader.remove(oldCharacter.urlAvatar)
-      infoAvatar = this.uploader.getInfo(c.fileAvatar, 'characterAvatar')
-      c.urlAvatar = infoAvatar.url
-      p.push(c.fileAvatar.mv(infoAvatar.path))
+      c.urlAvatar = await this.uploader.move(c.fileAvatar, 'characterAvatar')
     }
     await Promise.all<any>(p)
 

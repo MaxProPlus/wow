@@ -19,8 +19,7 @@ class StoryProvider {
 
   // Создать сюжет
   create = async (c: StoryUpload): Promise<number> => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'storyAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'storyAvatar')
 
     const id = await this.repository.insert(c)
     const p = []
@@ -52,7 +51,6 @@ class StoryProvider {
         })
       )
     )
-    p.push(c.fileAvatar.mv(infoAvatar.path))
     await Promise.all<any>(p)
     return id
   }
@@ -183,12 +181,9 @@ class StoryProvider {
 
     // Обновить аватарку
     c.urlAvatar = old.urlAvatar
-    let infoAvatar
     if (c.fileAvatar) {
       this.uploader.remove(old.urlAvatar)
-      infoAvatar = this.uploader.getInfo(c.fileAvatar, 'storyAvatar')
-      c.urlAvatar = infoAvatar.url
-      p.push(c.fileAvatar.mv(infoAvatar.path))
+      c.urlAvatar = await this.uploader.move(c.fileAvatar, 'storyAvatar')
     }
     await Promise.all<any>(p)
     return this.repository.update(c)

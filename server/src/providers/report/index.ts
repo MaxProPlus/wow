@@ -19,8 +19,7 @@ class ReportProvider {
 
   // Создать отчет
   create = async (c: ReportUpload): Promise<number> => {
-    const infoAvatar = this.uploader.getInfo(c.fileAvatar, 'reportAvatar')
-    c.urlAvatar = infoAvatar.url
+    c.urlAvatar = await this.uploader.move(c.fileAvatar, 'reportAvatar')
 
     const id = await this.repository.insert(c)
     const p: Promise<any>[] = []
@@ -52,7 +51,6 @@ class ReportProvider {
         })
       )
     )
-    p.push(c.fileAvatar.mv(infoAvatar.path))
     await Promise.all(p)
     return id
   }
@@ -217,12 +215,9 @@ class ReportProvider {
 
     // Обновить аватарку
     c.urlAvatar = old.urlAvatar
-    let infoAvatar
     if (c.fileAvatar) {
       this.uploader.remove(old.urlAvatar)
-      infoAvatar = this.uploader.getInfo(c.fileAvatar, 'reportAvatar')
-      c.urlAvatar = infoAvatar.url
-      p.push(c.fileAvatar.mv(infoAvatar.path))
+      c.urlAvatar = await this.uploader.move(c.fileAvatar, 'reportAvatar')
     }
     await Promise.all<any>(p)
     return this.repository.update(c)

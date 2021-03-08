@@ -56,9 +56,7 @@ class UserProvider {
     if (oldAvatarPath) {
       this.uploader.remove(oldAvatarPath)
     }
-    const infoAvatar = this.uploader.getInfo(avatar, 'avatar')
-    avatar.mv(infoAvatar.path)
-    return this.repository.updateAvatar(id, infoAvatar.url)
+    return this.repository.updateAvatar(id, await this.uploader.move(avatar, 'avatar'))
   }
 }
 

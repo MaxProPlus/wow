@@ -6,6 +6,7 @@ import DB from '../../services/mysql'
 import {ArticleUpload} from '../../entity/types'
 import {Article, CommentArticle} from '../../common/entity/types'
 import {ForbiddenError} from '../../errors'
+import Hash from '../../services/hash'
 
 describe('ArticleProvider', () => {
   let repository: ArticleRepository
@@ -13,7 +14,7 @@ describe('ArticleProvider', () => {
   let provider: ArticleProvider
   beforeEach(() => {
     repository = new ArticleRepository(new DB(new ConfigProvider().get('db')))
-    uploader = new Uploader()
+    uploader = new Uploader(new Hash(), {} as any)
     provider = new ArticleProvider(repository, uploader)
   })
   describe('create', () => {
@@ -24,10 +25,7 @@ describe('ArticleProvider', () => {
         mv: jest.fn().mockResolvedValue({}),
       } as any
       jest.spyOn(repository, 'insert').mockResolvedValue(article.id)
-      jest.spyOn(uploader, 'getInfo').mockReturnValue({
-        url: '',
-        path: '',
-      })
+      jest.spyOn(uploader, 'move').mockResolvedValue('/uploads/file.png')
 
       await expect(provider.create(article)).resolves.toBe(article.id)
       expect(article.fileAvatar.mv).toBeCalled()
@@ -88,10 +86,7 @@ describe('ArticleProvider', () => {
       } as any
       jest.spyOn(repository, 'selectById').mockResolvedValue(article)
       jest.spyOn(uploader, 'remove').mockReturnValue()
-      jest.spyOn(uploader, 'getInfo').mockReturnValue({
-        url: '',
-        path: '',
-      })
+      jest.spyOn(uploader, 'move').mockResolvedValue('/uploads/file.png')
       jest.spyOn(repository, 'update').mockResolvedValue(article.id)
 
       await expect(provider.update(article)).resolves.toBe(article.id)

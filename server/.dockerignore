@@ -1,0 +1,19 @@
+Dockerfile
+# dependencies
+/node_modules
+
+# Test
+/coverage
+
+# ide
+/.idea
+/src/common/.idea
+
+# env
+/.env.local
+/.env.*.local
+
+# production
+/dist
+/logs
+/uploads

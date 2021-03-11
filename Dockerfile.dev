@@ -1,0 +1,54 @@
+FROM node:14-alpine as builder
+WORKDIR /app
+
+# Копирование зависимостей
+COPY client/package*.json ./client/
+COPY server/package*.json ./server/
+
+# Установка зависимостей
+RUN npm --prefix client ci --only=prod
+RUN npm --prefix server ci
+
+# Копирование файлов проекта
+COPY . .
+
+# Компиляция проекта
+RUN npm --prefix client run build
+RUN npm --prefix server run build
+
+FROM node:14-alpine as app
+
+# Установка зависимостей
+RUN apk add --no-cache su-exec
+
+WORKDIR /home/node
+
+# Копирование зависимостей для продакшена
+COPY --chown=node:node server/package*.json ./server/
+
+# Установка зависимостей для продакшена
+RUN npm --prefix server ci --only=prod
+
+# Копирование скомпилированного проекта
+COPY --from=builder --chown=node:node /app/client/build /home/node/client/build
+COPY --from=builder --chown=node:node /app/server/dist /home/node/server/dist
+COPY --from=builder --chown=node:node /app/server/entrypoint.sh /home/node/server
+
+# Создание монтируемых директорий
+RUN mkdir -m '0755' -p /home/node/server/uploads && \
+    mkdir -m '0755' -p /home/node/server/logs
+
+# Выставление прав
+RUN chown node:node -R /home/node
+
+# Определение монтируемых каталогов
+VOLUME ["/home/node/server/uploads", "/home/node/server/logs"]
+
+# Порт сервера
+EXPOSE 5000
+
+WORKDIR /home/node/server
+
+# ENTRYPOINT для исправления прав
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["node", "dist"]

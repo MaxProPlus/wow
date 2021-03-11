@@ -1,3 +1,8 @@
+.git
+docker-compose.yaml
+Dockerfile.dev
+/server/Dockerfile
+/client/Dockerfile
 # dependencies
 /*/node_modules
 

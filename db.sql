@@ -1,5 +1,7 @@
-create schema wow collate utf8mb4_unicode_ci;
-use wow;
+# CREATE SCHEMA wow COLLATE utf8mb4_unicode_ci;
+# CREATE USER 'wow'@'localhost' IDENTIFIED BY 'wow';
+# GRANT ALL ON wow.* TO 'wow'@'localhost';
+# USE wow;
 
 create table if not exists account
 (

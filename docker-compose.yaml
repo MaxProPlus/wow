@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  db:
+    image: mariadb
+    restart: always
+    volumes:
+      - ./wow_data/mariadb/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+  api:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: wow-api
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./wow_data/uploads:/home/node/uploads
+    environment:
+      - HOST=${HOST}
+      - DB_HOST=db
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+      - DB_DATABASE=${MYSQL_DATABASE}
+      - SEND_EMAIL=${SEND_EMAIL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+  client:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
+    image: wow-client
+    restart: always
+    depends_on:
+      - api
+    volumes:
+      - ./wow_data/uploads:/usr/share/nginx/uploads
+    ports:
+      - '${PORT}:80'
